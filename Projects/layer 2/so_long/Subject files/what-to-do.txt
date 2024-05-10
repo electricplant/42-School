@@ -1,0 +1,69 @@
+Create makefile
+
+
+
+///////////////// GAME ////////////////////
+
+Program takes .ber file as map description file
+
+Wasd controls the character
+
+Character can't move into walls
+
+# of movements displayed in shell (or on screen, bonus)
+
+
+
+/////////////// GRAPHICS ///////////////////
+
+DONE?: program displays in a window
+
+DONE?: esc closes the window and "quits cleanly"
+
+DONE: Program closes when you click the X
+
+Window management remains smooth
+
+Use the "images" feature of the library
+
+
+
+
+///////////////// MAP /////////////////////
+
+Map made with walls/collectibles/free space (1, C, 0) 
+Map exit/Player starting position (E, P)
+
+Map must be rectangular
+
+Map must be closed/surrounded with walls or an Error occurs
+Same for if there's a valid path (use floodfill algo)
+If map contains duplicates of exit/start, display Error
+
+Error message must be of format; "Error\n *custom error message*"
+
+
+If (file_name has a ".ber" extension)
+{ 
+   Open the file in read-only mode
+   If (open is successful)
+   {
+        Read 1 byte from the file
+        If (read fails)
+            Display the error - not readable (error)
+            return (1);
+        }
+        Close the file and return 0 (success)
+   }
+   Display the error and return 1 (error)
+}
+Display an error for files without ".ber" extension and return 1 (error)
+
+
+//////////////// BONUS ////////////////////
+
+Make player lose when they touch enemy patrol
+
+Add sprite animation
+
+Display movement count directly on screen

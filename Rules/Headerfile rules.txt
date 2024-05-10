@@ -1,0 +1,10 @@
+always have a "wrapper": 
+
+ex for file named reqs.h
+
+#ifndef reqs.h
+# define reqs.h
+
+*program stuff, includes (with space after #), function protos with tab after type*
+
+#endif

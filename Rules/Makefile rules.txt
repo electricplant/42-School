@@ -1,0 +1,5 @@
+$(NAME) = name of final binary file (.a)
+all = build the executable file (above)
+clean = remove object files
+fclean = remove object AND executable file
+re = flcean all (remake everything)

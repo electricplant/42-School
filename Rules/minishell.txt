@@ -1,0 +1,3 @@
+this project is to make a parser for arguments
+treat each argument like a filter, (ex: "function.c -Werror") Werror is a separate executable you will run when found
+if duplicate, skip
