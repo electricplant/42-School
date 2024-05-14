@@ -5,7 +5,15 @@
 		},
 		{
 			"path": "../Working"
+		},
+		{
+			"path": "../../../layer 1/get_next_line"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"mlx.h": "c",
+			"reqs.h": "c"
+		}
+	}
 }

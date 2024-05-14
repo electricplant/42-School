@@ -1,22 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "../../Working/minilibx-linux/mlx.h"
-//#include "mlx.h"
-#include <X11/X.h>
-
-typedef struct s_data {
-	void	*mlx;
-	void	*win;
-	void	*img;
-	char	*addr;
-	int		bits_per_pixel;
-	int		line_length;
-	int		endian;
-	int		width;
-	int		height;
-	int		p_y_axis;
-	int		p_x_axis;
-}				t_data;
+#include "reqs.h"
 
 int close_window(t_data *img)
 {
@@ -51,23 +33,39 @@ int key_hook(int keycode, t_data *img)
 
 int	main(void)
 {
-	char	*relative_path = "./Player.xpm";
+	char	*relative_path = "textures/./Player.xpm";
 	t_data	img;
 	int		x = 512;
 	int		y = 512;
 	img.p_x_axis = 0;
 	img.p_y_axis = 0;
 
-	img.mlx = mlx_init();
+	img.mlx = mlx_init(); 
 	if (img.mlx == NULL)
 	{
-		printf("Error1\n");
+		printf("Error, mlx_init failed\n");
 		return (1);
 	}
+
+#include <fcntl.h>
+
+int		fd;
+char	*line;
+
+fd = open("test.ber", O_RDONLY);
+line = get_next_line(fd);
+while (line)
+{
+	printf("%s\n", line);
+	free(line);
+	line = get_next_line(fd);
+}
+close(fd);
+
 	img.img = mlx_xpm_file_to_image(img.mlx, relative_path, &img.width, &img.height);
 	if (img.img == NULL)
 	{
-		printf("Error2\n");
+		printf("Error, xpm_file_to_image failed :(\n");
 		return (1);
 	}
 	//img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);

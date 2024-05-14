@@ -2,8 +2,8 @@ always have a "wrapper":
 
 ex for file named reqs.h
 
-#ifndef reqs.h
-# define reqs.h
+#ifndef REQS.H
+# define REQS.H
 
 *program stuff, includes (with space after #), function protos with tab after type*
 
