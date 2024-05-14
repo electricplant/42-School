@@ -47,20 +47,20 @@ int	main(void)
 		return (1);
 	}
 
-#include <fcntl.h>
+	#include <fcntl.h>
 
-int		fd;
-char	*line;
+	int		fd;
+	char	*line;
 
-fd = open("test.ber", O_RDONLY);
-line = get_next_line(fd);
-while (line)
-{
-	printf("%s\n", line);
-	free(line);
+	fd = open("test.ber", O_RDONLY);
 	line = get_next_line(fd);
-}
-close(fd);
+	while (line)
+	{
+		printf("%s\n", line);
+		free(line);
+		line = get_next_line(fd);
+	}
+	close(fd);
 
 	img.img = mlx_xpm_file_to_image(img.mlx, relative_path, &img.width, &img.height);
 	if (img.img == NULL)

@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include "../../../Working/minilibx-linux/mlx.h"
 #include <X11/X.h>
+#include "get_next_line.h"
 
 #include <unistd.h> //remove later
 
