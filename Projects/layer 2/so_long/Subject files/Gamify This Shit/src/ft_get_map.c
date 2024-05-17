@@ -10,22 +10,33 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef REQS_H
-# define REQS_H
+#include "reqs.h"
 
-# include "structs.h"
-# include <stdio.h>
-# include <stdlib.h>
-# include "../../../Working/minilibx-linux/mlx.h"
-# include <X11/X.h>
-# include "get_next_line.h"
+int	ft_get_map(char *file, t_map *map) //something going wrong with the struct being sent
+{
+	int		fd;
+	char	*line;
+	int		i;
 
-# include <unistd.h> //remove later
-
-int		close_window(t_data *img);
-void	move_player(t_data *img);
-int		key_hook(int keycode, t_data *img);
-int		ft_get_map(char *file, t_map *map);
-
-
-#endif
+	line = NULL;
+	fd = open(file, O_RDONLY);
+	if (fd < 0)
+		return (0);
+	i = 0;
+	while (get_next_line(fd) > 0)
+		map->rows++;
+	close(fd);
+	fd = open(file, O_RDONLY);
+	map->map = malloc(sizeof(char *) * map->rows);
+	if (map->map == NULL)
+		return (0);
+	while (get_next_line(fd) > 0)
+	{
+		line = get_next_line(fd);
+		map->map[i] = ft_strdup(line);
+		free(line);
+		i++;
+	}
+	close(fd);
+	return (1);
+}

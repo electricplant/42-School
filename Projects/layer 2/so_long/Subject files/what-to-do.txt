@@ -6,7 +6,7 @@ Create makefile
 
 Program takes .ber file as map description file
 
-Wasd controls the character
+DONE: Wasd controls the character
 
 Character can't move into walls
 
@@ -16,16 +16,15 @@ Character can't move into walls
 
 /////////////// GRAPHICS ///////////////////
 
-DONE?: program displays in a window
+DONE: program displays in a window
 
-DONE?: esc closes the window and "quits cleanly"
+DONE: esc closes the window and "quits cleanly"
 
 DONE: Program closes when you click the X
 
 Window management remains smooth
 
 Use the "images" feature of the library
-
 
 
 
@@ -58,6 +57,27 @@ If (file_name has a ".ber" extension)
    Display the error and return 1 (error)
 }
 Display an error for files without ".ber" extension and return 1 (error)
+
+
+Floodfill: (breadcrumbs)
+Create struct to store:
+matrix copy
+
+1. copy map from .ber file into matrix
+2. loop to find player spawn coords
+
+recursive loop:
+1. Start at Player spawn coords
+2. place crumb
+3. check adjacent spots for crumbs/walls/collectible
+4. for each spot, recursive call to loop with empty spot coords
+5. if all collectibles and exit found, exit with success. Else, return error and close program
+
+
+
+
+
+
 
 
 //////////////// BONUS ////////////////////
