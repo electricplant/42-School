@@ -69,7 +69,7 @@ int	main(void)
 		return (1);
 	}
 	//img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
-	img.win = mlx_new_window(img.mlx, x, y, "Tennis titties");
+	img.win = mlx_new_window(img.mlx, x, y, "So long, and thanks for all the fish!");
 	mlx_put_image_to_window(img.mlx, img.win, img.img, 0, 0);
 	mlx_key_hook(img.win, key_hook, &img);
 	mlx_hook(img.win, DestroyNotify, StructureNotifyMask, close_window, &img);
