@@ -1,12 +1,1 @@
-1: program finds num of args and creates malloc array to fit them all
 
-1.1: program sends args to be convert.c
-
-1.2: convert.c sends each arg to be converted to string, then adds to array of strings
-
-2: program receives string array, 
-loops through printf-string
-when encountering '%', check i+1
-if supported letter found, send string array index to putstr, returning num of chars printed
-
-how do I always make 'just enough'?
