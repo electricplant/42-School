@@ -1,0 +1,27 @@
+Error types and if they work:
+
+	ft_check_map
+Matrix copy Column failed	- meh
+Matrix copy Row failed		- meh
+Bad num of Colls/Exits		- WORKS
+Missing Top Row Wall		- WORKS
+Missing Bottom Row Wall		- WORKS
+Missing Column Wall		- WORKS
+
+	ft_display_map
+Missing Textures		- WORKS-ISH
+
+	ft_parse
+File descriptor failed		- idk
+Map Dimension bad 		- WORKS
+Map Square 	  		- WORKS
+matrix error			- meh
+matrix allocation error		- meh
+Printmap bad			- idk
+Missing Player Position		- WORKS
+Bad num of Collectibles/Exits	- WORKS
+Strange character in map	- WORKS
+
+	main
+You forgot to choose a map	-
+xlx_ini failed			-

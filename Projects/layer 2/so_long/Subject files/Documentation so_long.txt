@@ -1,0 +1,61 @@
+Start
+
+	Check if Argv was given (map name, ex; "test.ber")
+
+	initialize variables in struct
+
+	ft_parse, parse through file:
+	-open file, check if valid fd
+	scan first line to get width
+	loop through file to get height (+ checking consistency)
+	-close file
+
+	init_matrix, create matrix to be filled
+	ft_fill map, fill matrix with map
+	
+	//ft_verify_map, scan copy of map
+
+	initialize mlx library
+
+	ft_texture_paths, create array with texture paths
+
+	create new window
+
+	ft_draw_scene, put background and stuff on window
+
+	mlx_key_hook, prep controls
+End, (when esc/X clicked, clear matrix and close)
+
+Function Descriptions:
+	main
+		close_window //self explanatory
+		move_player //clr win, ft_draw_scene, put_image_to_window
+		key_hook //manage WASD and other keys, free matrix upon exit
+		init_vars //prepare variables in structs
+		main
+			check input name
+			init_vars
+			ft_parse
+			init_matrix
+			init textures
+			init window
+			draw initial scene
+	ft_parse
+		ft_parse //open file, measure len, measure height, check if square, close file
+		init_matrix //allocate 2 dimensional array (matrix)
+		free_matrix //KILL
+		ft_fill_map //put map.ber into matrix
+		ft_fill_line //insert line into matrix row, also counting entities
+	ft_check_map //starts at POV x/y
+		ft_verify_map //floodfill
+		ft_check_walls //top/bottom/sides
+
+Algo:
+
+Start at Player POV
+
+loop:
+check if standing on wall/coin/exit
+if N-E-S-W available, repeat with new step
+
+
