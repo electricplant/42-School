@@ -118,6 +118,7 @@ void	ft_scan_map(t_data *img, t_data *img2)
 	ft_verify_map(img2, img->p_x_axis, img->p_y_axis);
 	if ((img2->txtr.num_colls != 0) || (img2->txtr.num_exits != 0))
 	{
+		img2->mlx = NULL;
 		free_matrix(img);
 		ft_error("Bad num of Colls/Exits", img2);
 	}

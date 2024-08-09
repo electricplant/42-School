@@ -42,6 +42,8 @@ int	free_matrix(t_data *img)
 	int	i;
 
 	i = 0;
+	if (img->matrix == NULL)
+		return (0);
 	i = img->map_y;
 	while (i > 0)
 	{
