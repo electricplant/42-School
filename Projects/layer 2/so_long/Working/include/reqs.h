@@ -32,6 +32,7 @@ int		ft_fill_map(t_data *img);
 int		init_matrix(t_data *img);
 int		free_matrix(t_data *img);
 int		ft_fill_line(t_data *img, int i);
+void	ft_scan_map(t_data *img, t_data *img2);
 
 //ft_display_map
 int		ft_texture_paths(t_data *img);
@@ -41,7 +42,7 @@ void	ft_put_texture(t_data *img, char dingus, int x, int y);
 void	update_movements(t_data *img);
 
 //ft_check_map
-void	ft_verify_map(t_data *img, int x, int y);
+void	ft_verify_map(t_data *img2, int x, int y);
 void	ft_check_walls(t_data *img);
 void	ft_check_textures(t_data *img);
 t_data	make_deep_copy(t_data src);

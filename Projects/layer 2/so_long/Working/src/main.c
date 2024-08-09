@@ -69,9 +69,7 @@ int	main(int argc, char **argv)
 	ft_parse(&img);
 	init_matrix(&img);
 	img2 = make_deep_copy(img);
-	ft_verify_map(&img2, img.p_x_axis, img.p_y_axis);
-	free_matrix(&img2);
-	ft_check_textures(&img);
+	ft_scan_map(&img, &img2);
 	img.mlx = mlx_init();
 	if (img.mlx == NULL)
 		ft_error("xlx_init failed\n", &img);

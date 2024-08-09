@@ -53,8 +53,6 @@ void	ft_verify_map(t_data *img2, int x, int y)
 		ft_verify_map(img2, x, y - 1);
 	if (img2->matrix[y + 1][x] != '1')
 		ft_verify_map(img2, x, y + 1);
-	if ((img2->txtr.num_colls != 0) && (img2->txtr.num_exits != 0))
-		ft_error("Bad num of Colls/Exits", img2);
 }
 
 void	ft_check_walls(t_data *img)
