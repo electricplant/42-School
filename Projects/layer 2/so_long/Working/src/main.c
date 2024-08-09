@@ -62,8 +62,7 @@ int	main(int argc, char **argv)
 	t_data	img;
 	t_data	img2;
 
-	if (argc != 2 || !(check_file_type(argv[1])))
-		ft_error("You forgot to choose a map / bad filetype", &img);
+	check_file_type(argc, argv[1]);
 	img.file.filename = argv[1];
 	init_vars(&img);
 	ft_parse(&img);

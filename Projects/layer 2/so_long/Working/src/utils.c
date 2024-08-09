@@ -86,12 +86,22 @@ char	*ft_strrchr(const char *s, int c)
 	return (NULL);
 }
 
-bool	check_file_type(char *argv)
+bool	check_file_type(int argc, char *argv)
 {
 	char	*string;
+	int		ret;
 
+	if (argc != 2)
+	{
+		write(2, "Error\nInvalid number of arguments\n", 35);
+		exit(1);
+	}
 	string = ft_strrchr(argv, '.');
 	if (string)
-		return (ft_strcmp(string, ".ber") == 0);
+	{
+		ret = ft_strcmp(string, ".ber");
+		if (ret == 0)
+			return (true);
+	}
 	return (false);
 }
