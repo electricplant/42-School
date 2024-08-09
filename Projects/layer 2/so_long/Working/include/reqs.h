@@ -57,7 +57,7 @@ int		ft_strcmp(const char *s1, const char *s2);
 
 //utils
 int		ft_check_exit(t_data *img, char p);
-bool	check_file_type(int argc, char *argv);
+void	check_file_type(int argc, char *argv);
 
 //ft_error
 int		ft_error(char *str, t_data *img);

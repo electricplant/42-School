@@ -28,6 +28,7 @@ typedef struct s_txtr {
 	int		init_y;
 	int		num_colls;
 	int		num_exits;
+	int		num_player;
 }				t_txtr;
 
 typedef struct s_data {

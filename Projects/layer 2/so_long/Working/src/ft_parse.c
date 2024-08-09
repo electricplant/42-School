@@ -12,7 +12,7 @@
 
 #include "reqs.h"
 
-int	ft_parse(t_data *img) //open file, fill matrix with map
+int	ft_parse(t_data *img)
 {
 	int	err;
 
@@ -77,8 +77,8 @@ int	ft_fill_map(t_data *img)
 		i++;
 	}
 	close(img->file.fd);
-	if (img->p_x_axis == 0 || err == 1)
-		ft_error("Missing Player Position/Weird char", img);
+	if (img->p_x_axis == 0 || err == 1 || img->txtr.num_player != 1)
+		ft_error("Bad Player Position/Weird char", img);
 	ft_check_walls(img);
 	if (img->txtr.num_colls < 1 || img->txtr.num_exits != 1)
 		ft_error("Bad num of Collectibles/Exits!", img);
@@ -101,6 +101,7 @@ int	ft_fill_line(t_data *img, int i)
 			img->txtr.num_exits++;
 		else if (step == 'P')
 		{
+			img->txtr.num_player++;
 			img->p_x_axis = j;
 			img->p_y_axis = i;
 		}

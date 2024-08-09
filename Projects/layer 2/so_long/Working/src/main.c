@@ -44,6 +44,7 @@ static void	init_vars(t_data *img)
 	img->map_y = 0;
 	img->txtr.num_colls = 0;
 	img->txtr.num_exits = 0;
+	img->txtr.num_player = 0;
 	img->txtr.textr_size = 64;
 	img->num_movs = 0;
 	img->file.prev_x = 0;

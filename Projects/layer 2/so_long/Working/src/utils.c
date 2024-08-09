@@ -86,7 +86,7 @@ char	*ft_strrchr(const char *s, int c)
 	return (NULL);
 }
 
-bool	check_file_type(int argc, char *argv)
+void	check_file_type(int argc, char *argv)
 {
 	char	*string;
 	int		ret;
@@ -100,8 +100,10 @@ bool	check_file_type(int argc, char *argv)
 	if (string)
 	{
 		ret = ft_strcmp(string, ".ber");
-		if (ret == 0)
-			return (true);
+		if (ret != 0)
+		{
+			write(1, "Invalid file type\n", 17);
+			exit(1);
+		}
 	}
-	return (false);
 }
