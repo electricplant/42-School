@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 14:10:43 by beanboy           #+#    #+#             */
-/*   Updated: 2024/08/25 20:08:40 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/08/25 20:29:02 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,18 +42,18 @@ void	print_stacks(int *a, int *b, int len)
 
 	a_ptr = a;
 	b_ptr = b;
-	int i = len - 2;
-	while (i >= 0)
+	int i = 0;
+	while (i < (len - 1))
 	{
 		if (a_ptr[i] == 0 && b_ptr[i] == 0)
-			ft_printf("");
+			ft_printf("- -\n");
 		else if (a_ptr[i] == 0)
 			ft_printf("  %d\n", b_ptr[i]);
 		else if (b_ptr[i] == 0)
 			ft_printf("%d  \n", a_ptr[i]);
 		else
 			ft_printf("%d %d\n", a_ptr[i], b_ptr[i]);
-		i--;
+		i++;
 	}
 	ft_printf("_ _\na b\n-------\n");
 }
@@ -73,41 +73,41 @@ void	check_input(int argc, char **argv)
 	}
 }
 
-// void	fill_stacks(int argc, char **argv, int *a, int **b)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while (i < argc)
-// 	{
-// 		a[i - 1] = atoi(argv[i]);
-// 		i++;
-// 	}
-// 	i = 3;
-// 	while (i < argc)
-// 	{
-// 		(*b)++;
-// 		i++;
-// 	}
-// 	//ft_printf("%d\n%d\n%d\n%d\n", a[0], a[1], a[2], a[3]);
-// }
-
 void	fill_stacks(int argc, char **argv, int *a, int **b)
 {
 	int	i;
 
-	i = argc - 1;
-	while (i > 0)
+	i = 0;
+	while (i < argc)
 	{
-		a[i - 1] = atoi(argv[argc - i]);
-		i--;
+		a[i - 1] = atoi(argv[i]);
+		i++;
 	}
-	i = argc - 3;
-	while (i > 0)
+	i = 3;
+	while (i < argc)
 	{
 		(*b)++;
-		i--;
+		i++;
 	}
-	//(*b)--;
 	//ft_printf("%d\n%d\n%d\n%d\n", a[0], a[1], a[2], a[3]);
 }
+
+// void	fill_stacks(int argc, char **argv, int *a, int **b)
+// {
+// 	int	i;
+
+// 	i = argc - 1;
+// 	while (i > 0)
+// 	{
+// 		a[i - 1] = atoi(argv[argc - i]);
+// 		i--;
+// 	}
+// 	i = argc - 3;
+// 	while (i > 0)
+// 	{
+// 		(*b)++;
+// 		i--;
+// 	}
+// 	//(*b)--;
+// 	//ft_printf("%d\n%d\n%d\n%d\n", a[0], a[1], a[2], a[3]);
+// }
