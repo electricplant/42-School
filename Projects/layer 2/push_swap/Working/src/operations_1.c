@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 12:28:11 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/08/25 14:19:57 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/08/25 14:24:42 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,24 @@ void	op_push(char *x, char *z, char *msg)
 	}
 }
 
+void	op_rotate(char *stack, char *msg)
+{
+	char	first;
+	int		i;
+
+	if (*stack)
+	{
+		first = *stack;
+		i = 0;
+		while (stack[i] && stack[i + 1])
+		{
+			stack[i] = stack[i + 1];
+			i++;
+		}
+		stack[i] = first;
+		ft_printf("%s\n", msg);
+	}
+}
 //top x to top z (push x)
 //move pointer(x) up 1 slot
 //push top x to top z
