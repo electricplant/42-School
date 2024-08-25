@@ -6,13 +6,13 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 12:28:11 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/08/25 15:00:21 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/08/25 16:17:34 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include.h"
 
-void	op_swap(char *stack, char *msg)
+void	op_swap(int *stack, char *msg)
 {
 	int	swap;
 
@@ -44,13 +44,21 @@ void	op_ss(char *a, char *b)
 	}
 }
 
-void	op_push(char *x, char *z, char *msg)
+void	op_push(int **x, int **z, char *msg)
 {
-	if (*z) // Check if z is not empty
+	if (**z)
 	{
-		x--; //x++?
-		*x = *z;
-		*z = '\0';
+		// x--;
+		// *x = *z;
+		// *z = '\0';
+		(*x)--;
+		**x = **z;
+		**z = '\0';
+		(*z)++;
+		// **x += 6;
+		// (*x)++;
+		// **x += 5;
+		// (*x)--;
 		ft_printf("%s\n", msg);
 	}
 }
