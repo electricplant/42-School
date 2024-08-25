@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 14:10:43 by beanboy           #+#    #+#             */
-/*   Updated: 2024/08/25 14:21:22 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/08/25 14:51:33 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,26 +27,27 @@ int	main(int argc, char **argv)
 	print_stacks(a, b);
 	op_push(b, a, "pa");
 	print_stacks(a, b);
-	ft_printf("%s%d\n%s%s\n", "num args :", argc, "arg :", argv[1]);
+	ft_printf("%s%d\n", "num args :", (argc - 1));
 	return (0);
 }
 
 void	print_stacks(char *a, char *b)
 {
-	int	i;
+	char	*a_ptr;
+	char	*b_ptr;
 
-	i = 0;
-	while (a[i] != '\0')
+	a_ptr = a;
+	b_ptr = b;
+	while (*a_ptr)
 	{
-		if (a[i] == 0 && b[i] == 0)
+		if (!*a_ptr && !*b_ptr)
 			ft_printf("   \n");
-		else if (a[i] == 0)
-			ft_printf("  %d\n", b[i]);
-		else if (b[i] == 0)
-			ft_printf("%d  \n", a[i]);
+		else if (!*a_ptr)
+			ft_printf("  %d\n", *b_ptr++);
+		else if (!*b_ptr)
+			ft_printf("%d  \n", *a_ptr++);
 		else
-			ft_printf("%d %d\n", a[i], b[i]);
-		i++;
+			ft_printf("%d %d\n", *a_ptr++, *b_ptr++);
 	}
 	ft_printf("_ _\na b\n-------\n");
 }
