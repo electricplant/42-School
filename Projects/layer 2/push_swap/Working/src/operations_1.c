@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 12:28:11 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/08/25 14:05:40 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/08/25 14:19:57 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	op_ss(char *a, char *b)
 	int	swap;
 
 	swap = 0;
-	if (*a && *b)
+	if (*a || *b)
 	{
 		swap = *a;
 		*a = *(a + 1);
@@ -47,12 +47,15 @@ void	op_ss(char *a, char *b)
 void	op_push(char *x, char *z, char *msg)
 {
 	int	swap;
-
+//push z into x if z exists
 	swap = 0;
-	if (*z) //if pointing at num
+	if (*z)
 	{
-		x--; //move pointer x up one slot
-		//print msg
+		x--;
+		swap = *x;
+		*x = *z;
+		*z = swap;
+		ft_printf("%s", msg);
 	}
 }
 

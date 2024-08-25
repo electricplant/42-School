@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 14:21:07 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/08/24 13:26:41 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/08/25 14:20:56 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,5 +31,5 @@ void	check_duplicates(int argc, char *a);
 //OPERATIONS_1
 void	op_swap(char *stack, char *msg);
 void	op_ss(char *a, char *b);
-//void	op_push(char *x, char *z, char *msg);
+void	op_push(char *x, char *z, char *msg);
 #endif

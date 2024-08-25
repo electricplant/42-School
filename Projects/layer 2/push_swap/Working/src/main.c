@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 14:10:43 by beanboy           #+#    #+#             */
-/*   Updated: 2024/08/25 13:51:58 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/08/25 14:21:22 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	main(int argc, char **argv)
 	print_stacks(a, b);
 	op_swap(a, "sa");
 	print_stacks(a, b);
-	op_ss(a, b);
+	op_push(b, a, "pa");
 	print_stacks(a, b);
 	ft_printf("%s%d\n%s%s\n", "num args :", argc, "arg :", argv[1]);
 	return (0);
