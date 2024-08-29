@@ -6,7 +6,7 @@
 #    By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/22 14:20:36 by dgerhard          #+#    #+#              #
-#    Updated: 2024/08/23 09:37:27 by dgerhard         ###   ########.fr        #
+#    Updated: 2024/08/28 20:13:55 by dgerhard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,8 @@ INC = $(wildcard $(INCS_PATH)/*.h)
 OBJ = $(SRC:$(SRCS_PATH)%.c=$(OBJS_PATH)%.o)
 RM = rm -rf
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -L./ft_printf -lftprintf
+#CFLAGS = -Wall -Wextra -Werror -L./ft_printf -lftprintf
+CFLAGS = -L./ft_printf -lftprintf -g
 
 all: $(NAME)
 

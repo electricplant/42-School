@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 14:21:07 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/08/25 19:44:19 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/08/29 09:51:54 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 //MAIN
 int		main(int argc, char **argv);
 void	check_input(int argc, char **argv);
-void	fill_stacks(int argc, char **argv, int *a, int **b);
+void	fill_stacks(int argc, char **argv, int *a, int *b, int *sizes);
 void	print_stacks(int *a, int *b, int len);
 
 //FT_ERROR
@@ -29,9 +29,10 @@ int	ft_error(char *str);
 void	check_duplicates(int argc, int *a);
 
 //OPERATIONS_1
-void	op_swap(int *stack, char *msg);
+void	op_swap(int *x, char *msg, int *sizes);
 void	op_ss(char *a, char *b);
-void	op_push(int **x, int **z, char *msg);
+void	op_pa(int **x, int **z);
+void	op_pb(int **x, int **z);
 void	op_rotate(char *stack, char *msg);
 
 //OPERATIONS_2

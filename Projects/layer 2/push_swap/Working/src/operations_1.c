@@ -6,22 +6,27 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 12:28:11 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/08/25 20:11:23 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/08/29 10:06:29 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include.h"
 
-void	op_swap(int *stack, char *msg)
+void	op_swap(int *x, char *msg, int *sizes)
 {
 	int	swap;
+	int	i;
 
 	swap = 0;
-	if (*stack && *(stack + 1))
+	if (msg == "sa")
+		i = sizes[0];
+	else if (msg == "sb")
+		i = sizes[1];
+	if (x[i] && x[i + 1])
 	{
-		swap = *stack;
-		*stack = *(stack + 1);
-		*(stack + 1) = swap;
+		swap = x[sizes[0]];
+		x[i] = x[i + 1];
+		x[i + 1] = swap;
 		ft_printf("%s\n", msg);
 	}
 
@@ -44,15 +49,28 @@ void	op_ss(char *a, char *b)
 	}
 }
 
-void	op_push(int **x, int **z, char *msg)
+// void	op_pa(int **x, int **z)
+// {
+// 	if (**x)
+// 	{
+// 		**z = **x;
+// 		(*z)--;
+// 		**x = 0;
+// 		(*x)++;
+// 		ft_printf("pa\n");
+// 	}
+// }
+
+void	op_pb(int **x, int **z)
 {
-	if (**z)
+	if ((*x)-- == 0 && **z)
 	{
+		
+		**z = **z;
 		(*x)--;
-		**x = **z;
-		**z = '\0';
+		**z = 0;
 		(*z)++;
-		ft_printf("%s\n", msg);
+		ft_printf("pb\n");
 	}
 }
 
