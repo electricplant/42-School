@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 12:28:11 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/08/29 10:06:29 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/08/30 11:29:19 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,61 +18,61 @@ void	op_swap(int *x, char *msg, int *sizes)
 	int	i;
 
 	swap = 0;
-	if (msg == "sa")
+	if (ft_strcmp(msg, "sa") == 0)
 		i = sizes[0];
 	else if (msg == "sb")
 		i = sizes[1];
 	if (x[i] && x[i + 1])
 	{
-		swap = x[sizes[0]];
+		swap = x[i];
 		x[i] = x[i + 1];
 		x[i + 1] = swap;
 		ft_printf("%s\n", msg);
 	}
-
 }
 
-void	op_ss(char *a, char *b)
+void	op_ss(int *a, int *b, int *sizes)
 {
 	int	swap;
 
 	swap = 0;
-	if (*a || *b)
+	if (a[sizes[0]] || b[sizes[1]])
 	{
-		swap = *a;
-		*a = *(a + 1);
-		*(a + 1) = swap;
-		swap = *b;
-		*b = *(b + 1);
-		*(b + 1) = swap;
+		swap = a[sizes[0]];
+		a[sizes[0]] = a[sizes[0] + 1];
+		a[sizes[0] + 1] = swap;
+		swap = b[sizes[1]];
+		b[sizes[1]] = b[sizes[1] + 1];
+		b[sizes[1] + 1] = swap;
 		ft_printf("ss\n");
 	}
 }
 
-// void	op_pa(int **x, int **z)
-// {
-// 	if (**x)
-// 	{
-// 		**z = **x;
-// 		(*z)--;
-// 		**x = 0;
-// 		(*x)++;
-// 		ft_printf("pa\n");
-// 	}
-// }
-
-void	op_pb(int **x, int **z)
+void	op_pa(int *x, int *z, int *sizes)
 {
-	if ((*x)-- == 0 && **z)
+	if (x[sizes[0]])
 	{
-		
-		**z = **z;
-		(*x)--;
-		**z = 0;
-		(*z)++;
-		ft_printf("pb\n");
+		z[sizes[1]] = x[sizes[0]];
+		sizes[1]--;
+		x[sizes[0]] = 0;
+		sizes[0]++;
+		ft_printf("pa\n");
+		//don't forget to update sizes
 	}
 }
+
+// void	op_pb(int **x, int **z)
+// {
+// 	if ((*x)-- == 0 && **z)
+// 	{
+		
+// 		**z = **z;
+// 		(*x)--;
+// 		**z = 0;
+// 		(*z)++;
+// 		ft_printf("pb\n");
+// 	}
+// }
 
 void	op_rotate(char *stack, char *msg)
 {

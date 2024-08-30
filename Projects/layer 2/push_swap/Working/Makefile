@@ -6,11 +6,9 @@
 #    By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/22 14:20:36 by dgerhard          #+#    #+#              #
-#    Updated: 2024/08/28 20:13:55 by dgerhard         ###   ########.fr        #
+#    Updated: 2024/08/30 15:03:47 by dgerhard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
-
-# //command to do a "make" on the printf makefile first
 
 NAME = push_swap
 SRCS_PATH = src

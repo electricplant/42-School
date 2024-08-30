@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 14:10:43 by beanboy           #+#    #+#             */
-/*   Updated: 2024/08/29 09:54:08 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/08/30 11:19:34 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,20 +23,13 @@ int	main(int argc, char **argv)
 	b = ft_calloc(argc - 1, sizeof(int));
 	sizes = ft_calloc(2, sizeof(int));
 	fill_stacks(argc, argv, a, b, sizes);
-	//check_duplicates(argc, a);
-
+	check_duplicates(argc, a);
+	print_stacks(a, b, argc);
 	op_swap(a, "sa", sizes);
 	print_stacks(a, b, argc);
-	// op_pa(&a, &b);
-	// print_stacks(a_ptr, b_ptr, argc);
-	// op_pa(&a, &b);
-
-	// print_stacks(a_ptr, b_ptr, argc);
-	//op_push(&a, &b, "pb");
-	//print_stacks(&a, &b, argc);
-	//op_push(&b, &a, "pa");
-	//op_swap(&b, "sb");
+	//op_pa(a, b, sizes);
 	//print_stacks(a, b, argc);
+	
 	free(a);
 	free(b);
 	free(sizes);
@@ -89,4 +82,5 @@ void	fill_stacks(int argc, char **argv, int *a, int *b, int *sizes)
 
 	sizes[0] = 0;
 	sizes[1] = argc - 2;
+	ft_printf("a:%d%d%d%d\n", a[0], a[1], a[2], a[3]);
 }
