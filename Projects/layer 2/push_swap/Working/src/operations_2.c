@@ -6,44 +6,85 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/25 15:00:36 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/08/25 15:05:05 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/09/04 21:00:26 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include.h"
 
-void	rr(char *a, char *b)
+void	op_rr(int *a, int *b, int *sizes)
 {
-	op_rotate(a, "rra");
-	op_rotate(b, "rrb");
-	ft_printf("rr\n");
-}
+	int	swap;
+	int	i;
 
-void	op_rrr(char *stack, char *msg)
-{
-	char last;
-	char *ptr;
-
-	if (*stack)
+	swap = 0;
+	if ((sizes[0] < sizes[2]) || (sizes[0] < sizes[2]))
 	{
-		ptr = stack;
-		while (*(ptr + 1))
-			ptr++;
-		last = *ptr;
-		while (ptr > stack)
+		i = sizes[0];
+		while (i < sizes[2])
 		{
-			*ptr = *(ptr - 1);
-			ptr--;
+			swap = a[i];
+			a[i] = a[i + 1];
+			a[i + 1] = swap;
+			i++;
 		}
-		*ptr = last;
-		if (strcmp(msg, "rra") == 0 || strcmp(msg, "rrb") == 0)
-			ft_printf("%s\n", msg);
+		i = sizes[1];
+		while (i < sizes[2])
+		{
+			swap = b[i];
+			b[i] = b[i + 1];
+			b[i + 1] = swap;
+			i++;
+		}
+		ft_printf("rr\n");
 	}
 }
 
-void	rrr(char *a, char *b)
+void	op_revrot(int *x, char *msg, int *sizes)
 {
-	op_rrr(a, "rrra");
-	op_rrr(b, "rrrb");
-	ft_printf("rrr\n");
+	int	i;
+	int	j;
+	int	swap;
+
+	i = sizes[0];
+	j = sizes[2];
+	swap = 0;
+	if (!strcmp(msg, "rrb"))
+		i = sizes[1];
+	if (i < j)
+		ft_printf("%s\n", msg);
+	while (i < j)
+	{
+		swap = x[j];
+		x[j] = x[j - 1];
+		x[j - 1] = swap;
+		j--;
+	}
+}
+
+void	op_rrr(int *a, int *b, int *sizes)
+{
+	int	i;
+	int	swap;
+
+	i = sizes[2];
+	if (i > sizes[0] || i > sizes[1])
+	{
+		swap = a[sizes[2]];
+		while (i > sizes[0])
+		{
+			a[i] = a[i - 1];
+			i--;
+		}
+		a[i] = swap;
+		i = sizes[2];
+		swap = b[sizes[2]];
+		while (i > sizes[1])
+		{
+			b[i] = b[i - 1];
+			i--;
+		}
+		b[i] = swap;
+		ft_printf("rrr\n");
+	}
 }

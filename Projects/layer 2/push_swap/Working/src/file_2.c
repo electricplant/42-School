@@ -6,13 +6,13 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 10:46:19 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/08/25 15:52:33 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/09/06 11:05:00 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include.h"
 
-void	check_duplicates(int argc, int *a)//redo with stack of ints (currently array of strs)
+void	check_duplicates(int argc, int *a)
 {
 	int	i;
 	int	j;
@@ -37,4 +37,12 @@ void	check_duplicates(int argc, int *a)//redo with stack of ints (currently arra
 		if (a[i] == '\0' && (i + 1) < argc)
 			ft_error("Please remove any zeros");
 	}
+}
+
+void	exit_free(int *a, int *b, int *sizes)
+{
+	free(a);
+	free(b);
+	free(sizes);
+	exit(0);
 }

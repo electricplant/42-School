@@ -24,7 +24,7 @@ $(FINAL): $(OBJ) makelibft
 	@$(AR) $(FINAL) $(OBJ)
 
 makelibft: 
-	@make -C $(LIBFT_PATH)
+	@make -C $(LIBFT_PATH) > /dev/null
 	@cp $(LIBFT_PATH)/$(LIBFT_NAME) .
 	@mv $(LIBFT_NAME) $(FINAL)
 
@@ -38,4 +38,6 @@ clean:
 fclean:
 	@$(RM) $(FINAL)
 
-.PHONY: all clean fclean
+re: fclean all
+
+.PHONY: all clean fclean re

@@ -1,62 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printfutils.c                                   :+:      :+:    :+:   */
+/*   ft_isnum_str.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/02 12:24:06 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/09/02 12:27:07 by dgerhard         ###   ########.fr       */
+/*   Created: 2024/08/30 15:28:15 by dgerhard          #+#    #+#             */
+/*   Updated: 2024/09/06 10:38:07 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "reqs.h"
 #include "libft.h"
 
-void	ft_putstr(char *str)
+int	ft_isnum_str(char *str)
 {
 	int	i;
 
 	i = 0;
-	while (str[i])
+	if (str[0] == '-')
+		i = 1;
+	while (str[i] != '\0')
 	{
-		write(1, &str[i], 1);
+		if (!ft_isdigit(str[i]))
+			return (0);
 		i++;
 	}
-}
-
-int	ft_printstr(char *str)
-{
-	int	i;
-
-	i = 0;
-	if (str == NULL)
-	{
-		ft_putstr("(null)");
-		return (6);
-	}
-	while (str[i])
-	{
-		write(1, &str[i], 1);
-		i++;
-	}
-	return (i);
-}
-
-int	ft_printnumber(int n)
-{
-	int		len;
-	char	*num;
-
-	len = 0;
-	num = ft_itoa(n);
-	len = ft_printstr(num);
-	free(num);
-	return (len);
-}
-
-int	ft_print_perc(void)
-{
-	write(1, "%", 1);
 	return (1);
 }
