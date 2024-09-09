@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 12:28:11 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/09/02 12:20:18 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/09/09 09:54:22 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	op_pb(int *x, int *z, int *sizes)
 		z[sizes[1]] = x[sizes[0]];
 		x[sizes[0]] = 0;
 		sizes[0]++;
-		ft_printf("pa\n");
+		ft_printf("pb\n");
 	}
 }
 
@@ -74,7 +74,7 @@ void	op_pa(int *x, int *z, int *sizes)
 		x[sizes[0]] = z[sizes[1]];
 		z[sizes[1]] = 0;
 		sizes[1]++;
-		ft_printf("pb\n");
+		ft_printf("pa\n");
 	}
 }
 

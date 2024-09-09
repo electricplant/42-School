@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 10:46:19 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/09/06 11:05:00 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/09/09 09:42:17 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,4 +45,22 @@ void	exit_free(int *a, int *b, int *sizes)
 	free(b);
 	free(sizes);
 	exit(0);
+}
+
+void	parameters(int *a, int *b, int *sizes)
+{
+	op_pa(a, b, sizes);
+	op_rotate(a, "ra", sizes);
+}
+
+void	rotate_a_twice(int *a, int *sizes)
+{
+	op_rotate(a, "ra", sizes);
+	op_rotate(a, "ra", sizes);
+}
+
+void	reverot_a_twice(int *a, int *sizes)
+{
+	op_revrot(a, "rra", sizes);
+	op_revrot(a, "rra", sizes);
 }
