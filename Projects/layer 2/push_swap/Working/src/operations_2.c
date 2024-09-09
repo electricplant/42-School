@@ -6,13 +6,13 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/25 15:00:36 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/09/04 21:00:26 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/09/09 20:56:17 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include.h"
 
-void	op_rr(int *a, int *b, int *sizes)
+void	op_rr(long *a, long *b, long *sizes)
 {
 	int	swap;
 	int	i;
@@ -40,7 +40,7 @@ void	op_rr(int *a, int *b, int *sizes)
 	}
 }
 
-void	op_revrot(int *x, char *msg, int *sizes)
+void	op_revrot(long *x, char *msg, long *sizes)
 {
 	int	i;
 	int	j;
@@ -62,7 +62,7 @@ void	op_revrot(int *x, char *msg, int *sizes)
 	}
 }
 
-void	op_rrr(int *a, int *b, int *sizes)
+void	op_rrr(long *a, long *b, long *sizes)
 {
 	int	i;
 	int	swap;

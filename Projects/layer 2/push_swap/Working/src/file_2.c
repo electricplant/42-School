@@ -6,13 +6,13 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 10:46:19 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/09/09 09:42:17 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/09/09 20:56:17 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include.h"
 
-void	check_duplicates(int argc, int *a)
+void	check_duplicates(int argc, long *a)
 {
 	int	i;
 	int	j;
@@ -39,7 +39,7 @@ void	check_duplicates(int argc, int *a)
 	}
 }
 
-void	exit_free(int *a, int *b, int *sizes)
+void	exit_free(long *a, long *b, long *sizes)
 {
 	free(a);
 	free(b);
@@ -47,19 +47,19 @@ void	exit_free(int *a, int *b, int *sizes)
 	exit(0);
 }
 
-void	parameters(int *a, int *b, int *sizes)
+void	parameters(long *a, long *b, long *sizes)
 {
 	op_pa(a, b, sizes);
 	op_rotate(a, "ra", sizes);
 }
 
-void	rotate_a_twice(int *a, int *sizes)
+void	rotate_a_twice(long *a, long *sizes)
 {
 	op_rotate(a, "ra", sizes);
 	op_rotate(a, "ra", sizes);
 }
 
-void	reverot_a_twice(int *a, int *sizes)
+void	reverot_a_twice(long *a, long *sizes)
 {
 	op_revrot(a, "rra", sizes);
 	op_revrot(a, "rra", sizes);

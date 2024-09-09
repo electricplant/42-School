@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 21:46:01 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/08/28 20:59:26 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/09/09 20:54:46 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	move_pointer(int *array);
 int	main(void)
 {
 	int a[] = { 1, 2, 3, 4 };
-	int *b = calloc(4, sizeof(int));
+	long *b = calloc(4, sizeof(int));
 	int	*a_ptr = a;
 	int	*b_ptr = b;
 

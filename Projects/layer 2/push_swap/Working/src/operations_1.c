@@ -6,13 +6,13 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 12:28:11 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/09/09 09:54:22 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/09/09 20:56:17 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include.h"
 
-void	op_swap(int *x, char *msg, int *sizes)
+void	op_swap(long *x, char *msg, long *sizes)
 {
 	int	swap;
 	int	i;
@@ -31,7 +31,7 @@ void	op_swap(int *x, char *msg, int *sizes)
 	}
 }
 
-void	op_ss(int *a, int *b, int *sizes)
+void	op_ss(long *a, long *b, long *sizes)
 {
 	int	swap;
 
@@ -54,7 +54,7 @@ void	op_ss(int *a, int *b, int *sizes)
 	}
 }
 
-void	op_pb(int *x, int *z, int *sizes)
+void	op_pb(long *x, long *z, long *sizes)
 {
 	if ((sizes[0] <= sizes[2]) && x[sizes[0]])
 	{
@@ -66,7 +66,7 @@ void	op_pb(int *x, int *z, int *sizes)
 	}
 }
 
-void	op_pa(int *x, int *z, int *sizes)
+void	op_pa(long *x, long *z, long *sizes)
 {
 	if ((sizes[1] <= sizes[2]) && z[sizes[1]])
 	{
@@ -78,7 +78,7 @@ void	op_pa(int *x, int *z, int *sizes)
 	}
 }
 
-void	op_rotate(int *x, char *msg, int *sizes)
+void	op_rotate(long *x, char *msg, long *sizes)
 {
 	int	i;
 	int	swap;

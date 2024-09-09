@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 14:21:07 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/09/09 09:49:12 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/09/09 20:56:17 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,37 +18,37 @@
 
 //MAIN
 int		main(int argc, char **argv);
-int		check_input(int argc, char **argv, int *a, int *b);
-void	fill_stacks(int argc, char **argv, int *a, int *sizes);
-void	print_stacks(int *a, int *b, int len);
-void	is_sorted(int *a, int *sizes);
+int		check_input(int argc, char **argv, long *a, long *b);
+void	fill_stacks(int argc, char **argv, long *a, long *sizes);
+void	print_stacks(long *a, long *b, int len);
+void	is_sorted(long *a, long *sizes);
 
 //FT_ERROR
 int		ft_error(char *str);
 
 //FILE 2
-void	check_duplicates(int argc, int *a);
-void	exit_free(int *a, int *b, int *sizes);
-void	parameters(int *a, int *b, int *sizes);
-void	rotate_a_twice(int *a, int *sizes);
-void	reverot_a_twice(int *a, int *sizes);
+void	check_duplicates(int argc, long *a);
+void	exit_free(long *a, long *b, long *sizes);
+void	parameters(long *a, long *b, long *sizes);
+void	rotate_a_twice(long *a, long *sizes);
+void	reverot_a_twice(long *a, long *sizes);
 
 //OPERATIONS_1
-void	op_swap(int *x, char *msg, int *sizes);
-void	op_ss(int *a, int *b, int *sizes);
-void	op_pa(int *x, int *z, int *sizes);
-void	op_pb(int *x, int *z, int *sizes);
-void	op_rotate(int *x, char *msg, int *sizes);
+void	op_swap(long *x, char *msg, long *sizes);
+void	op_ss(long *a, long *b, long *sizes);
+void	op_pa(long *x, long *z, long *sizes);
+void	op_pb(long *x, long *z, long *sizes);
+void	op_rotate(long *x, char *msg, long *sizes);
 
 //OPERATIONS_2
-void	op_rr(int *a, int *b, int *sizes);
-void	op_revrot(int *x, char *msg, int *sizes);
-void	op_rrr(int *a, int *b, int *sizes);
+void	op_rr(long *a, long *b, long *sizes);
+void	op_revrot(long *x, char *msg, long *sizes);
+void	op_rrr(long *a, long *b, long *sizes);
 
 //SMALL_CASES
-void	small_cases(int *a, int *b, int *sizes);
-void	sort_three(int *a, int *sizes);
-void	sort_five(int *a, int *b, int *sizes);
-void	first_stack(int *a, int *b, int *sizes);
-void	second_stack(int *a, int *b, int *sizes);
+void	small_cases(long *a, long *b, long *sizes);
+void	sort_three(long *a, long *sizes);
+void	sort_five(long *a, long *b, long *sizes);
+void	first_stack(long *a, long *b, long *sizes);
+void	second_stack(long *a, long *b, long *sizes);
 #endif

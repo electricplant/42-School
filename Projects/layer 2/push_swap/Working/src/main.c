@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 14:10:43 by beanboy           #+#    #+#             */
-/*   Updated: 2024/09/09 20:52:26 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/09/09 20:56:36 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,9 @@
 //op_rrr(a, b, sizes);
 int		main(int argc, char **argv)
 {
-	int	*a;
-	int	*b; //change these to a long
-	int	*sizes;
+	long	*a;
+	long	*b; //change these to a long
+	long	*sizes;
 	
 	a = ft_calloc(argc - 1, sizeof(int));
 	b = ft_calloc(argc - 1, sizeof(int));
@@ -44,7 +44,7 @@ int		main(int argc, char **argv)
 	exit_free(a, b, sizes);
 }
 
-void	print_stacks(int *a, int *b, int len)
+void	print_stacks(long *a, long *b, int len)
 {
 	int	i;
 
@@ -65,7 +65,7 @@ void	print_stacks(int *a, int *b, int len)
 	ft_printf("_ _\na b\n-------\n");
 }
 
-int		check_input(int argc, char **argv, int *a, int *b)
+int		check_input(int argc, char **argv, long *a, long *b)
 {
 	int	i;
 	int	j;
@@ -95,7 +95,7 @@ int		check_input(int argc, char **argv, int *a, int *b)
 	return (0);
 }
 
-void	fill_stacks(int argc, char **argv, int *a, int *sizes)
+void	fill_stacks(int argc, char **argv, long *a, long *sizes)
 {
 	int	i;
 
@@ -110,7 +110,7 @@ void	fill_stacks(int argc, char **argv, int *a, int *sizes)
 	sizes[2] = argc - 2;
 }
 
-void	is_sorted(int *a, int *sizes)
+void	is_sorted(long *a, long *sizes)
 {
 	int	i;
 
