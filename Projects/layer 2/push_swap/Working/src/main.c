@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 14:10:43 by beanboy           #+#    #+#             */
-/*   Updated: 2024/09/09 20:56:36 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/09/11 11:10:46 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,20 +24,20 @@
 //op_revrot(a, "rra", sizes);
 //op_revrot(b, "rrb", sizes);
 //op_rrr(a, b, sizes);
-int		main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
 	long	*a;
-	long	*b; //change these to a long
+	long	*b;
 	long	*sizes;
-	
-	a = ft_calloc(argc - 1, sizeof(int));
-	b = ft_calloc(argc - 1, sizeof(int));
-	sizes = ft_calloc(3, sizeof(int));
+
+	a = ft_calloc(argc - 1, sizeof(long));
+	b = ft_calloc(argc - 1, sizeof(long));
+	sizes = ft_calloc(6, sizeof(long));
 	if (check_input(argc, argv, a, b))
 		exit_free(a, b, sizes);
 	fill_stacks(argc, argv, a, sizes);
 	check_duplicates(argc, a);
-	ft_printf("Sizes[%d][%d][%d]\n", sizes[0], sizes[1], sizes[2]);
+	radix_sort(a, b, sizes);
 	small_cases(a, b, sizes);
 	is_sorted(a, sizes);
 	print_stacks(a, b, argc);
@@ -65,7 +65,7 @@ void	print_stacks(long *a, long *b, int len)
 	ft_printf("_ _\na b\n-------\n");
 }
 
-int		check_input(int argc, char **argv, long *a, long *b)
+int	check_input(int argc, char **argv, long *a, long *b)
 {
 	int	i;
 	int	j;
@@ -82,10 +82,8 @@ int		check_input(int argc, char **argv, long *a, long *b)
 		while (j < ft_strlen(argv[i]))
 		{
 			if (((argv[i][j] < 48) || (argv[i][j] > 57)) && argv[i][j] != 32)
-			{
 				if (argv[i][j] != 48)
 					return (1);
-			}
 			if ((argv[i][j] == 32) && (argv[i][j + 1] == 32))
 				return (1);
 			j++;
@@ -120,10 +118,10 @@ void	is_sorted(long *a, long *sizes)
 		if (a[i] > a[i + 1])
 		{
 			ft_printf("not sorted\n");
-			return;
-			//exit (0);
+			return ;
+			exit (0);
 		}
 		i++;
 	}
-	ft_printf("sorted\n");
+	//ft_printf("sorted\n");
 }

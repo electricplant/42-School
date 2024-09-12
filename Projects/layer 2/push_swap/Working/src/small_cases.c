@@ -6,18 +6,18 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 12:55:39 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/09/09 20:56:17 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/09/11 05:55:45 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include.h"
 
-void	small_cases(long *a,long *b, long *sizes)
-{//this assumes we check if it is already sorted beforehand
+void	small_cases(long *a, long *b, long *sizes)
+{
 	int	swap;
 
 	swap = 0;
-	ft_printf("sizes[2] = %d\n", sizes[2]);
+	//ft_printf("sizes[2] = %d\n", sizes[2]);
 	if (sizes[2] == 1)
 		op_swap(a, "sa", sizes);
 	else if (sizes[2] == 2)
@@ -29,7 +29,7 @@ void	small_cases(long *a,long *b, long *sizes)
 void	sort_three(long *a, long *sizes)
 {
 	int	i;
-	ft_printf("sort three\n");
+
 	i = sizes[0];
 	if ((a[i + 2] > a[i]) && (a[i + 2] < a[i + 1]))
 	{
@@ -59,7 +59,6 @@ void	sort_five(long *a, long *b, long *sizes)
 	{
 		if (sizes[0] == 2)
 		{
-			ft_printf("sort first\n");
 			first_stack(a, b, sizes);
 		}
 		else if (sizes[0] == 1)
@@ -93,7 +92,7 @@ void	first_stack(long *a, long *b, long *sizes)
 
 void	second_stack(long *a, long *b, long *sizes)
 {
-		if (b[sizes[1]] < a[sizes[0]])
+	if (b[sizes[1]] < a[sizes[0]])
 		op_pa(a, b, sizes);
 	else if ((b[sizes[1]] > a[sizes[0]]) && (b[sizes[1]] < a[sizes[0] + 1]))
 	{

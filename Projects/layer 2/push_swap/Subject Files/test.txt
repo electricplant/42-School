@@ -1,9 +1,11 @@
-a b
-
-1
-2
-3
 
 a[0]: 1 2 2 3 3
 a[1]: 3 1 3 2 1
 a[2]: 2 3 1 1 2
+
+Sorting Algo:
+Sort nums based on radix, for each number with more than one sig fig (ie 12 or 392), recursively call algo.
+
+LSD radix sort ideal for this
+
+group by lsd and sort, sort again by next left digit, and once again, repeat till achieved final digit. 
