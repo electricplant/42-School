@@ -7,5 +7,7 @@ Sorting Algo:
 Sort nums based on radix, for each number with more than one sig fig (ie 12 or 392), recursively call algo.
 
 LSD radix sort ideal for this
+LSD: num % 10
+SSD: (num / 10) % 10
 
 group by lsd and sort, sort again by next left digit, and once again, repeat till achieved final digit. 

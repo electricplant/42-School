@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 12:28:11 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/09/09 20:56:17 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/09/13 08:14:34 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,25 +54,25 @@ void	op_ss(long *a, long *b, long *sizes)
 	}
 }
 
-void	op_pb(long *x, long *z, long *sizes)
+void	op_pb(long *a, long *b, long *sizes)
 {
-	if ((sizes[0] <= sizes[2]) && x[sizes[0]])
+	if ((sizes[0] <= sizes[2]) && a[sizes[0]])
 	{
 		sizes[1]--;
-		z[sizes[1]] = x[sizes[0]];
-		x[sizes[0]] = 0;
+		b[sizes[1]] = a[sizes[0]];
+		a[sizes[0]] = 0;
 		sizes[0]++;
 		ft_printf("pb\n");
 	}
 }
 
-void	op_pa(long *x, long *z, long *sizes)
+void	op_pa(long *a, long *b, long *sizes)
 {
-	if ((sizes[1] <= sizes[2]) && z[sizes[1]])
+	if ((sizes[1] <= sizes[2]) && b[sizes[1]])
 	{
 		sizes[0]--;
-		x[sizes[0]] = z[sizes[1]];
-		z[sizes[1]] = 0;
+		a[sizes[0]] = b[sizes[1]];
+		b[sizes[1]] = 0;
 		sizes[1]++;
 		ft_printf("pa\n");
 	}

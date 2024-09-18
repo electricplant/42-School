@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 14:21:07 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/09/12 16:28:00 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/09/13 08:14:46 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ void	reverot_a_twice(long *a, long *sizes);
 //OPERATIONS_1
 void	op_swap(long *x, char *msg, long *sizes);
 void	op_ss(long *a, long *b, long *sizes);
-void	op_pa(long *x, long *z, long *sizes);
-void	op_pb(long *x, long *z, long *sizes);
+void	op_pa(long *a, long *b, long *sizes);
+void	op_pb(long *a, long *b, long *sizes);
 void	op_rotate(long *x, char *msg, long *sizes);
 
 //OPERATIONS_2
@@ -59,6 +59,6 @@ long	get_max(long *a, long *sizes);
 void	swap_these_two(long *a, long *b, long *sizes);
 
 //MEAT_UTILS
-void	scroll_pop(long *a, long *b, long *sizes, long i);
-void scroll_swap(long *a, long *b, long *sizes)
+void	scroll_pop(long *a, long *b, long *sizes);
+void	scroll_swap(long *a, long *b, long *sizes);
 #endif

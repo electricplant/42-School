@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 14:10:43 by beanboy           #+#    #+#             */
-/*   Updated: 2024/09/11 11:10:46 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/09/18 12:04:17 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ int	main(int argc, char **argv)
 	long	*b;
 	long	*sizes;
 
+	//ft_printf("argc: %d\n", argc);
 	a = ft_calloc(argc - 1, sizeof(long));
 	b = ft_calloc(argc - 1, sizeof(long));
 	sizes = ft_calloc(6, sizeof(long));
@@ -37,8 +38,14 @@ int	main(int argc, char **argv)
 		exit_free(a, b, sizes);
 	fill_stacks(argc, argv, a, sizes);
 	check_duplicates(argc, a);
-	radix_sort(a, b, sizes);
-	small_cases(a, b, sizes);
+
+	//TESTING
+	sizes[3] = 7;
+	sizes[4] = 4;
+	swap_these_two(a, b, sizes);
+	//TESTING
+	//radix_sort(a, b, sizes);
+	//small_cases(a, b, sizes);
 	is_sorted(a, sizes);
 	print_stacks(a, b, argc);
 	exit_free(a, b, sizes);
@@ -118,10 +125,9 @@ void	is_sorted(long *a, long *sizes)
 		if (a[i] > a[i + 1])
 		{
 			ft_printf("not sorted\n");
-			return ;
 			exit (0);
 		}
 		i++;
 	}
-	//ft_printf("sorted\n");
+	ft_printf("sorted\n");
 }

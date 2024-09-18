@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 21:06:18 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/09/12 16:27:47 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/09/18 11:23:57 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,31 +32,31 @@ void	radix_sort(long *a, long *b, long *sizes)
 void	shell_sort(long	*a, long *b, long *sizes)
 {
 	long	gap;
-	long	comp;
-	long	x;
+	long	i;
+	long	j;
+	long	temp;
 
-	sizes[3] = 6;
-	sizes[4] = 8;
-	// gap = get_max(a, sizes) / 2;
-	// comp = a[0];
-	// while (gap >= 1)
-	// {
-	// 	sizes[3] = 0;
-	// 	while (sizes[3] < gap)
-	// 	{
-	//		comp = a[sizes[3]];
-	// 		if (a[sizes[3] + gap] < comp)
-	// 		{
-	// 			x = 0;
-	// 			while (a[sizes[3] + gap] < (comp - (gap * (x + 1))))
-	// 				x++;
-	//			sizes[4] = gap * x;
+	gap = get_max(a, sizes) / 2;
+	i = 0;
+	while (gap > 0)
+	{
+		i = gap;
+		while (i < (sizes[2] + 1))
+		{
+			temp = a[i];
+			j = i;
+			while (j >= gap && a[j - gap] > temp)
+			{
+				sizes[4] = j;
+				sizes[3] = j - gap;
 	 			swap_these_two(a, b, sizes);
-	// 		}
-	//		sizes[3]++;
-	// 	}
-	//	gap /= 2;
-	// }
+				j -= gap;
+			}
+			i++;
+			a[j] = temp;
+		}
+		gap /= 2;
+	}
 }
 
 long	get_max(long *a, long *sizes)
@@ -77,28 +77,18 @@ long	get_max(long *a, long *sizes)
 	return (max_num);
 }
 
-//basket = a[index + gap]
-//comparison = a[index]
-//--gap sort algo--  what happens when gap size = 1
-//gap = length of array/ 2
-//index i = 0;
-//while gap >= 1
-//	i = 0;
-//	while i < gap
-//		if basket < comparison
-//			x = 0;
-//			while basket < (comparison - (gap * (x + 1))
-//				x++;
-//			swap basket and comparison - (gap * x)
-//		i++;
-//	gap / 2 rounded down (at end gap == 0.5 which gets rounded down to 0)
-//10 9 2 4 1
-//0  1 2 3 4
-//this will be called recursively
-//function to find biggest number
-
 void	swap_these_two(long *a, long *b, long *sizes)
 {
-	scroll_pop(a, b, sizes, sizes[3]);
+	// long	swap;
+
+	// swap = 0;
+	// if ((sizes[3] < sizes[4]) && (sizes[3] > (sizes[2] / 2)))
+	// {
+	// 	swap = sizes[3];
+	// 	sizes[3] = sizes[4];
+	// 	sizes[4] = swap;
+	// }
+	scroll_pop(a, b, sizes);
 	scroll_swap(a, b, sizes);
+	//print_stacks(a, b, (sizes[2] + 2));
 }
