@@ -5,117 +5,85 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/22 14:10:43 by beanboy           #+#    #+#             */
-/*   Updated: 2024/09/20 13:15:19 by dgerhard         ###   ########.fr       */
+/*   Created: 2024/08/10 12:21:01 by dgerhard          #+#    #+#             */
+/*   Updated: 2024/09/21 00:15:59 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "include.h"
+#include "pushswap.h"
 
-int	main(int argc, char **argv)
+int	ft_check(t_list *lst, int n, char *nbr)
 {
-	long	*a;
-	long	*b;
-	long	*sizes;
+	t_list	*tmp;
+	int		i;
 
-	a = ft_calloc(argc - 1, sizeof(long));
-	b = ft_calloc(argc - 1, sizeof(long));
-	sizes = ft_calloc(7, sizeof(long));
-	if (check_input(argc, argv, a, b))
-		exit_free(a, b, sizes);
-	fill_stacks(argc, argv, a, sizes);
-	check_duplicates(argc, a);
-
-	//TESTING
-	print_stacks(a, b, (sizes[2] + 2));
-	radix_sort(a, b, sizes);
-	//TESTING
-
-	//radix_sort(a, b, sizes);
-	//small_cases(a, b, sizes);
-	//is_sorted(a, sizes);
-	print_stacks(a, b, argc);
-	exit_free(a, b, sizes);
-}
-
-void	print_stacks(long *a, long *b, int len)
-{
-	int	i;
-
+	tmp = lst;
 	i = 0;
-	ft_printf("\n");
-	while (i < (len - 1))
+	while (nbr[i])
 	{
-		if (a[i] == 0 && b[i] == 0)
-			ft_printf("-\n");
-		else if (a[i] == 0)
-			ft_printf("  %d\n", b[i]);
-		else if (b[i] == 0)
-			ft_printf("%d  \n", a[i]);
-		else
-			ft_printf("%d %d\n", a[i], b[i]);
+		if (!(((nbr[i] == '-' || nbr[i] == '+') && ft_isdigit(nbr[i + 1])
+					&& (i == 0 || !ft_isdigit(nbr[i - 1])))
+				|| ft_isdigit(nbr[i])))
+			return (0);
 		i++;
 	}
-	ft_printf("_ _\na b\n-------\n\n");
+	while (tmp)
+	{
+		if (tmp->content == n)
+			return (0);
+		tmp = tmp->next;
+	}
+	return (1);
 }
 
-int	check_input(int argc, char **argv, long *a, long *b)
+t_list	*ft_init(char **ag, int ac)
 {
-	int	i;
-	int	j;
+	t_list	*tmp;
+	t_list	*res;
+	int		i;
+	long	nbr;
 
-	i = 1;
-	j = 0;
-	if (argc < 2)
-		return (1);
-	while (i < argc)
+	if (ac == 2)
+		i = 0;
+	else
+		i = 1;
+	res = NULL;
+	while (ag[i])
 	{
-		if ((argv[i][ft_strlen(argv[i]) - 1] == ' ') || (argv[i][0] == ' '))
-			return (1);
-		j = 0;
-		while (j < ft_strlen(argv[i]))
+		nbr = ft_atoi(ag[i]);
+		if (nbr > INT_MAX || nbr < INT_MIN || ft_check(res, nbr, ag[i]) == 0)
 		{
-			if (((argv[i][j] < 48) || (argv[i][j] > 57)) && argv[i][j] != 32)
-				if (argv[i][j] != 48)
-					return (1);
-			if ((argv[i][j] == 32) && (argv[i][j + 1] == 32))
-				return (1);
-			j++;
+			ft_putstr_fd("Error\n", 2);
+			return (NULL);
 		}
+		tmp = ft_lstnew(nbr);
+		ft_lstadd_back(&res, tmp);
+		tmp->index = -1;
 		i++;
 	}
-	return (0);
+	return (res);
 }
 
-void	fill_stacks(int argc, char **argv, long *a, long *sizes)
+int	main(int ac, char **ag)
 {
-	int	i;
+	t_swap	*tab;
+	char	**args;
 
-	i = 1;
-	while (i < argc)
-	{
-		a[i - 1] = ft_atoi(argv[i]);
-		i++;
-	}
-	sizes[0] = 0;
-	sizes[1] = argc - 1;
-	sizes[2] = argc - 2;
-}
-
-void	is_sorted(long *a, long *sizes)
-{
-	int	i;
-
-	i = 0;
-	while (i < (sizes[2]))
-	{
-		if (a[i] > a[i + 1])
-		{
-			ft_printf("not sorted\n");
-			return ;
-			exit (0);
-		}
-		i++;
-	}
-	ft_printf("sorted\n");
+	if (ac == 1)
+		return (0);
+	tab = malloc(sizeof(t_swap));
+	if (!tab)
+		return (-1);
+	if (ac == 2)
+		args = ft_split(ag[1], ' ');
+	else
+		args = ag;
+	tab->stack_a = ft_init(args, ac);
+	if (tab->stack_a == NULL)
+		return (-1);
+	tab->stack_b = NULL;
+	tab->asize = ft_lstsize(tab->stack_a);
+	tab->bsize = ft_lstsize(tab->stack_b);
+	add_index(tab->stack_a);
+	check_sort(tab);
 }

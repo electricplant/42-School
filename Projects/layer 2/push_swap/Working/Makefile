@@ -1,51 +1,35 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/08/22 14:20:36 by dgerhard          #+#    #+#              #
-#    Updated: 2024/08/30 15:19:02 by dgerhard         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 NAME = push_swap
-SRCS_PATH = src
-INCS_PATH = inc
-OBJS_PATH = obj
-PRINTF_INC = /ft_printf
-SRC = $(wildcard $(SRCS_PATH)/*.c)
-INC = $(wildcard $(INCS_PATH)/*.h)
-OBJ = $(SRC:$(SRCS_PATH)%.c=$(OBJS_PATH)%.o)
+
+CC = gcc
+
+CFLAGS = -Werror -Wall -Wextra -fsanitize=address
+
 RM = rm -rf
-CC = cc
-#CFLAGS = -Wall -Wextra -Werror -L./ft_printf -lftprintf
-CFLAGS = -L./ft_printf -lftprintf -g
 
-all: $(NAME)
 
-$(NAME): $(OBJ)
-	@make -C ./ft_printf > /dev/null
-	@$(CC) $(OBJ) -I $(INCS_PATH)\
-	 $(CFLAGS) -o $(NAME)
-	@echo ":D"
+SRCS = 	src/main.c\
+		src/index.c\
+		src/ope1.c\
+		src/ope2.c\
+		src/ope3.c\
+		src/ope4.c\
+		src/quick_sort.c\
+		src/sort_handler.c\
+		src/sort_utils.c\
+		libft/libft.a\
 
-$(OBJS_PATH)/%.o: $(SRCS_PATH)/%.c
-	@mkdir -p $(OBJS_PATH)
-	@$(CC) -c $< -o $@ $(CFLAGS) -I $(INCS_PATH)
+$(NAME) :
+	make bonus -C libft
+	gcc $(CFLAGS) $(SRCS) -o $(NAME)
 
-clean:
-	@make clean -C ./ft_printf > /dev/null
-	@$(RM) $(OBJ)
+all : $(NAME)
 
-fclean: clean
-	@make fclean -C ./ft_printf > /dev/null
-	@$(RM) $(NAME)
+fclean : clean
+	$(RM) $(NAME)
+	make fclean -C libft
 
-re: fclean all
+clean :
+	$(RM) $(NAME)
+	make clean -C libft
 
-test: all
-	./$(NAME)
-
-.PHONY: clean
+re : fclean all
