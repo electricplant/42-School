@@ -11,3 +11,7 @@ LSD: num % 10
 SSD: (num / 10) % 10
 
 group by lsd and sort, sort again by next left digit, and once again, repeat till achieved final digit. 
+
+
+clear && make -s && ARG="3 12 19 1 16 14 15 18 17 6 10 4 11 5 9 8 2 13 7 20"; ./push_swap $ARG | wc -l
+Steps: 895
