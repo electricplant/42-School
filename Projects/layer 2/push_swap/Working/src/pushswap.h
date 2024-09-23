@@ -38,6 +38,7 @@ int		check_sorting_a(t_list **stack1, int count);
 t_list	*find_min_lst(t_list **stack);
 t_list	*find_max_lst(t_list **stack);
 int		isrevsorted(t_swap	*tab);
+void	free_list(t_swap *tab);
 
 void	pa(t_list **stack1, t_list **stack2);
 void	pb(t_list **stack1, t_list **stack2);

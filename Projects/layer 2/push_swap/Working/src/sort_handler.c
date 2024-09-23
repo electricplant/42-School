@@ -41,7 +41,7 @@ void	sort_3nbr(t_swap *tab)
 		rra(&tab->stack_a);
 }
 
-void	sort_5nbr(t_swap	*tab)
+void	sort_5nbr(t_swap *tab)
 {
 	int	len;
 
@@ -60,7 +60,7 @@ void	sort_5nbr(t_swap	*tab)
 		sa(&tab->stack_a);
 }
 
-void	check_sort(t_swap	*tab)
+void	check_sort(t_swap *tab)
 {
 	int	len;
 
@@ -78,4 +78,5 @@ void	check_sort(t_swap	*tab)
 		sort_5nbr(tab);
 	else
 		quick_sort(&tab->stack_a, &tab->stack_b, ft_lstsize(tab->stack_a));
+	free_list(tab);
 }

@@ -80,10 +80,34 @@ int	main(int ac, char **ag)
 		args = ag;
 	tab->stack_a = ft_init(args, ac);
 	if (tab->stack_a == NULL)
+	{
+		if (ac == 2)
+			free(args);
+		free(tab);
 		return (-1);
+	}
 	tab->stack_b = NULL;
 	tab->asize = ft_lstsize(tab->stack_a);
 	tab->bsize = ft_lstsize(tab->stack_b);
 	add_index(tab->stack_a);
 	check_sort(tab);
+}
+
+void	free_list(t_swap *tab)
+{
+	t_list	*tmp;
+
+	while (tab->stack_a != NULL)
+	{
+		tmp = tab->stack_a;
+		tab->stack_a = tab->stack_a->next;
+		free(tmp);
+	}
+	while (tab->stack_a != NULL)
+	{
+		tmp = tab->stack_a;
+		tab->stack_a = tab->stack_a->next;
+		free(tmp);
+	}
+	free(tab);
 }
