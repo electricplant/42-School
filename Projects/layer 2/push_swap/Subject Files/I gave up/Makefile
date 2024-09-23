@@ -6,7 +6,7 @@
 #    By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/22 14:20:36 by dgerhard          #+#    #+#              #
-#    Updated: 2024/08/30 15:19:02 by dgerhard         ###   ########.fr        #
+#    Updated: 2024/09/23 14:47:04 by dgerhard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,14 +21,14 @@ OBJ = $(SRC:$(SRCS_PATH)%.c=$(OBJS_PATH)%.o)
 RM = rm -rf
 CC = cc
 #CFLAGS = -Wall -Wextra -Werror -L./ft_printf -lftprintf
-CFLAGS = -L./ft_printf -lftprintf -g
+LDFLAGS = -L./ft_printf -lftprintf -g
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	@make -C ./ft_printf > /dev/null
+	@make -C .$(PRINTF_INC) > /dev/null
 	@$(CC) $(OBJ) -I $(INCS_PATH)\
-	 $(CFLAGS) -o $(NAME)
+	 $(LDFLAGS) -o $(NAME)
 	@echo ":D"
 
 $(OBJS_PATH)/%.o: $(SRCS_PATH)/%.c
@@ -36,11 +36,11 @@ $(OBJS_PATH)/%.o: $(SRCS_PATH)/%.c
 	@$(CC) -c $< -o $@ $(CFLAGS) -I $(INCS_PATH)
 
 clean:
-	@make clean -C ./ft_printf > /dev/null
+	@make clean -C .$(PRINTF_INC) > /dev/null
 	@$(RM) $(OBJ)
 
 fclean: clean
-	@make fclean -C ./ft_printf > /dev/null
+	@make fclean -C .$(PRINTF_INC) > /dev/null
 	@$(RM) $(NAME)
 
 re: fclean all
@@ -48,4 +48,4 @@ re: fclean all
 test: all
 	./$(NAME)
 
-.PHONY: clean
+.PHONY: all clean fclean re test

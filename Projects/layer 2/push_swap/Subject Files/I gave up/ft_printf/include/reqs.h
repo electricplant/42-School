@@ -21,7 +21,7 @@ int		ft_printchar(char c);
 int		ft_printstr(char *s);
 int		ft_formats(va_list args, const char format);
 int		ft_printnumber(int n);
-int		ft_print_perc(void);
+int		ft_print_perc();
 int		ft_print_ptr(unsigned long long ptr);
 int		ft_print_hex(unsigned int num, const char format);
 int		ft_hex_len(unsigned	int num);

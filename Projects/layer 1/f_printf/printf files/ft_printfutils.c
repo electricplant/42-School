@@ -43,7 +43,7 @@ int ft_printnumber(int n)
 	return (len);
 }
 
-int	ft_print_perc()
+int	ft_print_perc(void)
 {
 	write(1, "%", 1);
 	return (1);
