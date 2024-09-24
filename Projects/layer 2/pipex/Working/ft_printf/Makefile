@@ -34,9 +34,11 @@ $(OBJ_PATH)%.o: $(SRC_PATH)%.c
 
 clean:
 	@$(RM) $(OBJ_PATH)
+	@make clean -C $(LIBFT_PATH) > /dev/null
 
 fclean:
 	@$(RM) $(FINAL)
+	@make fclean -C $(LIBFT_PATH) > /dev/null
 
 re: fclean all
 
