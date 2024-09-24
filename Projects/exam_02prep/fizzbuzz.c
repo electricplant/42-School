@@ -37,14 +37,14 @@
 // buzz
 // $>
 #include <unistd.h>
+#include <stdio.h>
 
 void	ft_writenum(int number)
 {
 	char	str[10] = "0123456789";
-
 	if (number > 9)
-		ft_writenum(number / 10);
-	write (1, &str[number % 10], 1);
+		ft_writenum (number / 10);
+	write(1, &str[number % 10], 1);
 }
 
 int	main(void)
@@ -62,7 +62,7 @@ int	main(void)
 			write(1, "buzz", 4);
 		else
 			ft_writenum(i);
-		i++;
 		write(1, "\n", 1);
+		i++;
 	}
 }
