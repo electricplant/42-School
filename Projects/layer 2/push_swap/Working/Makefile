@@ -1,6 +1,6 @@
 NAME = push_swap
 
-CC = gcc
+CC = cc
 
 CFLAGS = -Werror -Wall -Wextra -g3
 
@@ -20,7 +20,7 @@ SRCS = 	src/main.c\
 
 $(NAME) :
 	make bonus -C libft
-	gcc $(CFLAGS) $(SRCS) -o $(NAME)
+	cc $(CFLAGS) $(SRCS) -o $(NAME)
 
 all : $(NAME)
 
