@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/10 12:21:01 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/09/28 16:57:10 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/09/29 12:44:57 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,13 +33,13 @@ typedef struct s_swap
 	int		bsize;
 }		t_swap;
 
-void	check_sort(t_swap	*tab, char **args);
+void	check_sort(t_swap	*tab, char **args, int ac);
 int		check_sorting(t_list **stack1);
 int		check_sorting_a(t_list **stack1, int count);
 t_list	*find_min_lst(t_list **stack);
 t_list	*find_max_lst(t_list **stack);
 int		isrevsorted(t_swap	*tab);
-void	free_list(t_swap *tab, char **args);
+void	free_list(t_swap *tab, char **args, int ac);
 
 void	pa(t_list **stack1, t_list **stack2);
 void	pb(t_list **stack1, t_list **stack2);

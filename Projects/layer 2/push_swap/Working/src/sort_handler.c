@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/10 12:21:01 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/09/28 17:00:45 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/09/29 12:45:55 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,14 +60,14 @@ void	sort_5nbr(t_swap *tab)
 		sa(&tab->stack_a);
 }
 
-void	check_sort(t_swap *tab, char **args)
+void	check_sort(t_swap *tab, char **args, int ac)
 {
 	int	len;
 
 	len = ft_lstsize(tab->stack_a);
 	if (check_sorting(&tab->stack_a))
 	{
-		free_list(tab, args);
+		free_list(tab, args, ac);
 		return ;
 	}
 	if (len == 2)
@@ -81,5 +81,5 @@ void	check_sort(t_swap *tab, char **args)
 		sort_5nbr(tab);
 	else
 		quick_sort(&tab->stack_a, &tab->stack_b, ft_lstsize(tab->stack_a));
-	free_list(tab, args);
+	free_list(tab, args, ac);
 }

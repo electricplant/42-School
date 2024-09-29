@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/10 12:21:01 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/09/28 17:02:02 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/09/29 12:46:51 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,21 +90,25 @@ int	main(int ac, char **ag)
 	tab->asize = ft_lstsize(tab->stack_a);
 	tab->bsize = ft_lstsize(tab->stack_b);
 	add_index(tab->stack_a);
-	check_sort(tab, args);
+	check_sort(tab, args, ac);
 }
 
-void	free_list(t_swap *tab, char **args)
+void	free_list(t_swap *tab, char **args, int ac)
 {
 	t_list	*tmp;
 	int		i;
 
 	i = 0;
-	while (args[i])
+	if ((args[i] != NULL) && (ac == 2))
 	{
-		free(args[i]);
-		i++;
+		while (args[i] != NULL)
+		{
+			free(args[i]);
+			args[i] = NULL;
+			i++;
+		}
+		free(args);
 	}
-	free(args);
 	while (tab->stack_a != NULL)
 	{
 		tmp = tab->stack_a;
