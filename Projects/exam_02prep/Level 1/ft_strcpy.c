@@ -13,22 +13,17 @@
 
 char	*ft_strcpy(char *s1, char *s2)
 {
-	int	i;
-
-	i = 0;
-	while (s2[i] != '\0')
-	{
-		s1[i] = s2[i];
-		i++;
-	}
+	while(*s1 != '\0')
+		*s2 = *s1++;
+	return (s2);
 }
 
 int	main(void)
 {
-	char *s1;
-	char *s2 = "hello";
+	char	*s1 = "hello";
+	char	*s2;
 
-	s1 = (char *)malloc(5 * sizeof(char));
-	ft_strcpy(s1, s2);
-	printf("%s\n", s1);
+	s2 = (char *)malloc(6 * sizeof(char));
+	s2 = ft_strcpy(s2, s1);
+	printf("Returned %s", s2);
 }

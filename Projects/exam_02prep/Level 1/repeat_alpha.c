@@ -34,33 +34,28 @@ int	main(int argc, char **argv)
 	int	j;
 
 	i = 0;
-	j = 0;
-	if (argc == 2)
+	while ((argc == 2) && argv[1][i])
 	{
-		while (argv[1][i])
+		j = 0;
+		if (argv[1][i] >= 'A' && argv[1][i] <= 'Z')
 		{
-			if ((argv[1][i] <= 90) && (argv[1][i] >= 65))
+			while (j <= (argv[1][i] - 'A'))
 			{
-				j = argv[1][i] - 64;
-				while (j > 0)
-				{
-					write(1, &argv[1][i], 1);
-					j--;
-				}
+				write(1, &argv[1][i], 1);
+				j++;
 			}
-			else if ((argv[1][i] <= 121) && (argv[1][i] >= 97))
-			{
-				j = argv[1][i] - 96;
-				while (j > 0)
-				{
-					write(1, &argv[1][i], 1);
-					j--;
-				}
-			}
-			else
-				write(1, &argv[1][i],1);
-			i++;
 		}
+		else if (argv[1][i] >= 'a' && argv[1][i] <= 'z')
+		{
+			while (j <= (argv[1][i] - 'a'))
+			{
+				write(1, &argv[1][i], 1);
+				j++;
+			}
+		}
+		else
+			write(1, &argv[1][i], 1);
+		i++;
 	}
 	write(1, "\n", 1);
 }

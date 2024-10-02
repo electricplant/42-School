@@ -13,19 +13,17 @@
 
 void	ft_swap(int *a, int *b)
 {
-	int	temp = *a;
+	int	x = *a;
 	*a = *b;
-	*b = temp;
+	*b = x;
 }
 
 int	main(void)
 {
-	int	a;
-	int	b;
+	int	a = 10;
+	int b = 22;
 
-	a = 10;
-	b = 22;
-
+	printf("A:%d - B:%d\n", a, b);
 	ft_swap(&a, &b);
-	printf("a:%d, b:%d", a, b);
+	printf("A:%d - B:%d\n", a, b);
 }

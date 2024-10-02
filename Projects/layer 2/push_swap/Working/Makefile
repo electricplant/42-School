@@ -19,17 +19,17 @@ SRCS = 	src/main.c\
 		libft/libft.a\
 
 $(NAME) :
-	make bonus -C libft
-	cc $(CFLAGS) $(SRCS) -o $(NAME)
+	@make bonus -C libft
+	@cc $(CFLAGS) $(SRCS) -o $(NAME)
 
 all : $(NAME)
 
 fclean : clean
-	$(RM) $(NAME)
-	make fclean -C libft
+	@$(RM) $(NAME)
+	@make fclean -C libft
 
 clean :
-	$(RM) $(NAME)
-	make clean -C libft
+	@$(RM) $(NAME)
+	@make clean -C libft
 
 re : fclean all
