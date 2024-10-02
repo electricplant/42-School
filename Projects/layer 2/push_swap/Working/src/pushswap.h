@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/10 12:21:01 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/09/29 12:44:57 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/10/02 15:32:53 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include "../libft/libft.h"
 # include <limits.h>
-# include <stdio.h> //get outta here
+# include <stdio.h>
 
 typedef struct s_push
 {
@@ -53,6 +53,8 @@ void	rrb(t_list **stack2);
 void	rra(t_list **stack1);
 
 void	add_index(t_list *lst);
+void	ft_free_args(char **args);
+void	ft_free_init(char **ag, int ac, t_list *res);
 
 void	quick_sort(t_list **stack1, t_list **stack2, int count);
 #endif
