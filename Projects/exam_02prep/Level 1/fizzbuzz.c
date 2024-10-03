@@ -65,15 +65,3 @@ int	main(void)
 		i++;
 	}
 }
-
-#include <unistd.h>
-#include <stdio.h>
-
-void	ft_writenum(int number)
-{
-	char	str[10] = "0123456789";
-	if (number > 9)
-		ft_writenum (number / 10);
-	write(1, &str[number % 10], 1);
-}
-
