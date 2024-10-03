@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/10 12:21:01 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/09/29 12:46:51 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/10/02 15:27:45 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ t_list	*ft_init(char **ag, int ac)
 	int		i;
 	long	nbr;
 
+	tmp = NULL;
 	if (ac == 2)
 		i = 0;
 	else
@@ -53,7 +54,7 @@ t_list	*ft_init(char **ag, int ac)
 		nbr = ft_atoi(ag[i]);
 		if (nbr > INT_MAX || nbr < INT_MIN || ft_check(res, nbr, ag[i]) == 0)
 		{
-			ft_putstr_fd("Error\n", 2);
+			ft_free_init(ag, ac, res);
 			return (NULL);
 		}
 		tmp = ft_lstnew(nbr);
@@ -96,17 +97,10 @@ int	main(int ac, char **ag)
 void	free_list(t_swap *tab, char **args, int ac)
 {
 	t_list	*tmp;
-	int		i;
 
-	i = 0;
-	if ((args[i] != NULL) && (ac == 2))
+	if ((args[0] != NULL) && (ac == 2))
 	{
-		while (args[i] != NULL)
-		{
-			free(args[i]);
-			args[i] = NULL;
-			i++;
-		}
+		ft_free_args(args);
 		free(args);
 	}
 	while (tab->stack_a != NULL)
@@ -115,10 +109,10 @@ void	free_list(t_swap *tab, char **args, int ac)
 		tab->stack_a = tab->stack_a->next;
 		free(tmp);
 	}
-	while (tab->stack_a != NULL)
+	while (tab->stack_b != NULL)
 	{
-		tmp = tab->stack_a;
-		tab->stack_a = tab->stack_a->next;
+		tmp = tab->stack_b;
+		tab->stack_b = tab->stack_b->next;
 		free(tmp);
 	}
 	free(tab);
