@@ -29,7 +29,7 @@ LIBFT_NAME =	libft.a
 
 all: $(NAME)
 
-$(NAME): $(OBJ) makelibft
+$(NAME): makelibft $(OBJ)
 	@$(AR) $(NAME) $(OBJ)
 	@echo ":D"
 

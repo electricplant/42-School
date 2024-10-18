@@ -6,7 +6,7 @@
 #    By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/13 13:05:48 by dgerhard          #+#    #+#              #
-#    Updated: 2024/10/13 13:30:29 by dgerhard         ###   ########.fr        #
+#    Updated: 2024/10/17 10:35:12 by dgerhard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,9 +27,9 @@ CC = cc
 PRINTF_PATH = src/ft_printf/
 PRINTF_NAME = libftprintf.a
 
-all: $(NAME)
+all: makeprintf $(NAME)
 
-$(NAME): $(OBJ) makeprintf
+$(NAME): $(OBJ)
 	@$(CC) $(OBJ) -I$(INC_PATH) $(CFLAGS) \
 	-L$(PRINTF_PATH) -lftprintf -o $(NAME)
 	@echo ":D"

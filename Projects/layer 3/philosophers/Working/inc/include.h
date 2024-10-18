@@ -6,13 +6,14 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 12:17:39 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/10/13 13:05:56 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/10/17 10:36:33 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef INCLUDE_H
 # define INCLUDE_H
 
-
+# include "libft.h"
+# include "reqs.h"
 
 # endif
