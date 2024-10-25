@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 14:44:30 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/08/30 15:00:09 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/10/19 09:53:42 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 # include <stddef.h>
 # include <sys/types.h>
 # include <stdlib.h>
-# include <unistd.h>
 # include <stdbool.h>
 # include <string.h>
 
