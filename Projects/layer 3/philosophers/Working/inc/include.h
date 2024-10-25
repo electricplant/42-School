@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 12:17:39 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/10/25 13:35:37 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/10/25 18:39:22 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ typedef struct s_philo
 	pthread_t		t1;
 	int				id;
 	int				eat_cont;
-	int				status;
 	int				eating;
 	uint64_t		time_to_die;
 	pthread_mutex_t	lock;

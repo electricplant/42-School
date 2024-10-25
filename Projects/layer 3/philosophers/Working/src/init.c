@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 18:37:08 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/10/24 11:45:53 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/10/25 18:39:20 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ void	init_philos(t_thrd *table)
 		table->philos[i].time_to_die = table->death_time;
 		table->philos[i].eat_cont = 0;
 		table->philos[i].eating = 0;
-		table->philos[i].status = 0;
 		pthread_mutex_init(&table->philos[i].lock, NULL);
 		i++;
 	}
