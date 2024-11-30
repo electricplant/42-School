@@ -1,7 +1,10 @@
 My Projects at 42, Started in November 2023
 
 
-About me:
+
+<details>
+  <summary>About me</summary>
+  About me:
 Originally from the United States, California. Moved to Paris in 2015, graduated highschool, left to the Netherlands in 2021 during Covid Lockdowns
 to begin a degree in Electrical Engineering. About 6 months in, I decided to drop out for about 10 different reasons. While I was figuring things out,
 I decided to begin dog-sitting as a side gig. It quickly became my full time job and paid all the bills for the next 2 years. While this was the best
@@ -19,3 +22,6 @@ After the final Exam. I took my train back to the Netherlands and waited....Impa
 I was accepted, realiezd I needed to FULLY MOVE back to Paris within one week. So I closed my dog-sitting busines, said goodbye to all my friends (and dogs)
 and found a cheap shared apartment in the north of Paris. Still, I needed to find a way to pay rent while living here, I've currently found a few odd-jobs
 that are paying the bills and letting me study. I'm going slower than average because of this, but still progressing. 
+
+
+</details>
