@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "../Minishell"
+		},
+		{
+			"path": "../Rules/Guides"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"minishell.h": "c",
+			"stdlib.h": "c",
+			"header.h": "c"
+		}
+	}
+}
