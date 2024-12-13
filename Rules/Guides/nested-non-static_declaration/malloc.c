@@ -6,25 +6,25 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 11:28:10 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/12/09 11:32:15 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/12/13 13:01:09 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "header.h"
 
-void	init_mem_tracker(t_mem_tracker *tracker)
+void	init_mem_tracker(t_mem_tracker *trkr)
 {
-	tracker->addresses = malloc(sizeof(void *) * 1);
-	if (!tracker->addresses)
+	trkr->addresses = malloc(sizeof(void *) * 1);
+	if (!trkr->addresses)
 	{
 		perror("malloc");
 		exit(EXIT_FAILURE);
 	}
-	tracker->addresses[0] = NULL;
-	tracker->capacity = 1;
+	trkr->addresses[0] = NULL;
+	trkr->capacity = 1;
 }
 
-void	*ft_malloc(t_mem_tracker *tracker, size_t size)
+void	*ft_malloc(t_mem_tracker *trkr, size_t size)
 {
 	void	*ptr;
 
@@ -35,7 +35,7 @@ void	*ft_malloc(t_mem_tracker *tracker, size_t size)
 		perror("malloc");
 		exit(EXIT_FAILURE);
 	}
-	add_address(tracker, ptr);
+	add_address(trkr, ptr);
 	return (ptr);
 }
 
@@ -51,21 +51,21 @@ void	add_address(t_mem_tracker *trkr, void *address)
 	trkr->addresses[trkr->capacity - 1] = address;
 }
 
-void	free_all(t_mem_tracker *tracker)
+void	free_all(t_mem_tracker *trkr)
 {
 	size_t	i;
 
 	i = 0;
-	while (i < tracker->capacity)
+	while (i < trkr->capacity)
 	{
-		if (tracker->addresses[i] != NULL)
+		if (trkr->addresses[i] != NULL)
 		{
-			printf("Freeing address %p\n", tracker->addresses[i]);
-			free(tracker->addresses[i]);
+			printf("Freeing address %p\n", trkr->addresses[i]);
+			free(trkr->addresses[i]);
 		}
 		i++;
 	}
-	free(tracker->addresses);
-	tracker->addresses = NULL;
-	tracker->capacity = 0;
+	free(trkr->addresses);
+	trkr->addresses = NULL;
+	trkr->capacity = 0;
 }
