@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 11:45:39 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/12/09 11:48:30 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/12/13 15:09:24 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,6 @@ int	main(void)
 
 	str = strdup("Hello, world!");
 	add_address(&tracker, str);
-	free_all(&tracker);
+	free_trkr(&tracker);
 	return (0);
 }

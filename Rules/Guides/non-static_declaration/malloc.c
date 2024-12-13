@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 11:28:10 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/12/09 11:32:15 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/12/13 15:09:24 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	add_address(t_mem_tracker *trkr, void *address)
 	trkr->addresses[trkr->capacity - 1] = address;
 }
 
-void	free_all(t_mem_tracker *tracker)
+void	free_trkr(t_mem_tracker *tracker)
 {
 	size_t	i;
 

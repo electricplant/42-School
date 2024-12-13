@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 11:28:19 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/12/13 13:08:17 by dgerhard         ###   ########.fr       */
+/*   Updated: 2024/12/13 15:09:24 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,12 @@ int	main(void)
 	str = strdup("Hello, world!"); //when a function that mallocs is used, we do this:
 	add_address(&data.trkr, str);
 
-	free_all(&data.trkr);
+	free_trkr(&data.trkr);
 
 	str = strdup("Hello, world2!");
 	add_address(&data.trkr, str);
 	ft_malloc(&data.trkr, 40);
 
-	free_all(&data.trkr);
+	free_trkr(&data.trkr);
 	return (0);
 }
