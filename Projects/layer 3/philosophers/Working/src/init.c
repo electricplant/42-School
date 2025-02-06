@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 18:37:08 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/10/25 18:39:20 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/02/06 10:28:17 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,9 @@ void	init_philos(t_thrd *table)
 int	init_thrd(t_thrd *table, char **argv, int argc)
 {
 	table->philo_num = (int) ft_atoi(argv[1]);
-	table->death_time = (u_int64_t) ft_atoi(argv[2]);
-	table->eat_time = (u_int64_t) ft_atoi(argv[3]);
-	table->sleep_time = (u_int64_t) ft_atoi(argv[4]);
+	table->death_time = (uint64_t) ft_atoi(argv[2]);
+	table->eat_time = (uint64_t) ft_atoi(argv[3]);
+	table->sleep_time = (uint64_t) ft_atoi(argv[4]);
 	if (argc == 6)
 		table->meals_nb = (int) ft_atoi(argv[5]);
 	else

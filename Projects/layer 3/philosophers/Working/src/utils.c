@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 16:08:07 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/10/24 13:38:16 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/02/06 11:30:55 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ int	input_checker(char **argv)
 
 int	ft_usleep(useconds_t time)
 {
-	u_int64_t	start;
+	uint64_t	start;
 
 	start = get_time();
 	while ((get_time() - start) < time)

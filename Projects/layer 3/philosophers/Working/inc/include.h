@@ -6,22 +6,22 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 12:17:39 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/10/25 18:39:22 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/02/06 11:30:50 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef INCLUDE_H
 # define INCLUDE_H
 
-# include "libft.h"
-# include "reqs.h"
-//# include <sys/types.h>
+# define _GNU_SOURCE
 # include <stdbool.h>
 # include <stdlib.h>
 # include <unistd.h>
 # include <stdio.h>
 # include <pthread.h>
 # include <sys/time.h>
+# include <sys/types.h>
+# include <stdint.h>
 
 typedef struct s_philo
 {
@@ -44,14 +44,15 @@ typedef struct s_thrd
 	int				dead;
 	int				finished;
 	t_philo			*philos;
-	u_int64_t		death_time;
-	u_int64_t		eat_time;
-	u_int64_t		sleep_time;
-	u_int64_t		start_time;
+	uint64_t		death_time;
+	uint64_t		eat_time;
+	uint64_t		sleep_time;
+	uint64_t		start_time;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	lock;
 	pthread_mutex_t	write;
 }	t_thrd;
+
 //	alloc_err
 # define ALLOC_ERR_1 "Failed to allocate thread IDs"
 # define ALLOC_ERR_3 "Failed to allocate Philos"
@@ -81,9 +82,11 @@ int			error(char *str, t_thrd *data);
 void		clear_data(t_thrd	*data);
 void		messages(char *str, t_philo *philo);
 void		ft_exit(t_thrd *data);
+int			ft_atoi(const char *str);
+int			ft_strcmp(const char *s1, const char *s2);
 
 //	time
-u_int64_t	get_time(void);
+uint64_t	get_time(void);
 int			ft_usleep(useconds_t time);
 
 //	checker

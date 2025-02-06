@@ -6,24 +6,24 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 15:00:48 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/10/25 14:06:13 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/02/06 10:28:17 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include.h"
 
-u_int64_t	get_time(void)
+uint64_t	get_time(void)
 {
 	struct timeval	tv;
 
 	if (gettimeofday(&tv, NULL))
 		return (error("gettimeofday() FAILURE\n", NULL));
-	return ((tv.tv_sec * (u_int64_t)1000) + (tv.tv_usec / 1000));
+	return ((tv.tv_sec * (uint64_t)1000) + (tv.tv_usec / 1000));
 }
 
 void	messages(char *str, t_philo *philo)
 {
-	u_int64_t	time;
+	uint64_t	time;
 
 	pthread_mutex_lock(&philo->data->write);
 	time = get_time() - philo->data->start_time;
