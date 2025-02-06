@@ -1,3 +1,15 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/11/18 12:46:09 by dgerhard          #+#    #+#              #
+#    Updated: 2024/11/18 12:48:15 by dgerhard         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 NAME = so_long
 SRCS_PATH = src
 INCS_PATH = include
@@ -19,7 +31,7 @@ $(NAME): $(OBJ)
 	@echo ":D"
 
 $(OBJS_PATH)/%.o: $(SRCS_PATH)/%.c
-	@$(CC) -c $< -o $@ $(CFLAGS) -I $(INCS_PATH)
+	@$(CC) -I$(INCS_PATH) -c $< -o $@ $(CFLAGS)
 
 clean:
 	$(RM) $(OBJ)
