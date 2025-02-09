@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 14:48:38 by dgerhard          #+#    #+#             */
-/*   Updated: 2024/10/25 16:28:31 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/02/09 09:49:04 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	*supervisor(void *philo_pointer)
 	{
 		pthread_mutex_lock(&philo->lock);
 		if (get_time() >= philo->time_to_die && philo->eating == 0)
-			messages(DIED, philo);
+			replies(DIED, philo);
 		if (philo->eat_cont == philo->data->meals_nb)
 		{
 			pthread_mutex_lock(&philo->data->lock);
@@ -60,7 +60,7 @@ void	*routine(void *philo_pointer)
 	while (philo->data->dead == 0)
 	{
 		eat(philo);
-		messages(THINKING, philo);
+		replies(THINKING, philo);
 	}
 	if (pthread_join(philo->t1, NULL))
 		return ((void *)1);

@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 15:00:48 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/02/06 10:28:17 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/02/08 12:04:14 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ uint64_t	get_time(void)
 	return ((tv.tv_sec * (uint64_t)1000) + (tv.tv_usec / 1000));
 }
 
-void	messages(char *str, t_philo *philo)
+void	replies(char *str, t_philo *philo)
 {
 	uint64_t	time;
 
@@ -40,16 +40,16 @@ void	messages(char *str, t_philo *philo)
 void	take_forks(t_philo *philo)
 {
 	pthread_mutex_lock(philo->r_fork);
-	messages(TAKE_FORKS, philo);
+	replies(TAKE_FORKS, philo);
 	pthread_mutex_lock(philo->l_fork);
-	messages(TAKE_FORKS, philo);
+	replies(TAKE_FORKS, philo);
 }
 
 void	drop_forks(t_philo *philo)
 {
 	pthread_mutex_unlock(philo->l_fork);
 	pthread_mutex_unlock(philo->r_fork);
-	messages(SLEEPING, philo);
+	replies(SLEEPING, philo);
 	ft_usleep(philo->data->sleep_time);
 }
 
@@ -59,7 +59,7 @@ void	eat(t_philo *philo)
 	pthread_mutex_lock(&philo->lock);
 	philo->eating = 1;
 	philo->time_to_die = get_time() + philo->data->death_time;
-	messages(EATING, philo);
+	replies(EATING, philo);
 	philo->eat_cont++;
 	ft_usleep(philo->data->eat_time);
 	philo->eating = 0;

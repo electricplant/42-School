@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/09 15:41:45 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/02/06 10:25:37 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/02/09 11:45:29 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,6 @@ int	ft_strcmp(const char *s1, const char *s2)
 
 	i = 0;
 	while (s1[i] && s1[i] == s2[i])
-			i++;
+		i++;
 	return ((unsigned char) s1[i] - (unsigned char) s2[i]);
 }

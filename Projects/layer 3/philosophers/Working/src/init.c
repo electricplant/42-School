@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/22 18:37:08 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/02/06 10:28:17 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/02/09 11:44:59 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,9 @@ int	init_forks(t_thrd *table)
 	i = -1;
 	while (++i < table->philo_num)
 		pthread_mutex_init(&table->forks[i], NULL);
-	i = 0;
+	i = 1;
 	table->philos[0].l_fork = &table->forks[0];
 	table->philos[0].r_fork = &table->forks[table->philo_num - 1];
-	i = 1;
 	while (i < table->philo_num)
 	{
 		table->philos[i].l_fork = &table->forks[i];

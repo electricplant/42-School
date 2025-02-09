@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 12:17:39 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/02/06 11:30:50 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/02/08 12:04:14 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int			thread_init(t_thrd *data);
 //	utils
 int			error(char *str, t_thrd *data);
 void		clear_data(t_thrd	*data);
-void		messages(char *str, t_philo *philo);
+void		replies(char *str, t_philo *philo);
 void		ft_exit(t_thrd *data);
 int			ft_atoi(const char *str);
 int			ft_strcmp(const char *s1, const char *s2);
