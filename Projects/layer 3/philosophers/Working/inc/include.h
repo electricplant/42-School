@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 12:17:39 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/02/08 12:04:14 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/02/10 11:22:15 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define INCLUDE_H
 
 # define _GNU_SOURCE
+# include <signal.h>
 # include <stdbool.h>
 # include <stdlib.h>
 # include <unistd.h>
