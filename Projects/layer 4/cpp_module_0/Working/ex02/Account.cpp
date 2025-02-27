@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 15:14:48 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/02/27 11:53:45 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/02/27 12:08:26 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <iostream>     // std::cout
 #include <iomanip>      // std::put_time
 #include <ctime>        // std::time_t, struct std::tm, std::localtime
-#include <chrono>       // std::chrono::system_clock
+//#include <chrono>       // std::chrono::system_clock
 
 int Account::_nbAccounts = 0;
 int Account::_totalAmount = 0;
@@ -23,11 +23,14 @@ int Account::_totalNbWithdrawals = 0;
 
 void Account::_displayTimestamp()
 {
-	using std::chrono::system_clock;
-	std::time_t tt = system_clock::to_time_t (system_clock::now());
+	time_t		now;
+	struct tm	*ts;
+	char		buf[80];
 
-	struct std::tm * ptm = std::localtime(&tt);
-	std::cout << std::put_time(ptm,"[%G%m%e_%H%M%S] ");
+	now = time(NULL);
+	ts = localtime(&now);
+	strftime(buf, sizeof(buf), "[%Y%m%d_%H%M%S] ", ts);
+	std::cout << buf;
 }
 
 int Account::checkAmount(void) const
