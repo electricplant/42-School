@@ -6,25 +6,24 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 12:33:31 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/02/26 15:02:26 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/02/27 15:13:09 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iomanip>
-#include <iostream>
-#include <string>
 #include "Phonebook.hpp"
+#include <iomanip>
+#include <string>
+#include <iostream>
 #include <limits>
 
-Contact::Contact() {}
+//Contact::Contact() {}
 
-Contact::Contact(std::string details_to_add[5])
+Contact::Contact(const std::string details_to_add[5])
 {
-	details[0] = details_to_add[0];
-	details[1] = details_to_add[1];
-	details[2] = details_to_add[2];
-	details[3] = details_to_add[3];
-	details[4] = details_to_add[4];
+	for (int i = 0; i < 5; ++i)
+	{
+		details[i] = details_to_add[i];
+	}
 }
 
 PhoneBook::PhoneBook ()

@@ -6,7 +6,7 @@
 #    By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/23 19:42:32 by dgerhard          #+#    #+#              #
-#    Updated: 2025/02/23 19:51:08 by dgerhard         ###   ########.fr        #
+#    Updated: 2025/02/27 14:53:54 by dgerhard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,10 +27,10 @@ $(NAME): $(OBJ)
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	$(RM) $(OBJ)
+	@$(RM) $(OBJ)
 
 fclean: clean
-	$(RM) $(NAME)
+	@$(RM) $(NAME)
 
 re: fclean all
 
