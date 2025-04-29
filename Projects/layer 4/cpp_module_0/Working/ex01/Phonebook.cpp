@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 12:33:31 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/02/27 15:13:09 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/04/11 11:20:28 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,15 @@
 #include <iostream>
 #include <limits>
 
-//Contact::Contact() {}
+Contact::Contact ()
+{
+	for (int i = 0; i < 5; ++i)
+	{
+		details[i] = "";
+	}
+}
 
-Contact::Contact(const std::string details_to_add[5])
+Contact::Contact (const std::string details_to_add[5])
 {
 	for (int i = 0; i < 5; ++i)
 	{
