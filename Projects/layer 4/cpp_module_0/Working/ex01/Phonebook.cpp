@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 12:33:31 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/04/11 11:20:28 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/05/03 10:38:45 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,18 @@ void	prompt_user(PhoneBook &book)
 	while (true)
 	{
 		std::cout << REQ_OPTION << std::endl;
-		getline(std::cin, input);
+		
+		if (!std::getline(std::cin, input))
+		{
+			if (std::cin.eof())
+			{
+				std::cin.clear();
+				input = "";
+				std::cout << std::endl;
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+				continue;
+			}
+		}
 		if (input == "ADD")
 			add_contact(book);
 		else if (input == "SEARCH")

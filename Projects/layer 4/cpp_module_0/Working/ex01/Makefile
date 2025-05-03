@@ -6,7 +6,7 @@
 #    By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/25 12:39:52 by dgerhard          #+#    #+#              #
-#    Updated: 2025/02/26 15:04:37 by dgerhard         ###   ########.fr        #
+#    Updated: 2025/05/03 10:49:42 by dgerhard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,6 @@ RM = rm -rf
 CC = c++
 CFLAGS = -std=c++98 -Wall -Wextra -Werror
 SRC = Phonebook.cpp
-INC = Phonebook.hpp
 OBJ = $(SRC:.cpp=.o)
 
 all: $(NAME)

@@ -6,7 +6,7 @@
 #    By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/19 11:52:59 by dgerhard          #+#    #+#              #
-#    Updated: 2025/04/28 10:39:02 by dgerhard         ###   ########.fr        #
+#    Updated: 2025/05/03 10:49:07 by dgerhard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,6 @@ RM = rm -rf
 CC = c++
 CFLAGS = -std=c++98 -Wall -Wextra -Werror
 SRC =	main.cpp \
-		Harl.hpp \
 		Harl.cpp
 		
 OBJ = $(SRC:.cpp=.o)
