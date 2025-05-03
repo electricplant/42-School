@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 19:10:30 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/04/19 12:00:43 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/05/03 10:51:30 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,7 @@ class Zombie
 	std::string	name;
 	public:
 		Zombie() {}
-
-		void setName(std::string zombieName)
-		{
-			name = zombieName;
-		}
+		void setName(std::string zombieName);
 		void announce(void);
 };
 

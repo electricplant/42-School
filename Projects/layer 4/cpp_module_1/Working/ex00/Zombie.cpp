@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 19:10:23 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/04/19 12:01:25 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/05/03 10:56:18 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,4 +15,9 @@
 void Zombie::announce(void)
 {
 	std::cout << name << ": BraiiiiiiinnnzzzZ..." << std::endl;
+}
+
+void Zombie::setName(std::string zombieName)
+{
+	name = zombieName;
 }
