@@ -1,32 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Zombie.hpp                                         :+:      :+:    :+:   */
+/*   Point.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/29 19:10:30 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/05/03 13:34:11 by dgerhard         ###   ########.fr       */
+/*   Created: 2025/05/15 19:31:59 by dgerhard          #+#    #+#             */
+/*   Updated: 2025/05/16 11:12:59 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ZOMBIE_HPP
-# define ZOMBIE_HPP
+#ifndef POINT_HPP
+#define POINT_HPP
 
-# include <string>
-# include <iostream>
+#include "Fixed.hpp"
 
-class Zombie
+class Point
 {
-	std::string	name;
-	public:
-		Zombie() {}
-		void setName(std::string zombieName);
-		void announce(void);
-};
+	const Fixed x;
+	const Fixed y;
 
-Zombie*	newZombie(std::string name);
-void	randomChump(std::string name);
-Zombie* zombieHorde(int N, std::string name);
+	public:
+		Point();
+		Point(const float fx, const float fy);
+		Point(const Point& other);
+		Point& operator=(const Point& other);
+		~Point();
+
+		Fixed getX() const;
+		Fixed getY() const;
+};
 
 #endif

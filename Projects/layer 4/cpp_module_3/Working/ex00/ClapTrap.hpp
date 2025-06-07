@@ -1,32 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Zombie.hpp                                         :+:      :+:    :+:   */
+/*   ClapTrap.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/29 19:10:30 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/05/03 13:34:11 by dgerhard         ###   ########.fr       */
+/*   Created: 2025/05/19 19:38:56 by dgerhard          #+#    #+#             */
+/*   Updated: 2025/06/06 14:02:13 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ZOMBIE_HPP
-# define ZOMBIE_HPP
+#ifndef CLAPTRAP_HPP
+#define CLAPTRAP_HPP
 
-# include <string>
-# include <iostream>
+#include <iostream>
 
-class Zombie
+class ClapTrap
 {
-	std::string	name;
-	public:
-		Zombie() {}
-		void setName(std::string zombieName);
-		void announce(void);
-};
+	std::string name;
+	unsigned int health;
+	unsigned int energy;
+	unsigned int damage;
 
-Zombie*	newZombie(std::string name);
-void	randomChump(std::string name);
-Zombie* zombieHorde(int N, std::string name);
+	public:
+	ClapTrap();
+	~ClapTrap();
+	ClapTrap(const std::string name);
+	void attack(const std::string& target);
+	void takeDamage(unsigned int amount);
+	void beRepaired(unsigned int amount);
+};
 
 #endif

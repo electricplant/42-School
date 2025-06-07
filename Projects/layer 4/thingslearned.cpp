@@ -27,3 +27,37 @@ Contact::~Contact() //destructor
 {
 	//clean stuff
 }
+
+
+
+//hpp orthodox template
+
+class MyClass {
+	private:
+		int* data;
+	
+	public:
+		// Default constructor
+		MyClass() : data(new int(0)) {
+			// Initialize with default values
+		}
+	
+		// Copy constructor
+		MyClass(const MyClass& other) : data(new int(*other.data)) {
+			// Create a deep copy of 'other'
+		}
+	
+		// Copy assignment operator
+		MyClass& operator=(const MyClass& other) {
+			if (this != &other) {  // Self-assignment check
+				delete data;       // Release old resources
+				data = new int(*other.data);  // Acquire new resources
+			}
+			return *this;  // Return reference to this object
+		}
+	
+		// Destructor
+		~MyClass() {
+			delete data;  // Release resources
+		}
+	};

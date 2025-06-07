@@ -1,32 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Zombie.hpp                                         :+:      :+:    :+:   */
+/*   ScavTrap.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/29 19:10:30 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/05/03 13:34:11 by dgerhard         ###   ########.fr       */
+/*   Created: 2025/06/06 13:49:03 by dgerhard          #+#    #+#             */
+/*   Updated: 2025/06/07 13:22:44 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ZOMBIE_HPP
-# define ZOMBIE_HPP
+#include "ClapTrap.hpp"
 
-# include <string>
-# include <iostream>
+#ifndef SCAVTRAP_HPP
+#define SCAVTRAP_HPP
 
-class Zombie
+class ScavTrap : public ClapTrap
 {
-	std::string	name;
 	public:
-		Zombie() {}
-		void setName(std::string zombieName);
-		void announce(void);
-};
+	ScavTrap();
+	ScavTrap(std::string name);
+	~ScavTrap();
 
-Zombie*	newZombie(std::string name);
-void	randomChump(std::string name);
-Zombie* zombieHorde(int N, std::string name);
+	void guardGate();
+	void attack(const std::string& target);
+};
 
 #endif

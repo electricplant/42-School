@@ -1,32 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Zombie.hpp                                         :+:      :+:    :+:   */
+/*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/29 19:10:30 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/05/03 13:34:11 by dgerhard         ###   ########.fr       */
+/*   Created: 2025/05/05 12:19:04 by dgerhard          #+#    #+#             */
+/*   Updated: 2025/05/16 11:16:58 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ZOMBIE_HPP
-# define ZOMBIE_HPP
+#include "Fixed.hpp"
+#include "Point.hpp"
+#include <iostream>
 
-# include <string>
-# include <iostream>
+bool bsp( Point const a, Point const b, Point const c, Point const point);
 
-class Zombie
+int main(void)
 {
-	std::string	name;
-	public:
-		Zombie() {}
-		void setName(std::string zombieName);
-		void announce(void);
-};
+	Point a(10,10);
+	Point b(0,0);
+	Point c(5,0);
+	Point point(3,3);
 
-Zombie*	newZombie(std::string name);
-void	randomChump(std::string name);
-Zombie* zombieHorde(int N, std::string name);
-
-#endif
+	bsp(a,b,c,point);
+	
+	return 0;
+}
