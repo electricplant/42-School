@@ -6,20 +6,12 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 13:48:59 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/06/07 13:44:31 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/06/08 08:47:28 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ClapTrap.hpp"
 #include "ScavTrap.hpp"
-
-ScavTrap::ScavTrap() : ClapTrap("Steve")
-{
-	this->health = 100;
-	this->energy = 50;
-	this->damage = 20;
-	std::cout << "ScavTrap " << this->name << " created!" << std::endl;
-}
 
 ScavTrap::ScavTrap(std::string name) : ClapTrap(name)
 {

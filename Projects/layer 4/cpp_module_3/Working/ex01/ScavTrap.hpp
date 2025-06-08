@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 13:49:03 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/06/07 13:22:44 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/06/08 08:47:32 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 class ScavTrap : public ClapTrap
 {
 	public:
-	ScavTrap();
 	ScavTrap(std::string name);
 	~ScavTrap();
 

@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 19:38:56 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/06/06 14:02:13 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/06/08 08:44:29 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 
 class ClapTrap
 {
+	protected:
 	std::string name;
 	unsigned int health;
 	unsigned int energy;
