@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 19:48:50 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/06/06 13:46:52 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/06/08 09:45:14 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,14 +31,17 @@ void ClapTrap::attack(const std::string& target)
 		std::cout << target << ", causing " << this->damage;
 		std::cout << " points of damage!" << std::endl;
 		this->energy--;
+		// std::cout << "Current energy: " << this->energy << std::endl;
 	}
 	else if (this->energy == 0)
 	{
 		std::cout << "Claptrap " << this->name << " is out of energy" << std::endl;
+		// std::cout << "Current energy: " << this->energy << std::endl;
 	}
 	else
 	{
 		std::cout << "Claptrap " << this->name << " is dead" << std::endl;
+		// std::cout << "Current energy: " << this->energy << std::endl;
 	}
 
 }
@@ -52,8 +55,10 @@ void ClapTrap::takeDamage(unsigned int amount)
 		if (amount >= this->health)
 			this->health = 0;
 		else
+		{
 			this->health -= amount;
-		std::cout << this->health << std::endl;
+			// std::cout << "Current health: " << this->health << std::endl;
+		}
 	}
 	else
 		std::cout << "Claptrap " << this->name << " is already dead" << std::endl;
@@ -70,14 +75,21 @@ void ClapTrap::beRepaired(unsigned int amount)
 			std::cout << amount << " points of health!" << std::endl;
 			this->energy--;
 			this->health += amount;
+		// std::cout << "Current energy: " << this->energy << std::endl;
+		// std::cout << "Current health: " << this->health << std::endl;
 		}
 		else
+		{
 			std::cout << "Claptrap " << this->name << " is out of energy" << std::endl;
+			// std::cout << "Current energy: " << this->energy << std::endl;
+		}
 	}
 	else
-	std::cout << "Claptrap " << this->name << " is dead and cannot repair" << std::endl;
-		
-
+	{
+		std::cout << "Claptrap " << this->name << " is dead and cannot repair" << std::endl;
+		// std::cout << "Current energy: " << this->energy << std::endl;
+		// std::cout << "Current health: " << this->health << std::endl;
+	}
 }
 
 

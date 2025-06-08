@@ -1,29 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   ScavTrap.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/19 20:06:47 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/06/08 09:09:34 by dgerhard         ###   ########.fr       */
+/*   Created: 2025/06/06 13:49:03 by dgerhard          #+#    #+#             */
+/*   Updated: 2025/06/08 08:47:32 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ClapTrap.hpp"
-#include <iostream>
 
-int main(void)
+#ifndef SCAVTRAP_HPP
+#define SCAVTRAP_HPP
+
+class ScavTrap : public ClapTrap
 {
-	ClapTrap dude("duder");
-	ClapTrap bob("bob");
+	public:
+	ScavTrap(std::string name);
+	~ScavTrap();
 
-	dude.attack("sheldon");
-	bob.takeDamage(3);
-	bob.takeDamage(3);
-	bob.takeDamage(3);
-	bob.takeDamage(3);
-	bob.takeDamage(3);
-	bob.attack("genri");
-	bob.beRepaired(10);
-}
+	void guardGate();
+	void attack(const std::string& target);
+};
+
+#endif
