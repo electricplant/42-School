@@ -6,23 +6,25 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 13:49:03 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/06/08 08:47:39 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/06/08 10:13:22 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include "ClapTrap.hpp"
 
 #ifndef FragTrap_HPP
 #define FragTrap_HPP
 
+#include "ClapTrap.hpp"
+#include <iostream>
+
 class FragTrap : public ClapTrap
 {
+	private:
+		FragTrap();
 	public:
-	FragTrap(std::string name);
-	~FragTrap();
+		FragTrap(std::string name);
+		~FragTrap();
 
 	void highFivesGuys(void);
-	void attack(const std::string& target);
 };
 
 #endif

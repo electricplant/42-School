@@ -6,14 +6,15 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 13:49:03 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/06/08 08:47:32 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/06/08 10:14:01 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ClapTrap.hpp"
-
 #ifndef SCAVTRAP_HPP
 #define SCAVTRAP_HPP
+
+#include "ClapTrap.hpp"
+#include <iostream>
 
 class ScavTrap : public ClapTrap
 {
