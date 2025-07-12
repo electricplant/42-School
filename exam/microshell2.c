@@ -1,10 +1,8 @@
-#include <sys/wait.h>
 #include <unistd.h>
+#include <sys/wait.h>
 #include <string.h>
 #include <stdlib.h>
 
-/*not needed in exam, but necessary if you want to use this tester:
-https://github.com/Glagan/42-exam-rank-04/blob/master/microshell/test.sh*/
 #ifdef TEST_SH
 # define TEST		1
 #else
@@ -17,7 +15,7 @@ void	ft_putstr_fd2(char *str, char *arg)
 		write(2, str++, 1);
 	if (arg)
 		while (*arg)
-			write(2, arg++, 1);
+			write(2, str++, 1);
 	write(2, "\n", 1);
 }
 
@@ -31,15 +29,16 @@ void	ft_execute(char *argv[], int i, int tmp_fd, char *env[])
 	exit(1);
 }
 
-void	main(int argc, char *argv[], char *env[])
+int	main(int argc, char *argv[], char *env[])
 {
 	int	i;
-	int	fd[2];
 	int	tmp_fd;
+	int	fd[2];
 	(void)argc;
 
 	i = 0;
 	tmp_fd = dup(STDIN_FILENO);
+
 	while (argv[i] && argv[i + 1])
 	{
 		argv = &argv[i + 1];
@@ -47,6 +46,7 @@ void	main(int argc, char *argv[], char *env[])
 
 		while (argv[i] && strcmp(argv[i], ";") && strcmp(argv[i], "|"))
 			i++;
+		
 		if (strcmp(argv[0], "cd") == 0)
 		{
 			if (i != 2)
@@ -54,7 +54,7 @@ void	main(int argc, char *argv[], char *env[])
 			else if (chdir(argv[1]) != 0)
 				ft_putstr_fd2("error: cannot change directory to ", argv[1]);
 		}
-		else if (i != 0 && (argv[i] != NULL || strcmp(argv[i], ";") == 0))
+		else if (i != 0 && (argv[i] == NULL || strcmp(argv[i], ";")) == 0)
 		{
 			if (fork() == 0)
 				ft_execute(argv, i, tmp_fd, env);
@@ -66,7 +66,7 @@ void	main(int argc, char *argv[], char *env[])
 				tmp_fd = dup(STDIN_FILENO);
 			}
 		}
-		else if (i != 0 && strcmp(argv[i], "|"))
+		else if (i != 0 && strcmp(argv[i], "|") == 0)
 		{
 			pipe(fd);
 			if (fork() == 0)
@@ -85,5 +85,7 @@ void	main(int argc, char *argv[], char *env[])
 		}
 	}
 	close(tmp_fd);
+	if (TEST)		// not needed in exam, but necessary if you want to use this tester:
+		while (1);	// https://github.com/Glagan/42-exam-rank-04/blob/master/microshell/test.sh
+	return (0);
 }
-
