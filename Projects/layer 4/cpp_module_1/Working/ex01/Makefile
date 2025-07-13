@@ -6,7 +6,7 @@
 #    By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/19 11:52:59 by dgerhard          #+#    #+#              #
-#    Updated: 2025/04/22 14:04:15 by dgerhard         ###   ########.fr        #
+#    Updated: 2025/07/13 09:42:22 by dgerhard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ OBJ = $(SRC:.cpp=.o)
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	@$(CC) $(SRC) $(CFLAGS) -o $(NAME)
+	$(CC) $(SRC) $(CFLAGS) -o $(NAME)
 	@echo ":D"
 
 %.o: %.cpp
