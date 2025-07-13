@@ -1,5 +1,7 @@
 #!/bin/bash
 
+pkill -9 microshell 2>/dev/null
+
 test_line () {
 	echo $@
 	echo $@ >> out.res
