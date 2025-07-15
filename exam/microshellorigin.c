@@ -1,13 +1,27 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   microshellorigin.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/15 12:15:17 by shackbei          #+#    #+#             */
+/*   Updated: 2025/07/15 07:01:44 by dgerhard         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <unistd.h>
 #include <sys/wait.h>
 #include <string.h>
 #include <stdlib.h>
 
-#ifdef TEST_SH
-# define TEST		1
-#else
-# define TEST		0
-#endif
+/*not needed in exam, but necessary if you want to use this tester:
+https://github.com/Glagan/42-exam-rank-04/blob/master/microshell/test.sh*/
+// #ifdef TEST_SH
+// # define TEST		1
+// #else
+// # define TEST		0
+// #endif
 
 void	ft_putstr_fd2(char *str, char *arg)
 {
@@ -34,16 +48,15 @@ int	main(int argc, char *argv[], char *env[])
 	int	i;
 	int fd[2];
 	int tmp_fd;
-	(void)argc;	// is needed in exam, because the exam tester compiles with -Wall -Wextra -Werror
+	(void)argc;
 
 	i = 0;
 	tmp_fd = dup(STDIN_FILENO);
-
-	while (argv[i] && argv[i + 1]) //check if the end is reached
+	while (argv[i] && argv[i + 1])
 	{
-		argv = &argv[i + 1];	//the new argv start after the ; or |
+		argv = &argv[i + 1];
 		i = 0;
-		//count until we have all informations to execute the next child;
+
 		while (argv[i] && strcmp(argv[i], ";") && strcmp(argv[i], "|"))
 			i++;
 		if (strcmp(argv[0], "cd") == 0) //cd
@@ -53,7 +66,7 @@ int	main(int argc, char *argv[], char *env[])
 			else if (chdir(argv[1]) != 0)
 				ft_putstr_fd2("error: cd: cannot change directory to ", argv[1]	);
 		}
-		else if ((i != 0 && argv[i] == NULL) || (i != 0 && strcmp(argv[i], ";") == 0)) //exec in stdout
+		else if (i != 0 && (argv[i] == NULL || strcmp(argv[i], ";") == 0))
 		{
 			if ( fork() == 0)
 				ft_execute(argv, i, tmp_fd, env);
@@ -84,7 +97,7 @@ int	main(int argc, char *argv[], char *env[])
 		}
 	}
 	close(tmp_fd);
-	if (TEST)		// not needed in exam, but necessary if you want to use this tester:
-		while (1);	// https://github.com/Glagan/42-exam-rank-04/blob/master/microshell/test.sh
+	// if (TEST)		// not needed in exam, but necessary if you want to use this tester:
+	// 	while (1);	// https://github.com/Glagan/42-exam-rank-04/blob/master/microshell/test.sh
 	return (0);
 }
