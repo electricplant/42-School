@@ -6,11 +6,11 @@
 #    By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/08 15:01:48 by dgerhard          #+#    #+#              #
-#    Updated: 2025/06/08 15:08:01 by dgerhard         ###   ########.fr        #
+#    Updated: 2025/07/20 09:32:34 by dgerhard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = Dogs
+NAME = Animals
 
 RM = rm -rf
 CC = c++
@@ -18,7 +18,9 @@ CFLAGS = -std=c++98 -Wall -Wextra -Werror
 SRC =	main.cpp \
 		Animal.cpp \
 		Dog.cpp \
-		Cat.cpp
+		Cat.cpp \
+		WrongAnimal.cpp \
+		WrongCat.cpp \
 		
 OBJ = $(SRC:.cpp=.o)
 

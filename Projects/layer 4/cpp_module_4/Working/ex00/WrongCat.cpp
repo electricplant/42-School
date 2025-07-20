@@ -1,25 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Cat.hpp                                            :+:      :+:    :+:   */
+/*   WrongCat.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/08 15:07:28 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/20 09:28:51 by dgerhard         ###   ########.fr       */
+/*   Created: 2025/07/20 09:32:41 by dgerhard          #+#    #+#             */
+/*   Updated: 2025/07/20 09:34:02 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#include "WrongCat.hpp"
 
-#include <iostream>
-#include "Animal.hpp"
-
-class Cat : public Animal
+WrongCat::WrongCat()
 {
-	public:
-		Cat();
-		~Cat();
+	std::cout << "Default WrongCat Const called" << std::endl;
+	this->type = "WrongCat";
+}
 
-	void makeSound() const;
-};
+WrongCat::~WrongCat()
+{
+	std::cout << "WrongCat Dest called" << std::endl;
+}
+
+void WrongCat::makeSound() const
+{
+	std::cout << "Hello and welcome to my Ted Talk" << std::endl;
+}

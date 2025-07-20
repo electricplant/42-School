@@ -1,25 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Cat.hpp                                            :+:      :+:    :+:   */
+/*   WrongAnimal.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/08 15:07:28 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/20 09:28:51 by dgerhard         ###   ########.fr       */
+/*   Created: 2025/07/20 09:31:14 by dgerhard          #+#    #+#             */
+/*   Updated: 2025/07/20 09:31:38 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#include "WrongAnimal.hpp"
 
-#include <iostream>
-#include "Animal.hpp"
-
-class Cat : public Animal
+WrongAnimal::WrongAnimal()
 {
-	public:
-		Cat();
-		~Cat();
+	std::cout << "Default WrongAnimal Const called" << std::endl;
+}
 
-	void makeSound() const;
-};
+WrongAnimal::~WrongAnimal()
+{
+	std::cout << "WrongAnimal Dest called" << std::endl;
+}
+
+void WrongAnimal::makeSound() const
+{
+	std::cout << "quack" << std::endl;
+}
+
+std::string WrongAnimal::getType() const
+{
+	return(type);
+}

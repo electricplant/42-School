@@ -1,21 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   dog.hpp                                            :+:      :+:    :+:   */
+/*   Dog.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/08 15:06:13 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/06/08 15:07:05 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/20 09:28:47 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef	DOG_HPP
-#define DOG_HPP
+#pragma once
 
-class Dog
+#include <iostream>
+#include "Animal.hpp"
+
+class Dog : public Animal
 {
 	public:
-};
+		Dog();
+		~Dog();
 
-#endif
+	void makeSound() const;
+};
