@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 19:10:30 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/11 12:51:07 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/20 07:57:26 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 class Zombie
 {
 	public:
+		Zombie();
 		Zombie(std::string name);
 		~Zombie();
 		Zombie*	newZombie(std::string name);
@@ -26,7 +27,7 @@ class Zombie
 	private:
 		void	announce();
 		std::string	name;
-	};
+};
 
 
 #endif

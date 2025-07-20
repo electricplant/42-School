@@ -6,11 +6,16 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 19:10:23 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/11 12:49:53 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/20 07:52:59 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Zombie.hpp"
+
+Zombie::Zombie()
+{
+	std::cout << "Zombie default constructor called" << std::endl;
+}
 
 Zombie::Zombie(std::string name)
 {

@@ -6,11 +6,17 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 10:17:03 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/14 12:49:08 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/20 08:13:33 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Harl.hpp"
+
+Harl::Harl()
+{}
+
+Harl::~Harl()
+{}
 
 void Harl::debug(void)
 {
@@ -52,5 +58,5 @@ void Harl::complain(std::string level)
 		}
 	}
 
-	std::cout << "[ Who knows what it is this time ]" << std::endl; 
+	std::cout << "Bad input" << std::endl; 
 }
