@@ -1,32 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   WrongCat.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/05 12:19:04 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/21 09:47:13 by dgerhard         ###   ########.fr       */
+/*   Created: 2025/07/20 09:34:27 by dgerhard          #+#    #+#             */
+/*   Updated: 2025/07/20 09:34:43 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Fixed.hpp"
+#pragma once
+
 #include <iostream>
+#include "WrongAnimal.hpp"
 
-int main(void)
+class WrongCat : public WrongAnimal
 {
-	Fixed 		a;
-	Fixed const b( Fixed( 5.05f ) * Fixed( 2 ) );
+	public:
+		WrongCat();
+		~WrongCat();
 
-	std::cout << a << std::endl;
-	std::cout << ++a << std::endl;
-	std::cout << a << std::endl;
-	std::cout << a++ << std::endl;
-	std::cout << a << std::endl;
-
-	std::cout << b << std::endl;
-
-	std::cout << Fixed::max( a , b ) << std::endl;
-	
-	return 0;
-}
+	void makeSound() const;
+};

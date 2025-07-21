@@ -6,28 +6,28 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 19:54:00 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/05/19 19:30:17 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/21 10:24:06 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Fixed.hpp"
 #include "Point.hpp"
-#include <iostream>
+#include "Fixed.hpp"
 
-bool bsp( Point const a, Point const b, Point const c, Point const point)
-{
-	std::cout << "a.x = " << a.getX() << std::endl;
-	std::cout << "a.y = " << a.getY() << std::endl;
-	std::cout << "b.x = " << b.getX() << std::endl;
-	std::cout << "b.y = " << b.getY() << std::endl;
-	std::cout << "c.x = " << c.getX() << std::endl;
-	std::cout << "c.y = " << c.getY() << std::endl;
+Fixed	calcVector(Point const a, Point const b, Point const point) {
+	float	first = ((point.getX().toFloat() - b.getX().toFloat()) * (a.getY().toFloat() - b.getY().toFloat()));
+	float	second = ((a.getX().toFloat() - b.getX().toFloat()) * (point.getY().toFloat() - b.getY().toFloat()));
 
-	std::cout << "point.x = " << point.getX() << std::endl;
-	std::cout << "point.y = " << point.getY() << std::endl;
-	
+	return Fixed(first - second);
+}
 
-	//returns true if point is inside triangle, false otherwise
-	//if on edge or vertex, return false
-	return true;
+bool bsp(Point const a, Point const b, Point const c, Point const point) {
+	Fixed	vAB = calcVector(a, b, point);
+	Fixed	vBC = calcVector(b, c, point);
+	Fixed	vCA = calcVector(c, a, point);
+
+	if (vAB > 0 && vBC > 0 && vCA > 0)
+		return true;
+	if (vAB < 0 && vBC < 0 && vCA < 0)
+		return true;
+	return false;
 }

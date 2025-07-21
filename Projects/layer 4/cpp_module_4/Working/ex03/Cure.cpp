@@ -1,32 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   Cure.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/05 12:19:04 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/21 09:47:13 by dgerhard         ###   ########.fr       */
+/*   Created: 2025/07/21 09:27:21 by dgerhard          #+#    #+#             */
+/*   Updated: 2025/07/21 09:30:39 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Fixed.hpp"
-#include <iostream>
+#include "Cure.hpp"
 
-int main(void)
+Cure::Cure()
 {
-	Fixed 		a;
-	Fixed const b( Fixed( 5.05f ) * Fixed( 2 ) );
+	//default constructor
+}
 
-	std::cout << a << std::endl;
-	std::cout << ++a << std::endl;
-	std::cout << a << std::endl;
-	std::cout << a++ << std::endl;
-	std::cout << a << std::endl;
-
-	std::cout << b << std::endl;
-
-	std::cout << Fixed::max( a , b ) << std::endl;
-	
-	return 0;
+Cure::~Cure()
+{
+	//destructor
 }

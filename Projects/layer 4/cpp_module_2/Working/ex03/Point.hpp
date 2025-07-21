@@ -6,12 +6,11 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/15 19:31:59 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/05/16 11:12:59 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/21 09:50:33 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef POINT_HPP
-#define POINT_HPP
+#pragma once
 
 #include "Fixed.hpp"
 
@@ -30,5 +29,3 @@ class Point
 		Fixed getX() const;
 		Fixed getY() const;
 };
-
-#endif

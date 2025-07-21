@@ -6,12 +6,11 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/04 12:09:17 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/05/05 12:16:15 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/21 10:39:04 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FIXED_HPP
-#define FIXED_HPP
+#pragma once
 
 class Fixed 
 {
@@ -28,5 +27,3 @@ class Fixed
 		int getRawBits(void) const;
 		void setRawBits(int const raw);
 };
-
-#endif

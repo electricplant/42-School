@@ -5,28 +5,34 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/05 12:19:04 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/21 09:47:13 by dgerhard         ###   ########.fr       */
+/*   Created: 2025/07/21 08:45:53 by dgerhard          #+#    #+#             */
+/*   Updated: 2025/07/21 09:37:25 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Fixed.hpp"
-#include <iostream>
+//#include something?
 
-int main(void)
+int main()
 {
-	Fixed 		a;
-	Fixed const b( Fixed( 5.05f ) * Fixed( 2 ) );
+	IMateriaSource* src = new MateriaSource();
+	src->learnMateria(new Ice());
+	src->learnMateria(new Cure());
 
-	std::cout << a << std::endl;
-	std::cout << ++a << std::endl;
-	std::cout << a << std::endl;
-	std::cout << a++ << std::endl;
-	std::cout << a << std::endl;
+	ICharacter* me = new Character("me");
 
-	std::cout << b << std::endl;
+	AMateria* tmp;
+	tmp = src->createMateria("ice");
+	me->equip(tmp);
+	tmp = src->createMateria("cure");
+	me->equip(tmp);
 
-	std::cout << Fixed::max( a , b ) << std::endl;
-	
+	ICharacter* bob = new Character("bob");
+
+	me->use(0, *bob);
+	me->use(1, *bob);
+
+	delete bob;
+	delete me;
+	delete src;
 	return 0;
 }

@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 12:19:04 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/05/16 11:16:58 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/21 10:26:50 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,12 @@ int main(void)
 	Point a(10,10);
 	Point b(0,0);
 	Point c(5,0);
-	Point point(3,3);
+	Point point(3,1);
 
-	bsp(a,b,c,point);
+	if (bsp(a,b,c,point) == true)
+		std::cout << "Point inside triangle" << std::endl;
+	else
+		std::cout << "Point outside triangle" << std::endl;
 	
 	return 0;
 }

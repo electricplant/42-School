@@ -6,12 +6,11 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/04 12:09:17 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/05/16 10:55:50 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/21 09:50:34 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FIXED_HPP
-#define FIXED_HPP
+#pragma once
 
 #include <iostream>
 
@@ -57,5 +56,3 @@ class Fixed
 };
 
 std::ostream& operator<<(std::ostream& os, const Fixed& fixed);
-
-#endif

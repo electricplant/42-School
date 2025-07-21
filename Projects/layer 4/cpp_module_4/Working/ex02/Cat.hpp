@@ -1,32 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   Cat.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/05 12:19:04 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/21 09:47:13 by dgerhard         ###   ########.fr       */
+/*   Created: 2025/06/08 15:07:28 by dgerhard          #+#    #+#             */
+/*   Updated: 2025/07/21 09:13:00 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Fixed.hpp"
+#pragma once
+
 #include <iostream>
+#include "Animal.hpp"
+#include "Brain.hpp"
 
-int main(void)
+class Cat : public Animal
 {
-	Fixed 		a;
-	Fixed const b( Fixed( 5.05f ) * Fixed( 2 ) );
+	private:
+		Brain* brain;
 
-	std::cout << a << std::endl;
-	std::cout << ++a << std::endl;
-	std::cout << a << std::endl;
-	std::cout << a++ << std::endl;
-	std::cout << a << std::endl;
+	public:
+		Cat();
+		~Cat();
+		Cat(const Cat& other);
+		Cat& operator=(const Cat& other);
 
-	std::cout << b << std::endl;
-
-	std::cout << Fixed::max( a , b ) << std::endl;
-	
-	return 0;
-}
+		void makeSound() const;
+		Brain* getBrain() const;
+};

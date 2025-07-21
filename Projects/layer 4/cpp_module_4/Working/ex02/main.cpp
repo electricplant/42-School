@@ -5,28 +5,36 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/05 12:19:04 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/21 09:47:13 by dgerhard         ###   ########.fr       */
+/*   Created: 2025/06/08 15:02:32 by dgerhard          #+#    #+#             */
+/*   Updated: 2025/07/21 08:45:07 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Fixed.hpp"
-#include <iostream>
+#include "Animal.hpp"
+#include "Cat.hpp"
+#include "Dog.hpp"
+#include "WrongAnimal.hpp"
+#include "WrongCat.hpp"
 
-int main(void)
+int	main()
 {
-	Fixed 		a;
-	Fixed const b( Fixed( 5.05f ) * Fixed( 2 ) );
+	const Animal *array[100];
+	// const Animal* meta = new Animal();
 
-	std::cout << a << std::endl;
-	std::cout << ++a << std::endl;
-	std::cout << a << std::endl;
-	std::cout << a++ << std::endl;
-	std::cout << a << std::endl;
+	int i = 0;
 
-	std::cout << b << std::endl;
+	while(i < 50)
+		array[i++] = new Cat();
+	while(i < 100)
+		array[i++] = new Dog();
 
-	std::cout << Fixed::max( a , b ) << std::endl;
+	array[10]->makeSound();
+	array[51]->makeSound();
+	array[1]->makeSound();
+	array[99]->makeSound();
+
+	for (i = 0; i < 100; i++)
+		delete array[i];
 	
 	return 0;
 }

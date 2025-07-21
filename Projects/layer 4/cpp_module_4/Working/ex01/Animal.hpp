@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/08 15:17:38 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/21 07:59:03 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/21 08:02:58 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,5 +22,5 @@ class Animal
 		Animal();
 		virtual ~Animal();
 		std::string getType() const;
-		virtual void makeSound() const = 0;
+		virtual void makeSound() const; // = 0 for ex02
 };

@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/08 15:07:28 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/20 09:28:51 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/21 08:21:26 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,19 @@
 
 #include <iostream>
 #include "Animal.hpp"
+#include "Brain.hpp"
 
 class Cat : public Animal
 {
+	private:
+		Brain* brain;
+
 	public:
 		Cat();
 		~Cat();
+		Cat(const Cat& other);
+		Cat& operator=(const Cat& other);
 
-	void makeSound() const;
+		void makeSound() const;
+		Brain* getBrain() const;
 };

@@ -1,32 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   Animal.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/05 12:19:04 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/21 09:47:13 by dgerhard         ###   ########.fr       */
+/*   Created: 2025/07/07 12:52:15 by dgerhard          #+#    #+#             */
+/*   Updated: 2025/07/20 09:28:30 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Fixed.hpp"
-#include <iostream>
+#include "Animal.hpp"
 
-int main(void)
+Animal::Animal()
 {
-	Fixed 		a;
-	Fixed const b( Fixed( 5.05f ) * Fixed( 2 ) );
+	std::cout << "Default Animal Const called" << std::endl;
+}
 
-	std::cout << a << std::endl;
-	std::cout << ++a << std::endl;
-	std::cout << a << std::endl;
-	std::cout << a++ << std::endl;
-	std::cout << a << std::endl;
+Animal::~Animal()
+{
+	std::cout << "Animal Dest called" << std::endl;
+}
 
-	std::cout << b << std::endl;
+void Animal::makeSound() const
+{
+	std::cout << "quack" << std::endl;
+}
 
-	std::cout << Fixed::max( a , b ) << std::endl;
-	
-	return 0;
+std::string Animal::getType() const
+{
+	return(type);
 }
