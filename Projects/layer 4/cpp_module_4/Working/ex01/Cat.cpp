@@ -1,36 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   Cat.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/08 15:02:32 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/21 08:00:34 by dgerhard         ###   ########.fr       */
+/*   Created: 2025/07/07 12:56:31 by dgerhard          #+#    #+#             */
+/*   Updated: 2025/07/20 08:53:11 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Animal.hpp"
 #include "Cat.hpp"
-#include "Dog.hpp"
-#include "WrongAnimal.hpp"
-#include "WrongCat.hpp"
 
-int	main()
+Cat::Cat()
 {
-	const Animal* meta = new Animal();
-	const Animal* j = new Dog();
-	const WrongAnimal* i = new WrongCat();
+	std::cout << "Default Cat Const called" << std::endl;
+	this->type = "Cat";
+}
 
-	std::cout << j->getType() << " " << std::endl;
-	std::cout << i->getType() << " " << std::endl;
-	j->makeSound();
-	i->makeSound();
-	meta->makeSound();
+Cat::~Cat()
+{
+	std::cout << "Cat Dest called" << std::endl;
+}
 
-	delete meta;
-	delete j;
-	delete i;
-
-	return 0;
+void Cat::makeSound() const
+{
+	std::cout << "Meow" << std::endl;
 }

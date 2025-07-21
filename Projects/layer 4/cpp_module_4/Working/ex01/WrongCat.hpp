@@ -1,36 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   WrongCat.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/08 15:02:32 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/21 08:00:34 by dgerhard         ###   ########.fr       */
+/*   Created: 2025/07/20 09:34:27 by dgerhard          #+#    #+#             */
+/*   Updated: 2025/07/20 09:34:43 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Animal.hpp"
-#include "Cat.hpp"
-#include "Dog.hpp"
+#pragma once
+
+#include <iostream>
 #include "WrongAnimal.hpp"
-#include "WrongCat.hpp"
 
-int	main()
+class WrongCat : public WrongAnimal
 {
-	const Animal* meta = new Animal();
-	const Animal* j = new Dog();
-	const WrongAnimal* i = new WrongCat();
+	public:
+		WrongCat();
+		~WrongCat();
 
-	std::cout << j->getType() << " " << std::endl;
-	std::cout << i->getType() << " " << std::endl;
-	j->makeSound();
-	i->makeSound();
-	meta->makeSound();
-
-	delete meta;
-	delete j;
-	delete i;
-
-	return 0;
-}
+	void makeSound() const;
+};
