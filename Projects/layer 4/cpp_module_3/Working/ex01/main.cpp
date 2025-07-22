@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 20:06:47 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/06/07 14:16:50 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/22 10:21:06 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ int main(void)
 	ScavTrap bees("bees");
 
 	dude.attack("sherry");
+	bees.guardGate();
 	bees.attack("agke");
 	bees.beRepaired(20);
 }

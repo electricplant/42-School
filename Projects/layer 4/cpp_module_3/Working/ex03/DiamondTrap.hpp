@@ -6,12 +6,11 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/08 10:17:57 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/06/08 10:28:37 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/22 10:27:31 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef DIAMONDTRAP_HPP
-#define DIAMONDTRAP_HPP
+#pragma once
 
 #include "ScavTrap.hpp"
 #include "FragTrap.hpp"
@@ -28,5 +27,3 @@ class DiamondTrap : public ScavTrap, public FragTrap
 	using ScavTrap::attack;
 	void whoAmI();
 };
-
-#endif
