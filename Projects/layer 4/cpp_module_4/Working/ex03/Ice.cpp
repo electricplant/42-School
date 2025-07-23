@@ -6,18 +6,18 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 09:27:09 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/21 09:30:06 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/23 07:30:22 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Ice.hpp"
 
-Ice::Ice()
+Ice::Ice(std::string type) : AMateria(type)
 {
-	//default constructor
+	std::cout << "Default constructor Ice called" << std::endl;
 }
 
 Ice::~Ice()
 {
-	//destructor
+	std::cout << "Destructor Ice called" << std::endl;
 }

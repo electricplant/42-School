@@ -6,27 +6,26 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 08:46:10 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/21 09:37:34 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/23 08:21:06 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <iostream>
+#include "IMateriaSource.hpp"
+#include "Character.hpp"
 
 class AMateria
 {
 	protected:
-		std::string _type;
+		std::string type;
 
 	public:
-		AMateria();
-		~AMateria();
-		AMateria(std::string const& type);
+		AMateria(std::string const & type);
+		virtual ~AMateria();
 
-		AMateria(const AMateria& src);
-		AMateria& operator=(AMateria const &other);
-		std::string const &getType() const;
+		std::string const & getType() const;
 		
 		virtual AMateria* clone () const = 0;
 		virtual void use(ICharacter& target);

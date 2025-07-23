@@ -1,23 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   MateriaSource.cpp                                  :+:      :+:    :+:   */
+/*   MateriaSource.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/21 09:35:21 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/22 12:21:28 by dgerhard         ###   ########.fr       */
+/*   Created: 2025/07/21 09:35:29 by dgerhard          #+#    #+#             */
+/*   Updated: 2025/07/23 06:16:10 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "MateriaSource.hpp"
+#pragma once
 
-void IMateriaSource::learnMateria(AMateria* )
-{
-	
-}
+#include <iostream>
+#include <string>
 
-IMateriaSource::~IMateriaSource()
+#include "AMateria.hpp"
+
+class IMateriaSource
 {
-	std::cout << "Destructor called for IMateriaSource" << std::endl;
-}
+	public:
+		virtual ~IMateriaSource() {}
+		virtual void learnMateria(AMateria *materia) = 0;
+		virtual AMateria* createMateria(std::string const& type) = 0;
+};

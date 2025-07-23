@@ -6,11 +6,11 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 08:45:53 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/21 09:37:25 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/23 08:22:42 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-//#include something?
+#include "AMateria.hpp"
 
 int main()
 {

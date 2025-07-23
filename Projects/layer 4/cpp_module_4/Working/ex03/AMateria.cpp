@@ -6,39 +6,29 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 08:46:11 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/21 09:19:02 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/23 08:21:50 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "AMateria.hpp"
 
-AMateria::AMateria()
+AMateria::AMateria(std::string const& type)
 {
-	std::cout << "Default constructor called" << std::endl;
-}
-
-AMateria::AMateria(std::string const & type)
-{
-	
+	std::cout << "AMateria constructor called" << std::endl;
+	this->type = type;
 }
 
 void AMateria::use(ICharacter& target)
 {
-	
+
 }
 
-AMateria::AMateria(const AMateria& other)
+const std::string& AMateria::getType() const
 {
-	std::cout << "AMateria copy constructor called" << std::endl;
-	this->_type = other._type;
+	return this->type;
 }
 
-AMateria& AMateria::operator=(const AMateria& other)
+AMateria::~AMateria()
 {
-	std::cout << "AMateria assignment operator called" << std::endl;
-	if (this != &other)
-	{
-		this->_type = other._type;
-	}
-	return *this;
+	std::cout << "Destructor AMateria called" << std::endl;
 }
