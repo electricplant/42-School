@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/08 15:07:28 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/21 08:21:26 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/30 09:00:15 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@ class Cat : public Animal
 
 	public:
 		Cat();
-		~Cat();
 		Cat(const Cat& other);
 		Cat& operator=(const Cat& other);
+		~Cat();
 
 		void makeSound() const;
 		Brain* getBrain() const;

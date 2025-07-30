@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 09:31:14 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/20 09:31:38 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/30 09:55:48 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,19 @@
 WrongAnimal::WrongAnimal()
 {
 	std::cout << "Default WrongAnimal Const called" << std::endl;
+}
+
+WrongAnimal::WrongAnimal(const WrongAnimal& other)
+{
+	std::cout << "WrongAnimal copy constructor called" << std::endl;
+	*this = other;
+}
+
+WrongAnimal& WrongAnimal::operator=(const WrongAnimal& other)
+{
+	std::cout << "WrongAnimal assignment operator called" << std::endl;
+	this->type = other.type;
+	return *this;
 }
 
 WrongAnimal::~WrongAnimal()

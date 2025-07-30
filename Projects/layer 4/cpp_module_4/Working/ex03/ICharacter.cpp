@@ -1,32 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Cat.hpp                                            :+:      :+:    :+:   */
+/*   ICharacter.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/08 15:07:28 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/30 09:00:20 by dgerhard         ###   ########.fr       */
+/*   Created: 2025/07/21 09:31:00 by dgerhard          #+#    #+#             */
+/*   Updated: 2025/07/23 09:35:08 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#include "ICharacter.hpp"
 
-#include <iostream>
-#include "Animal.hpp"
-#include "Brain.hpp"
-
-class Cat : public Animal
+ICharacter::ICharacter()
 {
-	private:
-		Brain* brain;
+	std::cout << "Default constructor called" << std::endl;
+}
 
-	public:
-		Cat();
-		Cat(const Cat& other);
-		Cat& operator=(const Cat& other);
-		~Cat();
+ICharacter::ICharacter(std::string name)
+{
+	std::cout << "Creating: " << name << std::endl;
+	this->name = name;
+}
 
-		void makeSound() const;
-		Brain* getBrain() const;
-};
+ICharacter::~ICharacter()
+{
+	std::cout << "Destructor called" << std::endl;
+}

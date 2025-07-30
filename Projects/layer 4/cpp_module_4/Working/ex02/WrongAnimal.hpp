@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 09:31:45 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/20 09:31:56 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/30 09:55:53 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ class WrongAnimal
 	public:
 		WrongAnimal();
 		virtual ~WrongAnimal();
+		WrongAnimal(const WrongAnimal& other);
+		WrongAnimal& operator=(const WrongAnimal& other);
 		std::string getType() const;
-		virtual void makeSound() const;
+		void makeSound() const;
 };
