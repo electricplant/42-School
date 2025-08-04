@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 12:52:15 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/20 09:28:30 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/30 08:50:52 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,19 @@
 Animal::Animal()
 {
 	std::cout << "Default Animal Const called" << std::endl;
+}
+
+Animal::Animal(const Animal& other)
+{
+	std::cout << "Animal copy constructor called" << std::endl;
+	*this = other;
+}
+
+Animal& Animal::operator=(const Animal& other)
+{
+	std::cout << "Animal assignment operator called" << std::endl;
+	this->type = other.type;
+	return *this;
 }
 
 Animal::~Animal()

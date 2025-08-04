@@ -5,25 +5,40 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/21 09:31:00 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/22 11:59:25 by dgerhard         ###   ########.fr       */
+/*   Created: 2025/07/23 09:38:57 by dgerhard          #+#    #+#             */
+/*   Updated: 2025/07/23 09:45:07 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Character.hpp"
 
-ICharacter::ICharacter()
+Character::Character(std::string name)
 {
-	std::cout << "Default constructor called" << std::endl;
-}
-
-ICharacter::ICharacter(std::string name)
-{
-	std::cout << "Creating: " << name << std::endl;
+	std::cout << "Constructor Character called" << std::endl;
 	this->name = name;
 }
 
-ICharacter::~ICharacter()
+Character::~Character()
 {
-	std::cout << "Destructor called" << std::endl;
+	std::cout << "Default destructor " << this->name << " destroyed" << std::endl;
+}
+
+std::string const& Character::getName() const
+{
+	return(this->name);
+}
+
+void Character::equip(AMateria* m)
+{
+	
+}
+
+void Character::unequip(int idx)
+{
+	
+}
+
+void Character::use(int idx, ICharacter& target)
+{
+	
 }

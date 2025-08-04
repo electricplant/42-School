@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 09:34:27 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/20 09:34:43 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/30 09:52:56 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ class WrongCat : public WrongAnimal
 {
 	public:
 		WrongCat();
+		WrongCat(const WrongCat& other);
+		WrongCat& operator=(const WrongCat& other);
 		~WrongCat();
 
 	void makeSound() const;

@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 09:32:41 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/20 09:34:02 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/30 09:55:16 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,19 @@ WrongCat::WrongCat()
 {
 	std::cout << "Default WrongCat Const called" << std::endl;
 	this->type = "WrongCat";
+}
+
+WrongCat::WrongCat(const WrongCat& other)
+{
+	std::cout << "WrongCat copy constructor called" << std::endl;
+	*this = other;
+}
+
+WrongCat& WrongCat::operator=(const WrongCat& other)
+{
+	std::cout << "WrongCat assignment operator called" << std::endl;
+	this->type = other.type;
+	return *this;
 }
 
 WrongCat::~WrongCat()

@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 09:26:46 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/07/23 07:30:03 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/07/23 09:56:10 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,10 @@
 class Ice : public AMateria
 {
 	public:
+		Ice();
 		Ice(std::string type);
+		virtual AMateria* clone() const;
+		
 		~Ice();
 	private:
 		std::string type;
