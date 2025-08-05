@@ -6,7 +6,7 @@
 #    By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/04 09:45:40 by dgerhard          #+#    #+#              #
-#    Updated: 2025/08/04 10:11:02 by dgerhard         ###   ########.fr        #
+#    Updated: 2025/08/05 09:33:40 by dgerhard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,8 @@ RM = rm -rf
 CC = c++
 CFLAGS = -std=c++98 -Wall -Wextra -Werror
 SRC =	main.cpp \
-		Bureaucrat.cpp
+		Bureaucrat.cpp \
+		Form.cpp
 		
 OBJ = $(SRC:.cpp=.o)
 

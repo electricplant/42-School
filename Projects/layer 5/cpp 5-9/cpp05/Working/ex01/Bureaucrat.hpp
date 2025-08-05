@@ -6,12 +6,15 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 09:45:36 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/08/04 11:52:23 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/08/05 09:26:54 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#pragma once
+
 #include <string>
 #include <stdexcept>
+#include "Form.hpp"
 
 class Bureaucrat
 {
@@ -27,6 +30,8 @@ class Bureaucrat
 
 		std::string getName() const;
 		int getGrade() const;
+
+		void signForm(Form& form);
 
 		void incrementGrade();
 		void decrementGrade();

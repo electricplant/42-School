@@ -6,20 +6,23 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 09:45:39 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/08/04 15:42:34 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/08/05 10:43:01 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Bureaucrat.hpp"
+#include "Form.hpp"
 #include <iostream>
 
 int main(void)
 {
 	try
 	{
-		Bureaucrat person1("Sasha", 30); //all correct
+		Bureaucrat person1("Sasha", 4); //all correct
 		person1.decrementGrade();
-		std::cout << person1.getName() << " grade is " << person1.getGrade() << std::endl;
+		std::cout << person1 << std::endl;
+		Form form1("divorce", 3, 5);
+		person1.signForm(form1);
 	}
 	catch(Bureaucrat::GradeTooHighException& e) {std::cout << e.what() << std::endl;}
 	catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
