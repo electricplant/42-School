@@ -6,13 +6,14 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 12:39:22 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/08/08 12:58:04 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/08/08 20:28:54 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include "AForm.hpp"
+#include "Bureaucrat.hpp"
 
 class ShrubberyCreationForm : public AForm
 {
