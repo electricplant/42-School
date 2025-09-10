@@ -17,7 +17,7 @@
 
 AForm::AForm() : name("bob"), sign(false), gradeSign(1), gradeEx(1)
 {
-	std::cout << "Default constructor AForm called" << std::endl;
+	// std::cout << "Default constructor AForm called" << std::endl;
 }
 
 AForm::AForm(std::string name, const int gradeSign, const int gradeEx)
@@ -28,7 +28,7 @@ AForm::AForm(std::string name, const int gradeSign, const int gradeEx)
 AForm::AForm(const AForm& other)
 	: name(other.name), sign(other.sign), gradeSign(other.gradeSign), gradeEx(other.gradeEx)
 {
-	std::cout << "Copy constructor called" << std::endl;
+	// std::cout << "Copy constructor called" << std::endl;
 }
 
 AForm& AForm::operator=(const AForm& other)
@@ -40,7 +40,7 @@ AForm& AForm::operator=(const AForm& other)
 
 AForm::~AForm()
 {
-	std::cout << "Default destructor AForm called" << std::endl;
+	// std::cout << "Default destructor AForm called" << std::endl;
 }
 
 std::string AForm::getName() const
@@ -77,17 +77,17 @@ void AForm::beSigned(const Bureaucrat& bureaucrat)
 
 const char* AForm::GradeTooLowException::what() const throw()
 {
-    return "AForm Grade too low!";
+    return "Grade too low!";
 }
 
 const char* AForm::GradeTooHighException::what() const throw()
 {
-    return "AForm Grade too high!";
+    return "Grade too high!";
 }
 
 const char* AForm::GradeNotEnoughException::what() const throw()
 {
-    return "AForm not high enough for this task!";
+    return "Grade not high enough for this task!";
 }
 
 

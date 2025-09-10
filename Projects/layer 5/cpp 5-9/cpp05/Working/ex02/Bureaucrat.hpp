@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 09:45:36 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/08/08 12:22:35 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/09/10 10:40:39 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,17 @@ class Bureaucrat
 
 		void incrementGrade();
 		void decrementGrade();
+
+		class GradeTooHighException: public std::exception
+		{
+			public:
+				virtual const char* what() const throw();
+		};
+		class GradeTooLowException: public std::exception
+		{
+			public:
+				virtual const char* what() const throw();
+		};
 };
 
 std::ostream& operator<<(std::ostream& os, const Bureaucrat& bureaucrat);

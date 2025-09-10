@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 09:45:36 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/08/05 09:27:04 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/09/10 08:25:00 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <string>
 #include <stdexcept>
 
-class Bureaucrat : public Form
+class Bureaucrat
 {
 	private:
 		const std::string name;

@@ -1,0 +1,85 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/10 09:13:19 by dgerhard          #+#    #+#             */
+/*   Updated: 2025/09/10 10:43:59 by dgerhard         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "Bureaucrat.hpp"
+#include "AForm.hpp"
+#include "ShrubberyCreationForm.hpp"
+#include "iostream"
+
+int main(void)
+{
+	try // Enough to sign
+	{
+		Bureaucrat person1("Sarah", 145);
+		ShrubberyCreationForm Bushes("Home");
+		person1.signForm(Bushes);
+	}
+	catch(Bureaucrat::GradeTooHighException& e) {std::cout << e.what() << std::endl;}
+	catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
+	catch(std::exception& e) {std::cout << e.what() << std::endl;}
+
+	try // NOT Enough to sign
+	{
+		Bureaucrat person1("Sarah", 146);
+		ShrubberyCreationForm Bushes("Home");
+		person1.signForm(Bushes);
+	}
+	catch(Bureaucrat::GradeTooHighException& e) {std::cout << e.what() << std::endl;}
+	catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
+	catch(std::exception& e) {std::cout << e.what() << std::endl;}
+
+		try // Enough to execute
+	{
+		Bureaucrat person1("Sarah", 137);
+		ShrubberyCreationForm Bushes("Home");
+		person1.executeForm(Bushes);
+	}
+	catch(Bureaucrat::GradeTooHighException& e) {std::cout << e.what() << std::endl;}
+	catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
+	catch(std::exception& e) {std::cout << e.what() << std::endl;}
+
+	try // NOT Enough to execute
+	{
+		Bureaucrat person1("Sarah", 138);
+		ShrubberyCreationForm Bushes("Home");
+		person1.executeForm(Bushes);
+	}
+	catch(Bureaucrat::GradeTooHighException& e) {std::cout << e.what() << std::endl;}
+	catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
+	catch(std::exception& e) {std::cout << e.what() << std::endl;}
+
+	// try
+	// {
+	// 	Bureaucrat person2("Bane", 0); //too high initialization
+	// }
+	// catch(Bureaucrat::GradeTooHighException& e) {std::cout << e.what() << std::endl;}
+	// catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
+	// catch(std::exception& e) {std::cout << e.what() << std::endl;}
+
+	// try
+	// {
+	// 	Bureaucrat person3("Bane 2", 150); //too low decrement
+	// 	person3.decrementGrade();
+	// }
+	// catch(Bureaucrat::GradeTooHighException& e) {std::cout << e.what() << std::endl;}
+	// catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
+	// catch(std::exception& e) {std::cout << e.what() << std::endl;}
+
+	// try
+	// {
+	// 	Bureaucrat person4("Niel", 1); //too high increment
+	// 	person4.incrementGrade();
+	// }
+	// catch(Bureaucrat::GradeTooHighException& e) {std::cout << e.what() << std::endl;}
+	// catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
+	// catch(std::exception& e) {std::cout << e.what() << std::endl;}	
+}
