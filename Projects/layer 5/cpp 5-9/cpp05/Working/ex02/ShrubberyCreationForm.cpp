@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 12:58:19 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/09/21 11:59:54 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/09/21 12:12:32 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,4 +64,3 @@ void ShrubberyCreationForm::execute(Bureaucrat const& executor) const
 	std::cout << "Made shrubs at " << this->target << std::endl;
 }
 
-//create file targetName_shrubbery with ascii trees inside
