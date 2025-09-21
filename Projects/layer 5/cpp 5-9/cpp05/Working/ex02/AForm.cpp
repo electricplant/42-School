@@ -90,6 +90,11 @@ const char* AForm::GradeNotEnoughException::what() const throw()
     return "Grade not high enough for this task!";
 }
 
+const char* AForm::FileErrorException::what() const throw()
+{
+    return "Error opening file";
+}
+
 
 std::ostream& operator<<(std::ostream& os, const AForm& AForm)
 {

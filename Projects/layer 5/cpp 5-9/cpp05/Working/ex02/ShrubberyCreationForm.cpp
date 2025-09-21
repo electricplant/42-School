@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 12:58:19 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/09/10 10:49:44 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/09/21 11:59:54 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,22 @@ void ShrubberyCreationForm::execute(Bureaucrat const& executor) const
 {
 	if (executor.getGrade() > 137)
 		throw AForm::GradeNotEnoughException();
+	std::ofstream shrubs;
+	shrubs.open((this->target + "_shrubbery").c_str());
+	if (!shrubs.is_open())
+		throw AForm::FileErrorException();
 
+	shrubs  << "      _/--\\ \n"
+			<< "    /~     ~\\\n"
+			<< " /~~    :)    ~~\\\n"
+			<< "{               }\n"
+			<< " \\  _-     -_  /\n"
+			<< "   ~  \\\\ //  ~\n"
+			<< "_- -   | | _- _\n"
+			<< "  _ -  | |   -_\n"
+			<< "      /   \\\n";
+
+	shrubs.close();
 	std::cout << "Made shrubs at " << this->target << std::endl;
 }
 
