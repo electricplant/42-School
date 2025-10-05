@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 12:58:19 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/09/21 12:12:32 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/10/05 11:32:18 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,13 @@
 ShrubberyCreationForm::ShrubberyCreationForm(std::string target)
 : AForm("Shrubbery", 145, 137), target(target)
 {
-	// std::cout << "Default constructor Shrubbery called" << std::endl;
+	std::cout << "Default constructor Shrubbery called" << std::endl;
 }
 
 ShrubberyCreationForm::ShrubberyCreationForm(const ShrubberyCreationForm& other)
 : AForm(other), target(other.target)
 {
-	// std::cout << "Copy constructor Shrubbery called" << std::endl;
+	std::cout << "Copy constructor Shrubbery called" << std::endl;
 }
 
 ShrubberyCreationForm& ShrubberyCreationForm::operator=(const ShrubberyCreationForm& other)
@@ -38,7 +38,7 @@ ShrubberyCreationForm& ShrubberyCreationForm::operator=(const ShrubberyCreationF
 
 ShrubberyCreationForm::~ShrubberyCreationForm()
 {	
-	// std::cout << "Destructor Shrubbery called" << std::endl;
+	std::cout << "Destructor Shrubbery called" << std::endl;
 }
 
 void ShrubberyCreationForm::execute(Bureaucrat const& executor) const

@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 09:45:34 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/09/10 10:40:41 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/10/05 11:29:51 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,13 @@
 
 Bureaucrat::Bureaucrat()
 {
-	// std::cout << "Default constructor called" << std::endl;
+	std::cout << "Default constructor called" << std::endl;
 }
 
 Bureaucrat::Bureaucrat(std::string name, int grade)
 	: name(name), grade(grade)
 {
-	// std::cout << "Constructor called for " << name  << " : " << grade << std::endl;
+	std::cout << "Constructor called for " << name  << " : " << grade << std::endl;
 	if (grade > 150)
 		throw AForm::GradeTooHighException();
 	else if (grade < 1)
@@ -30,13 +30,13 @@ Bureaucrat::Bureaucrat(std::string name, int grade)
 
 Bureaucrat::Bureaucrat(const Bureaucrat& other)
 {
-	// std::cout << "Copy constructor called" << std::endl;
+	std::cout << "Copy constructor called" << std::endl;
 	*this = other;
 }
 
 Bureaucrat& Bureaucrat::operator=(const Bureaucrat& other)
 {
-	// std::cout << "Copy assignment operator called" << std::endl;
+	std::cout << "Copy assignment operator called" << std::endl;
 	if (this != &other)
 	{
 		this->grade = other.grade;
@@ -46,7 +46,7 @@ Bureaucrat& Bureaucrat::operator=(const Bureaucrat& other)
 
 Bureaucrat::~Bureaucrat()
 {
-	// std::cout << "Default destructor called" << std::endl;
+	std::cout << "Default destructor called" << std::endl;
 }
 
 std::string Bureaucrat::getName() const
@@ -64,11 +64,11 @@ void Bureaucrat::signForm(AForm& form)
 	try
 	{
 		form.beSigned(*this);
-		std::cout << this->name << " signed " << form.getName() << std::endl; 
+		std::cout << this->name << GREEN << " signed " << RESET << form.getName() << std::endl; 
 	}
 	catch (const AForm::GradeTooLowException& e)
 	{
-		std::cout << this->name << " couldn't sign " << form.getName() << " because " << e.what() << std::endl;
+		std::cout << this->name << RED << " couldn't sign " << RESET << form.getName() << " because " << e.what() << std::endl;
 	}
 }
 
@@ -77,12 +77,11 @@ void Bureaucrat::executeForm(AForm const& form)
 	try
 	{
 		form.execute(*this);
-		//code to execute? I guess form.execute()
-		std::cout << this->name << " executed " << form.getName() << std::endl;
+		std::cout << this->name << GREEN << " executed " << RESET << form.getName() << std::endl;
 	}
 	catch (const AForm::GradeNotEnoughException& e)
 	{
-		std::cout << this->name << " couldn't execute " << form.getName() << " because " << e.what() << std::endl;
+		std::cout << this->name << RED << " couldn't execute " << RESET << form.getName() << " because " << e.what() << std::endl;
 	}
 }
 

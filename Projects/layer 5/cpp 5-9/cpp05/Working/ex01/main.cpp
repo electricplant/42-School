@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 09:45:39 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/08/05 10:43:01 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/10/05 11:23:05 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int main(void)
 	try
 	{
 		Bureaucrat person1("Sasha", 4); //all correct
-		person1.decrementGrade();
+		person1.incrementGrade();
 		std::cout << person1 << std::endl;
 		Form form1("divorce", 3, 5);
 		person1.signForm(form1);
@@ -28,6 +28,22 @@ int main(void)
 	catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
 	catch(std::exception& e) {std::cout << e.what() << std::endl;}
 
+	std::cout << std::endl;
+
+	try
+	{
+		Bureaucrat person1("Sasha", 10); //too low to sign
+		person1.decrementGrade();
+		std::cout << person1 << std::endl;
+		Form form1("divorce", 10, 5);
+		person1.signForm(form1);
+	}
+	catch(Bureaucrat::GradeTooHighException& e) {std::cout << e.what() << std::endl;}
+	catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
+	catch(std::exception& e) {std::cout << e.what() << std::endl;}
+
+	std::cout << std::endl;
+	
 	try
 	{
 		Bureaucrat person2("Bane", 0); //too high initialization
@@ -35,6 +51,8 @@ int main(void)
 	catch(Bureaucrat::GradeTooHighException& e) {std::cout << e.what() << std::endl;}
 	catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
 	catch(std::exception& e) {std::cout << e.what() << std::endl;}
+
+	std::cout << std::endl;
 
 	try
 	{
@@ -45,6 +63,8 @@ int main(void)
 	catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
 	catch(std::exception& e) {std::cout << e.what() << std::endl;}
 
+	std::cout << std::endl;
+	
 	try
 	{
 		Bureaucrat person4("Niel", 1); //too high increment

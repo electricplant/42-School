@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 09:45:34 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/09/10 10:40:41 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/10/05 11:43:11 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,11 +64,11 @@ void Bureaucrat::signForm(AForm& form)
 	try
 	{
 		form.beSigned(*this);
-		std::cout << this->name << " signed " << form.getName() << std::endl; 
+		std::cout << this->name << GREEN << " signed " << RESET << form.getName() << std::endl; 
 	}
 	catch (const AForm::GradeTooLowException& e)
 	{
-		std::cout << this->name << " couldn't sign " << form.getName() << " because " << e.what() << std::endl;
+		std::cout << this->name << RED << " couldn't sign " << RESET << form.getName() << " because " << e.what() << std::endl;
 	}
 }
 
@@ -78,11 +78,11 @@ void Bureaucrat::executeForm(AForm const& form)
 	{
 		form.execute(*this);
 		//code to execute? I guess form.execute()
-		std::cout << this->name << " executed " << form.getName() << std::endl;
+		std::cout << this->name << GREEN << " executed " << RESET << form.getName() << std::endl;
 	}
 	catch (const AForm::GradeNotEnoughException& e)
 	{
-		std::cout << this->name << " couldn't execute " << form.getName() << " because " << e.what() << std::endl;
+		std::cout << this->name << RED << " couldn't execute " << RESET << form.getName() << " because " << e.what() << std::endl;
 	}
 }
 

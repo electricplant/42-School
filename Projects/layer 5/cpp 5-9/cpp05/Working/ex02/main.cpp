@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 09:13:19 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/09/21 12:38:21 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/10/05 11:30:58 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ int main(void)
 	catch(Bureaucrat::GradeTooHighException& e) {std::cout << e.what() << std::endl;}
 	catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
 	catch(std::exception& e) {std::cout << e.what() << std::endl;}
+	std::cout << std::endl;
 
 	try // NOT Enough to sign
 	{
@@ -38,8 +39,9 @@ int main(void)
 	catch(Bureaucrat::GradeTooHighException& e) {std::cout << e.what() << std::endl;}
 	catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
 	catch(std::exception& e) {std::cout << e.what() << std::endl;}
+	std::cout << std::endl;
 
-		try // Enough to execute
+	try // Enough to execute
 	{
 		Bureaucrat person1("Sarah", 137);
 		ShrubberyCreationForm Bushes("Home");
@@ -48,6 +50,7 @@ int main(void)
 	catch(Bureaucrat::GradeTooHighException& e) {std::cout << e.what() << std::endl;}
 	catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
 	catch(std::exception& e) {std::cout << e.what() << std::endl;}
+	std::cout << std::endl;
 
 	try // NOT Enough to execute
 	{
@@ -58,10 +61,11 @@ int main(void)
 	catch(Bureaucrat::GradeTooHighException& e) {std::cout << e.what() << std::endl;}
 	catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
 	catch(std::exception& e) {std::cout << e.what() << std::endl;}
+	std::cout << std::endl;
 
 //		ROBOTOMY FORM    ////////////////////////////////////////////////////////////////////////
 
-		try // Enough to sign
+	try // Enough to sign
 	{
 		Bureaucrat person2("Farnsworth", 72);
 		RobotomyRequestForm Robotize("Bender");
@@ -70,6 +74,7 @@ int main(void)
 	catch(Bureaucrat::GradeTooHighException& e) {std::cout << e.what() << std::endl;}
 	catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
 	catch(std::exception& e) {std::cout << e.what() << std::endl;}
+	std::cout << std::endl;
 
 	try // NOT Enough to sign
 	{
@@ -80,8 +85,9 @@ int main(void)
 	catch(Bureaucrat::GradeTooHighException& e) {std::cout << e.what() << std::endl;}
 	catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
 	catch(std::exception& e) {std::cout << e.what() << std::endl;}
+	std::cout << std::endl;
 
-		try // Enough to execute
+	try // Enough to execute
 	{
 		Bureaucrat person2("Farnsworth", 45);
 		RobotomyRequestForm Robotize("Bender");
@@ -90,6 +96,7 @@ int main(void)
 	catch(Bureaucrat::GradeTooHighException& e) {std::cout << e.what() << std::endl;}
 	catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
 	catch(std::exception& e) {std::cout << e.what() << std::endl;}
+	std::cout << std::endl;
 
 	try // NOT Enough to execute
 	{
@@ -100,10 +107,11 @@ int main(void)
 	catch(Bureaucrat::GradeTooHighException& e) {std::cout << e.what() << std::endl;}
 	catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
 	catch(std::exception& e) {std::cout << e.what() << std::endl;}
+	std::cout << std::endl;
 
 //		PARDON FORM    ////////////////////////////////////////////////////////////////////////
 
-		try // Enough to sign
+	try // Enough to sign
 	{
 		Bureaucrat person3("Arthur", 25);
 		PresidentialPardonForm Pardon("Trillian");
@@ -112,6 +120,7 @@ int main(void)
 	catch(Bureaucrat::GradeTooHighException& e) {std::cout << e.what() << std::endl;}
 	catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
 	catch(std::exception& e) {std::cout << e.what() << std::endl;}
+	std::cout << std::endl;
 
 	try // NOT Enough to sign
 	{
@@ -122,8 +131,9 @@ int main(void)
 	catch(Bureaucrat::GradeTooHighException& e) {std::cout << e.what() << std::endl;}
 	catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
 	catch(std::exception& e) {std::cout << e.what() << std::endl;}
+	std::cout << std::endl;
 
-		try // Enough to execute
+	try // Enough to execute
 	{
 		Bureaucrat person3("Arthur", 5);
 		PresidentialPardonForm Pardon("Trillian");
@@ -133,6 +143,7 @@ int main(void)
 	catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
 	catch(AForm::FileErrorException& e) {std::cout << e.what() << std::endl;}
 	catch(std::exception& e) {std::cout << e.what() << std::endl;}
+	std::cout << std::endl;
 
 	try // NOT Enough to execute
 	{
@@ -144,6 +155,7 @@ int main(void)
 	catch(Bureaucrat::GradeTooLowException& e) {std::cout << e.what() << std::endl;}
 	catch(AForm::FileErrorException& e) {std::cout << e.what() << std::endl;}
 	catch(std::exception& e) {std::cout << e.what() << std::endl;}
+	std::cout << std::endl;
 	
 	// try
 	// {

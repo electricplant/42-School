@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 12:07:46 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/09/21 12:16:10 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/10/05 11:32:04 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,13 @@
 PresidentialPardonForm::PresidentialPardonForm(std::string target)
 : AForm("Presidential", 25, 5), target(target)
 {
-	// std::cout << "Default constructor Presidential called" << std::endl;
+	std::cout << "Default constructor Presidential called" << std::endl;
 }
 
 PresidentialPardonForm::PresidentialPardonForm(const PresidentialPardonForm& other)
 : AForm(other), target(other.target)
 {
-	// std::cout << "Copy constructor Presidential called" << std::endl;
+	std::cout << "Copy constructor Presidential called" << std::endl;
 }
 
 PresidentialPardonForm& PresidentialPardonForm::operator=(const PresidentialPardonForm& other)
@@ -38,7 +38,7 @@ PresidentialPardonForm& PresidentialPardonForm::operator=(const PresidentialPard
 
 PresidentialPardonForm::~PresidentialPardonForm()
 {	
-	// std::cout << "Destructor Presidential called" << std::endl;
+	std::cout << "Destructor Presidential called" << std::endl;
 }
 
 void PresidentialPardonForm::execute(Bureaucrat const& executor) const

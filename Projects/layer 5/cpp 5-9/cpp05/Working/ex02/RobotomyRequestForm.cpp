@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 12:07:51 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/09/21 12:30:08 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/10/05 11:32:12 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,13 @@
 RobotomyRequestForm::RobotomyRequestForm(std::string target)
 : AForm("Robotomy", 72, 45), target(target)
 {
-	// std::cout << "Default constructor Robotomy called" << std::endl;
+	std::cout << "Default constructor Robotomy called" << std::endl;
 }
 
 RobotomyRequestForm::RobotomyRequestForm(const RobotomyRequestForm& other)
 : AForm(other), target(other.target)
 {
-	// std::cout << "Copy constructor Robotomy called" << std::endl;
+	std::cout << "Copy constructor Robotomy called" << std::endl;
 }
 
 RobotomyRequestForm& RobotomyRequestForm::operator=(const RobotomyRequestForm& other)
@@ -38,7 +38,7 @@ RobotomyRequestForm& RobotomyRequestForm::operator=(const RobotomyRequestForm& o
 
 RobotomyRequestForm::~RobotomyRequestForm()
 {	
-	// std::cout << "Destructor Robotomy called" << std::endl;
+	std::cout << "Destructor Robotomy called" << std::endl;
 }
 
 void RobotomyRequestForm::execute(Bureaucrat const& executor) const

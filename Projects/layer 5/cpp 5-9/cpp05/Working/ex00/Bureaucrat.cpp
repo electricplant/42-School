@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 09:45:34 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/09/10 08:28:05 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/10/05 10:59:21 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@ Bureaucrat::Bureaucrat(std::string name, int grade)
 {
 	std::cout << "Constructor called for " << name  << " : " << grade << std::endl;
 	if (grade > 150)
-		throw Bureaucrat::GradeTooHighException();
-	else if (grade < 1)
 		throw Bureaucrat::GradeTooLowException();
+	else if (grade < 1)
+		throw Bureaucrat::GradeTooHighException();
 }
 
 Bureaucrat::Bureaucrat(const Bureaucrat& other)
@@ -61,6 +61,7 @@ int Bureaucrat::getGrade() const
 
 void Bureaucrat::incrementGrade()
 {
+	std::cout << "Increment requested for " << this->name << std::endl;
 	if (this->grade < 2)
 		throw Bureaucrat::GradeTooHighException();
 	else
@@ -69,6 +70,7 @@ void Bureaucrat::incrementGrade()
 
 void Bureaucrat::decrementGrade()
 {
+	std::cout << "Decrement requested for " << this->name << std::endl;
 	if (this->grade > 149)
 		throw Bureaucrat::GradeTooLowException();
 	else
@@ -77,7 +79,7 @@ void Bureaucrat::decrementGrade()
 
 std::ostream& operator<<(std::ostream& os, const Bureaucrat bureaucrat)
 {
-	os << bureaucrat.getName() << ", bureaucrat grade" << bureaucrat.getGrade();
+	os << bureaucrat.getName() << ", bureaucrat grade" << bureaucrat.getGrade() << ".";
 	return os;
 }
 
