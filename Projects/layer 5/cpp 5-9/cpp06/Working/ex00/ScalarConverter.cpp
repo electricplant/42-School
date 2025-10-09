@@ -6,44 +6,100 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 14:22:25 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/10/06 15:02:30 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/10/09 17:55:29 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ScalarConverter.hpp"
 
-ScalarConverter::ScalarConverter() 
+ScalarType getType(const std::string& input)
 {
-	std::cout << "Default constructor called" << std::endl;
+	size_t pos = input.find_first_not_of("0123456789+-.");
+	
+	if (input.find("inf") != std::string::npos || 
+			input.find("nan") != std::string::npos) 
+	{
+		return STUPID;
+	}
+	else if (pos != std::string::npos && input[pos] == 'f')
+	{
+		return FLOAT;
+	}
+	else if (input.find(',') != std::string::npos)
+	{
+		return DOUBLE;
+	}
+	else if (input.find_first_of("0123456789") != std::string::npos)
+	{
+		return INT;
+	}
+	else 
+	{
+		return CHAR;
+	}
 }
 
-ScalarConverter::ScalarConverter(const std::string& input)
-: input(input)
+void ScalarConverter::convert(const std::string& input)
 {
+	int i;
+	char sign;
+	char c;
+	ScalarType VarType = INVALID;
+	i = 0;
+	sign = 0;
+	c = 0;
+	if (input.empty())
+		return;
+
+	if (input.length() == 3 && input[0] == '\'' && input[2] == '\'')
+	{
+		c = input[1];
+		std::cout <<  "char: ";
+		if (c < 32 || c >= 127)
+		{
+			std::cout << "non-printable" << std::endl;
+		}
+		else
+		{
+			std::cout << "'" << c << "'" << std::endl;
+		}
+		std::cout << "int: " << static_cast<int>(c) << std::endl;
+		std::cout << "float: " << static_cast<float>(c) << ".0f" << std::endl;
+		std::cout << "double: " << static_cast<double>(c) << ".0" << std::endl;
+		return;
+	}
+
+	
+	if (input[0] == '-' || input[0] == '+')
+	{
+		if (input[0] == '-')
+		sign = '-';
+	}
+	
+	VarType = getType(input);
+	switch (VarType){
+		case CHAR:
+		
+			break;
+		case INT:
+
+			break;
+		case FLOAT:
+
+			break;
+		case DOUBLE:
+
+			break;
+		case STUPID:
+
+			break;
+		case INVALID:
+
+			break;
+	}	
 }
 
-ScalarConverter::ScalarConverter(const ScalarConverter& other)
-: input(other.input)
+const char* ScalarConverter::ConvertException::what() const throw()
 {
-	std::cout << "Copy constructor called" << std::endl;
+	return "Conversion failed";
 }
-
-ScalarConverter& ScalarConverter::operator=(const ScalarConverter& other)
-{
-	std::cout << "Copy assignment operator called" << std::endl;
-	return *this;
-}
-
-ScalarConverter::~ScalarConverter()
-{
-	std::cout << "Default destructor called" << std::endl;
-}
-
-void ScalarConverter::convert(std::string input)
-{
-	//output char literals ex: 'c' 'a' (if not ASCII or printable, add message)
-	//output int literals ex 0, -42, 42
-	//output float literals ex: 0.0f, -4.2f, 4.2f
-	//output double literals ex: 0.0, -4.2, 4.2
-}
-
