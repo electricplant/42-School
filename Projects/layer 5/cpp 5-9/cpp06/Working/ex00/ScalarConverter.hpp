@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 14:22:27 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/10/09 17:19:18 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/10/11 20:56:54 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <string>
+#include <cstdlib>
 
 enum ScalarType
 {
