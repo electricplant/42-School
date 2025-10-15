@@ -6,11 +6,11 @@
 #    By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/04 09:45:40 by dgerhard          #+#    #+#              #
-#    Updated: 2025/10/06 14:24:20 by dgerhard         ###   ########.fr        #
+#    Updated: 2025/10/14 08:51:27 by dgerhard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = ScalarConverter
+NAME = convert
 
 RM = rm -rf
 CC = c++

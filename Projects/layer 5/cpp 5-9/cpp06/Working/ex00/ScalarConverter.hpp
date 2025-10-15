@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 14:22:27 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/10/11 20:56:54 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/10/15 19:13:40 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,21 +16,14 @@
 #include <stdio.h>
 #include <string>
 #include <cstdlib>
-
-enum ScalarType
-{
-	CHAR,
-	INT,
-	FLOAT,
-	DOUBLE,
-	INVALID,
-	STUPID
-};
+#include <iomanip>
+#include <limits.h>
+#include <cfloat>
 
 class ScalarConverter
 {
 	public:
-		static void convert(const std::string& input);
+		static void convert(const std::string input);
 
 	class ConvertException: public std::exception
 	{
