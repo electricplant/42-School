@@ -6,16 +6,18 @@
 #    By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/04 09:45:40 by dgerhard          #+#    #+#              #
-#    Updated: 2025/10/06 14:25:14 by dgerhard         ###   ########.fr        #
+#    Updated: 2025/10/19 13:44:52 by dgerhard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = ScalarConverter
+NAME = cereal
 
 RM = rm -rf
 CC = c++
 CFLAGS = -std=c++98 -Wall -Wextra -Werror
 SRC =	main.cpp \
+		Serialize.cpp \
+		Data.cpp
 OBJ = $(SRC:.cpp=.o)
 
 all: $(NAME)
