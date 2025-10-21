@@ -6,16 +6,17 @@
 #    By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/04 09:45:40 by dgerhard          #+#    #+#              #
-#    Updated: 2025/10/06 14:25:23 by dgerhard         ###   ########.fr        #
+#    Updated: 2025/10/21 10:49:30 by dgerhard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = ScalarConverter
+NAME = Type
 
 RM = rm -rf
 CC = c++
 CFLAGS = -std=c++98 -Wall -Wextra -Werror
 SRC =	main.cpp \
+		Base.cpp
 OBJ = $(SRC:.cpp=.o)
 
 all: $(NAME)
