@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 14:22:25 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/10/15 19:14:39 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/10/29 08:24:20 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,13 +82,6 @@ static void		nanConvert() {
 	std::cout << "double: " << 0 << std::endl;
 }
 
-static void		error() {
-	std::cout << "char: impossible" << std::endl;
-	std::cout << "int: " << 0 << std::endl;
-	std::cout << "float: " << 0 << std::endl;
-	std::cout << "double: " << 0 << std::endl;
-}
-
 void ScalarConverter::convert(std::string param) {
 	if (std::isprint(param[0]) && !std::isdigit(param[0])) {
 		if (param.length() == 1)
@@ -100,7 +93,7 @@ void ScalarConverter::convert(std::string param) {
 		else if (param == "nan" || param == "nanf")
 			nanConvert();
 		else
-			error();
+			throw ConvertException();
 	}
 	else if (param[param.length() - 1] == 'f') {
 		long unsigned int	i = 0;
@@ -109,7 +102,7 @@ void ScalarConverter::convert(std::string param) {
 		if (i == param.length() - 1)
 			floatConvert(param);
 		else
-			error();
+			throw ConvertException();
 	}
 	else if (param.find('.') != std::string::npos) {
 		long unsigned int	i = 0;
@@ -118,7 +111,7 @@ void ScalarConverter::convert(std::string param) {
 		if (i == param.length())
 			doubleConvert(param);
 		else
-			error();
+			throw ConvertException();
 	}
 	else if (std::isdigit(param[0])) {
 		long unsigned int	i = 0;
@@ -127,10 +120,10 @@ void ScalarConverter::convert(std::string param) {
 		if (i == param.length())
 			intConvert(param);
 		else
-			error();
+			throw ConvertException();
 	}
 	else
-		error();
+		throw ConvertException();
 }
 
 

@@ -5,32 +5,38 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/06 14:23:46 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/10/29 08:24:48 by dgerhard         ###   ########.fr       */
+/*   Created: 2025/10/24 16:12:00 by dgerhard          #+#    #+#             */
+/*   Updated: 2025/10/29 08:37:26 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ScalarConverter.hpp"
-#include <string>
+#include "Array.hpp"
 #include <iostream>
 
-int main(int argc, char **argv)
+int main()
 {
-	if (argc != 2)
 	{
-		std::cerr << "Invalid/Blank input" << std::endl;
-		return 1;
+		Array<int> arr(5);
+		try
+		{
+			arr[2] = 42;
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << '\n';
+		}
 	}
-	std::string input = argv[1];
-	
-	try
+
 	{
-		ScalarConverter::convert(input);
-	}
-	catch (const ScalarConverter::ConvertException& e)
-	{
-		std::cerr << "Error: " << e.what() << std::endl;
-		return 1;
+		Array<int> arr(5);
+		try
+		{
+			arr[10] = 42;
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << '\n';
+		}
 	}
 
 	return 0;
