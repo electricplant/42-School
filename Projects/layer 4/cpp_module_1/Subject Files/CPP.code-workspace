@@ -55,7 +55,14 @@
 			"streambuf": "cpp",
 			"typeinfo": "cpp",
 			"fstream": "cpp",
-			"cfloat": "cpp"
+			"cfloat": "cpp",
+			"charconv": "cpp",
+			"set": "cpp",
+			"format": "cpp",
+			"span": "cpp",
+			"text_encoding": "cpp",
+			"typeindex": "cpp",
+			"variant": "cpp"
 		}
 	}
 }
