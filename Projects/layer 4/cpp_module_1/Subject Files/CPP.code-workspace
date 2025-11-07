@@ -62,7 +62,9 @@
 			"span": "cpp",
 			"text_encoding": "cpp",
 			"typeindex": "cpp",
-			"variant": "cpp"
+			"variant": "cpp",
+			"list": "cpp",
+			"map": "cpp"
 		}
 	}
 }
