@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 06:23:19 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/11/07 08:02:57 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/07 08:31:42 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ BitcoinExchange& BitcoinExchange::operator=(const BitcoinExchange& other)
 }
 BitcoinExchange::~BitcoinExchange()
 {
-
+	
 }
 
 bool BitcoinExchange::_checkDate(const std::string date)

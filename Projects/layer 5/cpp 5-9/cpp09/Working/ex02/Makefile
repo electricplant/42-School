@@ -6,16 +6,17 @@
 #    By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/04 09:45:40 by dgerhard          #+#    #+#              #
-#    Updated: 2025/10/31 10:39:46 by dgerhard         ###   ########.fr        #
+#    Updated: 2025/11/08 07:44:08 by dgerhard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = ex02
+NAME = PmergeMe
 
 RM = rm -rf
 CC = c++
 CFLAGS = -std=c++98 -Wall -Wextra -Werror
-SRC =	main.cpp
+SRC =	main.cpp \
+		PmergeMe.cpp
 OBJ = $(SRC:.cpp=.o)
 
 all: $(NAME)

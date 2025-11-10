@@ -6,7 +6,7 @@
 #    By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/04 09:45:40 by dgerhard          #+#    #+#              #
-#    Updated: 2025/10/31 10:39:41 by dgerhard         ###   ########.fr        #
+#    Updated: 2025/11/07 08:04:58 by dgerhard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,8 @@ NAME = ex01
 RM = rm -rf
 CC = c++
 CFLAGS = -std=c++98 -Wall -Wextra -Werror
-SRC =	main.cpp
+SRC =	main.cpp \
+		RPN.cpp
 OBJ = $(SRC:.cpp=.o)
 
 all: $(NAME)

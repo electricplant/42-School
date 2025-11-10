@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 06:25:37 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/11/03 08:15:28 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/07 08:34:16 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,3 +55,7 @@ class ClassName // ( : public inheritedClassName )
 		class InnerExceptionClassName {};
 
 };
+
+#include <string> //for below ostream
+
+std::ostream& operator<<(std::ostream& os, const ClassName& classname);
