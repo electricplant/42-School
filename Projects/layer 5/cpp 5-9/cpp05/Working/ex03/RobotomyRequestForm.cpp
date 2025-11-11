@@ -6,13 +6,15 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 12:07:51 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/09/21 12:30:08 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/11 14:14:01 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RobotomyRequestForm.hpp"
 #include "Bureaucrat.hpp"
 #include "AForm.hpp"
+
+RobotomyRequestForm::RobotomyRequestForm() { };
 
 RobotomyRequestForm::RobotomyRequestForm(std::string target)
 : AForm("Robotomy", 72, 45), target(target)

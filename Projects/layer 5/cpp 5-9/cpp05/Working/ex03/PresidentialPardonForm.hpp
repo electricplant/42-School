@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 12:07:44 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/09/21 12:13:53 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/11 14:13:25 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ class PresidentialPardonForm : public AForm
 {
 	private:
 		std::string target;
+		PresidentialPardonForm();
 		
 	public:
 		PresidentialPardonForm(std::string target);

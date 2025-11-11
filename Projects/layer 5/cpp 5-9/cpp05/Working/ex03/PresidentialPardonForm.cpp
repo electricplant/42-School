@@ -6,13 +6,15 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 12:07:46 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/09/21 12:16:10 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/11 14:13:34 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PresidentialPardonForm.hpp"
 #include "Bureaucrat.hpp"
 #include "AForm.hpp"
+
+PresidentialPardonForm::PresidentialPardonForm() { };
 
 PresidentialPardonForm::PresidentialPardonForm(std::string target)
 : AForm("Presidential", 25, 5), target(target)

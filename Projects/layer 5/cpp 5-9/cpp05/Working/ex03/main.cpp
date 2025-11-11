@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/10 09:13:19 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/10/05 11:52:17 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/11 14:15:51 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int main(void)
 	catch(Intern::InvalidFormException& e) {std::cout << e.what() << std::endl;}
 	std::cout << std::endl;
 
-	try // Correct Form name and not enough to sign
+	try // Correct Form name but not enough to sign
 	{
 		Intern someRandomIntern;
 		Bureaucrat Leela("Leela", 73);

@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 09:45:36 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/10/05 11:42:29 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/11 14:12:21 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,9 @@ class Bureaucrat
 	private:
 		const std::string name;
 		int grade;
-	public:
 		Bureaucrat();
+
+	public:
 		Bureaucrat(std::string name, int grade);
 		Bureaucrat(const Bureaucrat& other);
 		Bureaucrat& operator=(const Bureaucrat& other);
