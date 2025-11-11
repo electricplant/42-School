@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 15:45:02 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/08/05 09:34:42 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/11 13:54:24 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ class Bureaucrat;
 class Form
 {
 	private:
-		std::string name;
+		const std::string name;
 		bool sign;
 		const int gradeSign;
 		const int gradeEx;

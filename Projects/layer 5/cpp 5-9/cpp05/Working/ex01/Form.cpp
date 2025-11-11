@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/05 08:33:59 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/08/05 09:34:37 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/11 13:56:38 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,6 @@ const char* Form::GradeTooHighException::what() const throw()
 
 std::ostream& operator<<(std::ostream& os, const Form& form)
 {
-	os << form.getName() << ", bureaucrat gradeSign" << form.getGradeSign();
+	os << form.getName() << ", bureaucrat gradeSign " << form.getGradeSign();
 	return os;
 }
