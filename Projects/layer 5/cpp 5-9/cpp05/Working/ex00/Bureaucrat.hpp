@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 09:45:36 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/09/10 08:25:00 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/11 13:47:51 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ class Bureaucrat
 	private:
 		const std::string name;
 		int grade;
-	public:
 		Bureaucrat();
+	public:
 		Bureaucrat(std::string name, int grade);
 		Bureaucrat(const Bureaucrat& other);
 		Bureaucrat& operator=(const Bureaucrat& other);
@@ -41,6 +41,6 @@ class Bureaucrat
 			public:
 				virtual const char* what() const throw();
 		};
-};
-
+	};
+	
 std::ostream& operator<<(std::ostream& os, const Bureaucrat& bureaucrat);
