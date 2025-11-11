@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 12:07:49 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/09/21 12:28:33 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/11 14:05:00 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ class RobotomyRequestForm : public AForm
 {
 	private:
 		std::string target;
+		RobotomyRequestForm();
+
 	public:
 		RobotomyRequestForm(std::string target);
 		RobotomyRequestForm(const RobotomyRequestForm& other);

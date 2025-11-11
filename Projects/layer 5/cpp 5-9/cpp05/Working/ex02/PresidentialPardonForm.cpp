@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 12:07:46 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/10/05 11:32:04 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/11 14:02:55 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,12 @@
 #include "Bureaucrat.hpp"
 #include "AForm.hpp"
 
+PresidentialPardonForm::PresidentialPardonForm() { };
+
 PresidentialPardonForm::PresidentialPardonForm(std::string target)
 : AForm("Presidential", 25, 5), target(target)
 {
-	std::cout << "Default constructor Presidential called" << std::endl;
+	std::cout << "PresidentialPardonForm constructor called" << std::endl;
 }
 
 PresidentialPardonForm::PresidentialPardonForm(const PresidentialPardonForm& other)

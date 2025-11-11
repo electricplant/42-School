@@ -6,13 +6,15 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 12:58:19 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/10/05 11:32:18 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/11 14:05:38 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ShrubberyCreationForm.hpp"
 #include "Bureaucrat.hpp"
 #include "AForm.hpp"
+
+ShrubberyCreationForm::ShrubberyCreationForm() { };
 
 ShrubberyCreationForm::ShrubberyCreationForm(std::string target)
 : AForm("Shrubbery", 145, 137), target(target)

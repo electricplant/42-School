@@ -19,7 +19,7 @@ class Bureaucrat;
 class AForm
 {
 	private:
-		std::string name;
+		const std::string name;
 		bool sign;
 		const int gradeSign;
 		const int gradeEx;

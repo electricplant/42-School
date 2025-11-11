@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 12:39:22 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/09/21 11:49:05 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/11 14:05:27 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ class ShrubberyCreationForm : public AForm
 {
 	private:
 		std::string target;
+		ShrubberyCreationForm();
 		
 	public:
 		ShrubberyCreationForm(std::string target);
