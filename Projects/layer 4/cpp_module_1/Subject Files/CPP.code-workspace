@@ -64,7 +64,19 @@
 			"typeindex": "cpp",
 			"variant": "cpp",
 			"list": "cpp",
-			"map": "cpp"
+			"map": "cpp",
+			"cstring": "cpp",
+			"forward_list": "cpp",
+			"buffer": "cpp",
+			"executor": "cpp",
+			"io_context": "cpp",
+			"netfwd": "cpp",
+			"ratio": "cpp",
+			"socket": "cpp",
+			"ranges": "cpp",
+			"thread": "cpp",
+			"stop_token": "cpp",
+			"queue": "cpp"
 		}
 	}
 }
