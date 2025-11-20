@@ -15,10 +15,7 @@
 #include <iostream>
 #include <string>
 
-AForm::AForm() : name("bob"), sign(false), gradeSign(1), gradeEx(1)
-{
-	std::cout << "Default constructor AForm called" << std::endl;
-}
+AForm::AForm() : name("bob"), sign(false), gradeSign(1), gradeEx(1) { }
 
 AForm::AForm(std::string name, const int gradeSign, const int gradeEx)
 	: name(name), gradeSign(gradeSign), gradeEx(gradeEx)

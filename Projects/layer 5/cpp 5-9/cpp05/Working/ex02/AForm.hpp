@@ -23,7 +23,7 @@ class AForm
 		bool sign;
 		const int gradeSign;
 		const int gradeEx;
-
+		
 	public:
 		AForm();
 		AForm(std::string name, const int gradeSign, const int gradeEx);
