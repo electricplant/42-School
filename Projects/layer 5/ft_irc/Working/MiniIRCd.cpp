@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:58:49 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/11/19 07:53:34 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/22 10:20:18 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,145 @@ static void send_numeric(int fd, const std::string& target, int code, const std:
 	sendLine(fd, os.str());
 }
 
+
+//CABLE MANAGEMENT
+
+void MiniIRCd::handle_ping(const IRCMessage& msg, const int& fd, const std::string& line)
+{
+		debug_print_raw("RECV PING raw", line);
+
+	if (!msg.trailing.empty()) {
+		sendLine(fd, (std::string("weird3")));
+		std::ostringstream os; os << "PONG :" << msg.trailing;
+		sendLine(fd, os.str());
+	} else if (!msg.params.empty()) {
+		sendLine(fd, (std::string("weird2")));
+		std::ostringstream os; os << "PONG :" << msg.params[0];
+		sendLine(fd, os.str());
+	} else {
+		sendLine(fd, (std::string("weird")));
+	}
+}
+
+void MiniIRCd::handle_nick(const IRCMessage& msg, const int& fd)
+{
+	std::string newnick;
+	if (!msg.params.empty()) newnick = msg.params[0];
+	if (newnick.empty()) {
+		sendLine(fd, "431 * :No nickname given");
+	} else {
+		if (newnick[0] == ':') newnick = newnick.substr(1);
+		if (nick_map_.find(newnick) != nick_map_.end()) {
+			sendLine(fd, (std::string("433 * ") + newnick + " :Nickname is already in use"));
+		} else {
+			Client& c = clients_[fd];
+			if (!c.nick.empty()) nick_map_.erase(c.nick);
+			c.nick = newnick;
+			nick_map_[newnick] = fd;
+			if (!c.user.empty() && !c.registered) {
+				c.registered = true;
+				send_numeric(fd, c.nick, 001, ":Welcome to miniircd");
+			}
+		}
+	}
+}
+//does not print nick upon exit
+
+void MiniIRCd::handle_user(const IRCMessage& msg, const int& fd)
+{
+	if (msg.params.size() < 3) {
+			if (msg.params.size() < 3) {
+			sendLine(fd, "461 USER :Not enough parameters");
+		} else {
+			Client& c = clients_[fd];
+			c.user = msg.params[0];
+			if (!msg.trailing.empty()) c.real = msg.trailing;
+			if (!c.nick.empty() && !c.registered) {
+				c.registered = true;
+				send_numeric(fd, c.nick, 001, ":Welcome to miniircd");
+			}
+		}
+	}
+}
+
+void MiniIRCd::handle_join(const IRCMessage& msg, const int& fd)
+{
+		if (msg.params.empty()) {
+		sendLine(fd, "461 JOIN :Not enough parameters");
+	} else {
+		std::string chan = msg.params[0];
+		if (chan.empty()) return ;
+		if (chan[0] != '#') chan = std::string("#") + chan;
+		Client& c = clients_[fd];
+		std::vector<int>& v = channels_[chan];
+		bool already = false;
+		for (size_t k=0;k<v.size();++k) if (v[k]==fd) { already = true; break; }
+		if (!already) v.push_back(fd);
+		std::ostringstream joinmsg;
+		joinmsg << ":" << nick_or_fd(c) << " JOIN :" << chan;
+		for (size_t k=0;k<v.size();++k) sendLine(v[k], joinmsg.str());
+		std::ostringstream names;
+		names << ":miniircd 353 " << (c.nick.empty() ? "*" : c.nick) << " = " << chan << " :";
+		for (size_t k=0;k<v.size();++k) {
+			Client& oc = clients_[v[k]];
+			names << (oc.nick.empty() ? nick_or_fd(oc) : oc.nick) << (k+1<v.size() ? " " : "");
+		}
+		sendLine(fd, names.str());
+		std::ostringstream endnames;
+		endnames << ":miniircd 366 " << (c.nick.empty() ? "*" : c.nick) << " " << chan << " :End of /NAMES list.";
+		sendLine(fd, endnames.str());
+	}
+}
+
+void MiniIRCd::handle_privmsg(const IRCMessage& msg, const int& fd)
+{
+	if (msg.params.empty()) { sendLine(fd, "411 :No recipient given"); return ; }
+	std::string target = msg.params[0];
+	std::string text = msg.trailing;
+	Client& sender = clients_[fd];
+	if (target.size() > 0 && target[0] == '#') {
+		std::vector<int>& v = channels_[target];
+		for (size_t k=0;k<v.size();++k) {
+			if (v[k] == fd) continue;
+			std::ostringstream pm;
+			pm << ":" << nick_or_fd(sender) << " PRIVMSG " << target << " :" << text;
+			sendLine(v[k], pm.str());
+		}
+	} else {
+		std::map<std::string,int>::iterator it = nick_map_.find(target);
+		if (it == nick_map_.end()) {
+			sendLine(fd, (std::string("401 ") + target + " :No such nick/channel"));
+		} else {
+			int od = it->second;
+			std::ostringstream pm;
+			pm << ":" << nick_or_fd(sender) << " PRIVMSG " << target << " :" << text;
+			sendLine(od, pm.str());
+		}
+	}
+}
+
+void MiniIRCd::handle_quit(const int& fd, std::vector<struct pollfd>& pfds, int i)
+{
+	Client c = clients_[fd];
+	std::ostringstream q;
+	q << ":" << nick_or_fd(c) << " QUIT :Client Quit";
+	for (std::map<std::string, std::vector<int> >::iterator it=channels_.begin(); it!=channels_.end(); ++it) {
+		std::vector<int>& v = it->second;
+		for (size_t k=0;k<v.size();++k) if (v[k] != fd) sendLine(v[k], q.str());
+	}
+	sendLine(fd, "ERROR :Closing Link");
+	close(fd);
+	if (!c.nick.empty()) nick_map_.erase(c.nick);
+	clients_.erase(fd);
+	pfds.erase(pfds.begin()+i);
+	std::cout << "fd " << fd << " quit\n";
+}
+
+
+
+
+//END CABLE MANAGEMENT
+
 int MiniIRCd::run() {
 	listenfd_ = make_listen();
 	if (listenfd_ < 0) { std::cerr << "listen failed\n"; return 1; }
@@ -121,7 +260,7 @@ int MiniIRCd::run() {
 				std::cout << "accept fd=" << newfd << "\n";
 			}
 		}
-		for (int i = (int)pfds.size()-1; i >= 1; --i) {
+		for (int i = (int)pfds.size()-1; i >= 1; --i) { //iterate through each user and check what their status is
 			int fd = pfds[i].fd;
 			short re = pfds[i].revents;
 			if (re == 0) continue;
@@ -172,115 +311,116 @@ int MiniIRCd::run() {
 
 						debug_print_raw("RECV raw", line);
 						if (cmd == "PING") {
-							debug_print_raw("RECV PING raw", line);
-
-							if (!msg.trailing.empty()) {
-								sendLine(fd, (std::string("weird3")));
-								std::ostringstream os; os << "PONG :" << msg.trailing;
-								sendLine(fd, os.str());
-							} else if (!msg.params.empty()) {
-								sendLine(fd, (std::string("weird2")));
-								std::ostringstream os; os << "PONG :" << msg.params[0];
-								sendLine(fd, os.str());
-							} else {
-								sendLine(fd, (std::string("weird")));
-							}
+							handle_ping(msg, fd, line);
+							// debug_print_raw("RECV PING raw", line);
+							// if (!msg.trailing.empty()) {
+							// 	std::ostringstream os; os << "PONG :" << msg.trailing;
+							// 	sendLine(fd, os.str());
+							// } else if (!msg.params.empty()) {
+							// 	std::ostringstream os; os << "PONG :" << msg.params[0];
+							// 	sendLine(fd, os.str());
+							// }
 						} else if (cmd == "NICK") {
-							std::string newnick;
-							if (!msg.params.empty()) newnick = msg.params[0];
-							if (newnick.empty()) {
-								sendLine(fd, "431 * :No nickname given");
-							} else {
-								if (newnick[0] == ':') newnick = newnick.substr(1);
-								if (nick_map_.find(newnick) != nick_map_.end()) {
-									sendLine(fd, (std::string("433 * ") + newnick + " :Nickname is already in use"));
-								} else {
-									Client& c = clients_[fd];
-									if (!c.nick.empty()) nick_map_.erase(c.nick);
-									c.nick = newnick;
-									nick_map_[newnick] = fd;
-									if (!c.user.empty() && !c.registered) {
-										c.registered = true;
-										send_numeric(fd, c.nick, 001, ":Welcome to miniircd");
-									}
-								}
-							}
+							handle_nick(msg, fd);
+							// std::string newnick;
+							// if (!msg.params.empty()) newnick = msg.params[0];
+							// if (newnick.empty()) {
+							// 	sendLine(fd, "431 * :No nickname given");
+							// } else {
+							// 	if (newnick[0] == ':') newnick = newnick.substr(1);
+							// 	if (nick_map_.find(newnick) != nick_map_.end()) {
+							// 		sendLine(fd, (std::string("433 * ") + newnick + " :Nickname is already in use"));
+							// 	} else {
+							// 		Client& c = clients_[fd];
+							// 		if (!c.nick.empty()) nick_map_.erase(c.nick);
+							// 		c.nick = newnick;
+							// 		nick_map_[newnick] = fd;
+							// 		if (!c.user.empty() && !c.registered) {
+							// 			c.registered = true;
+							// 			send_numeric(fd, c.nick, 001, ":Welcome to miniircd");
+							// 		}
+							// 	}
+							// }
 						} else if (cmd == "USER") {
-							if (msg.params.size() < 3) {
-								sendLine(fd, "461 USER :Not enough parameters");
-							} else {
-								Client& c = clients_[fd];
-								c.user = msg.params[0];
-								if (!msg.trailing.empty()) c.real = msg.trailing;
-								if (!c.nick.empty() && !c.registered) {
-									c.registered = true;
-									send_numeric(fd, c.nick, 001, ":Welcome to miniircd");
-								}
-							}
+							handle_user(msg, fd);
+							// if (msg.params.size() < 3) {
+							// 	sendLine(fd, "461 USER :Not enough parameters");
+							// } else {
+							// 	Client& c = clients_[fd];
+							// 	c.user = msg.params[0];
+							// 	if (!msg.trailing.empty()) c.real = msg.trailing;
+							// 	if (!c.nick.empty() && !c.registered) {
+							// 		c.registered = true;
+							// 		send_numeric(fd, c.nick, 001, ":Welcome to miniircd");
+							// 	}
+							// }
 						} else if (cmd == "JOIN") {
-							if (msg.params.empty()) {
-								sendLine(fd, "461 JOIN :Not enough parameters");
-							} else {
-								std::string chan = msg.params[0];
-								if (chan.empty()) continue;
-								if (chan[0] != '#') chan = std::string("#") + chan;
-								Client& c = clients_[fd];
-								std::vector<int>& v = channels_[chan];
-								bool already = false;
-								for (size_t k=0;k<v.size();++k) if (v[k]==fd) { already = true; break; }
-								if (!already) v.push_back(fd);
-								std::ostringstream joinmsg;
-								joinmsg << ":" << nick_or_fd(c) << " JOIN :" << chan;
-								for (size_t k=0;k<v.size();++k) sendLine(v[k], joinmsg.str());
-								std::ostringstream names;
-								names << ":miniircd 353 " << (c.nick.empty() ? "*" : c.nick) << " = " << chan << " :";
-								for (size_t k=0;k<v.size();++k) {
-									Client& oc = clients_[v[k]];
-									names << (oc.nick.empty() ? nick_or_fd(oc) : oc.nick) << (k+1<v.size() ? " " : "");
-								}
-								sendLine(fd, names.str());
-								std::ostringstream endnames;
-								endnames << ":miniircd 366 " << (c.nick.empty() ? "*" : c.nick) << " " << chan << " :End of /NAMES list.";
-								sendLine(fd, endnames.str());
-							}
+							handle_join(msg, fd);
+							// if (msg.params.empty()) {
+							// 	sendLine(fd, "461 JOIN :Not enough parameters");
+							// } else {
+							// 	std::string chan = msg.params[0];
+							// 	if (chan.empty()) continue;
+							// 	if (chan[0] != '#') chan = std::string("#") + chan;
+							// 	Client& c = clients_[fd];
+							// 	std::vector<int>& v = channels_[chan];
+							// 	bool already = false;
+							// 	for (size_t k=0;k<v.size();++k) if (v[k]==fd) { already = true; break; }
+							// 	if (!already) v.push_back(fd);
+							// 	std::ostringstream joinmsg;
+							// 	joinmsg << ":" << nick_or_fd(c) << " JOIN :" << chan;
+							// 	for (size_t k=0;k<v.size();++k) sendLine(v[k], joinmsg.str());
+							// 	std::ostringstream names;
+							// 	names << ":miniircd 353 " << (c.nick.empty() ? "*" : c.nick) << " = " << chan << " :";
+							// 	for (size_t k=0;k<v.size();++k) {
+							// 		Client& oc = clients_[v[k]];
+							// 		names << (oc.nick.empty() ? nick_or_fd(oc) : oc.nick) << (k+1<v.size() ? " " : "");
+							// 	}
+							// 	sendLine(fd, names.str());
+							// 	std::ostringstream endnames;
+							// 	endnames << ":miniircd 366 " << (c.nick.empty() ? "*" : c.nick) << " " << chan << " :End of /NAMES list.";
+							// 	sendLine(fd, endnames.str());
+							// }
 						} else if (cmd == "PRIVMSG") {
-							if (msg.params.empty()) { sendLine(fd, "411 :No recipient given"); continue; }
-							std::string target = msg.params[0];
-							std::string text = msg.trailing;
-							Client& sender = clients_[fd];
-							if (target.size() > 0 && target[0] == '#') {
-								std::vector<int>& v = channels_[target];
-								for (size_t k=0;k<v.size();++k) {
-									if (v[k] == fd) continue;
-									std::ostringstream pm;
-									pm << ":" << nick_or_fd(sender) << " PRIVMSG " << target << " :" << text;
-									sendLine(v[k], pm.str());
-								}
-							} else {
-								std::map<std::string,int>::iterator it = nick_map_.find(target);
-								if (it == nick_map_.end()) {
-									sendLine(fd, (std::string("401 ") + target + " :No such nick/channel"));
-								} else {
-									int od = it->second;
-									std::ostringstream pm;
-									pm << ":" << nick_or_fd(sender) << " PRIVMSG " << target << " :" << text;
-									sendLine(od, pm.str());
-								}
-							}
+							handle_privmsg(msg, fd);
+							// if (msg.params.empty()) { sendLine(fd, "411 :No recipient given"); continue; }
+							// std::string target = msg.params[0];
+							// std::string text = msg.trailing;
+							// Client& sender = clients_[fd];
+							// if (target.size() > 0 && target[0] == '#') {
+							// 	std::vector<int>& v = channels_[target];
+							// 	for (size_t k=0;k<v.size();++k) {
+							// 		if (v[k] == fd) continue;
+							// 		std::ostringstream pm;
+							// 		pm << ":" << nick_or_fd(sender) << " PRIVMSG " << target << " :" << text;
+							// 		sendLine(v[k], pm.str());
+							// 	}
+							// } else {
+							// 	std::map<std::string,int>::iterator it = nick_map_.find(target);
+							// 	if (it == nick_map_.end()) {
+							// 		sendLine(fd, (std::string("401 ") + target + " :No such nick/channel"));
+							// 	} else {
+							// 		int od = it->second;
+							// 		std::ostringstream pm;
+							// 		pm << ":" << nick_or_fd(sender) << " PRIVMSG " << target << " :" << text;
+							// 		sendLine(od, pm.str());
+							// 	}
+							// }
 						} else if (cmd == "QUIT") {
-							Client c = clients_[fd];
-							std::ostringstream q;
-							q << ":" << nick_or_fd(c) << " QUIT :Client Quit";
-							for (std::map<std::string, std::vector<int> >::iterator it=channels_.begin(); it!=channels_.end(); ++it) {
-								std::vector<int>& v = it->second;
-								for (size_t k=0;k<v.size();++k) if (v[k] != fd) sendLine(v[k], q.str());
-							}
-							sendLine(fd, "ERROR :Closing Link");
-							close(fd);
-							if (!c.nick.empty()) nick_map_.erase(c.nick);
-							clients_.erase(fd);
-							pfds.erase(pfds.begin()+i);
-							std::cout << "fd " << fd << " quit\n";
+							handle_quit(fd, pfds, i);
+							// Client c = clients_[fd];
+							// std::ostringstream q;
+							// q << ":" << nick_or_fd(c) << " QUIT :Client Quit";
+							// for (std::map<std::string, std::vector<int> >::iterator it=channels_.begin(); it!=channels_.end(); ++it) {
+							// 	std::vector<int>& v = it->second;
+							// 	for (size_t k=0;k<v.size();++k) if (v[k] != fd) sendLine(v[k], q.str());
+							// }
+							// sendLine(fd, "ERROR :Closing Link");
+							// close(fd);
+							// if (!c.nick.empty()) nick_map_.erase(c.nick);
+							// clients_.erase(fd);
+							// pfds.erase(pfds.begin()+i);
+							// std::cout << "fd " << fd << " quit\n";
 							break;
 						} else {
 							sendLine(fd, std::string(":miniircd NOTICE * :Unknown command ") + cmd);

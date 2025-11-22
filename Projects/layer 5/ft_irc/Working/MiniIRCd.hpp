@@ -6,13 +6,15 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:53:18 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/11/19 06:50:06 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/22 10:19:32 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <string>
 #include <map>
 #include <vector>
+
+struct IRCMessage;
 
 struct Client {
 	int fd;
@@ -38,4 +40,11 @@ private:
 	std::map<std::string, std::vector<int> > channels_;
 
 	int make_listen();
+	void handle_ping(const IRCMessage& msg, const int& fd, const std::string& line);
+	void handle_nick(const IRCMessage& msg, const int& fd);
+	void handle_user(const IRCMessage& msg, const int& fd);
+	void handle_join(const IRCMessage& msg, const int& fd);
+	void handle_privmsg(const IRCMessage& msg, const int& fd);
+	void handle_quit(const int& fd, std::vector<struct pollfd>& pfds, int i);
+
 };
