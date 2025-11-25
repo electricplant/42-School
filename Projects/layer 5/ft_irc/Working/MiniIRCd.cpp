@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:58:49 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/11/24 08:59:05 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/25 13:32:22 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
-#include <fcntl.h>
+#include <fcntl.h> 
 #include <poll.h>
 #include <errno.h>
 #include <string.h>
@@ -283,7 +283,7 @@ int MiniIRCd::run() {
 		if (pfds[0].revents & POLLIN) { // = incoming connection
 			int newfd = accept(listenfd_, NULL, NULL);
 			if (newfd >= 0) {
-				int flags = fcntl(newfd, F_GETFL, 0);
+				int flags = fcntl(newfd, F_GETFL, 0); 
 				fcntl(newfd, F_SETFL, flags | O_NONBLOCK);
 				Client c; c.fd = newfd; c.registered = false;
 				clients_[newfd] = c;
@@ -327,7 +327,7 @@ int MiniIRCd::run() {
 					while ((pos = clients_[fd].inbuf.find("\r\n")) != std::string::npos ||
 						(pos = clients_[fd].inbuf.find("\n")) != std::string::npos) {
 						std::string line = clients_[fd].inbuf.substr(0, pos);
-						size_t erase_len = 1;
+						size_t erase_len = 1; 
 						if (clients_[fd].inbuf.size() > pos && clients_[fd].inbuf[pos] == '\r') {
 							if (clients_[fd].inbuf.size() > pos+1 && clients_[fd].inbuf[pos+1] == '\n') erase_len = 2;
 						} else {
@@ -342,7 +342,7 @@ int MiniIRCd::run() {
 						std::string cmd = msg.command;
 						for (size_t u=0; u<cmd.size(); ++u) cmd[u] = toupper(cmd[u]);
 
-						
+						//put all this into "handle_command"
 						if (cmd == "PING") {
 							handle_ping(msg, fd, line);
 						} else if (cmd == "NICK") {
