@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-// MY COMMENT
+// MY COMMENT AGAIN
 
 #include "MiniIRCd.hpp"
 #include "IRCParser.hpp"
