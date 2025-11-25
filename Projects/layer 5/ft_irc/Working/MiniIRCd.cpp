@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:58:49 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/11/25 13:32:22 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/25 14:32:11 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,8 +100,6 @@ static void send_numeric(int fd, const std::string& target, int code, const std:
 	sendLine(fd, os.str());
 }
 
-
-//CABLE MANAGEMENT
 
 void MiniIRCd::handle_ping(const IRCMessage& msg, const int& fd, const std::string& line)
 {
@@ -265,7 +263,7 @@ void MiniIRCd::handle_cap(const IRCMessage& msg, const int& fd)
 		sendLine(fd, std::string(":miniircd NOTICE * :Unknown CAP subcommand"));
 	}
 }
-//END CABLE MANAGEMENT
+
 
 int MiniIRCd::run() {
 	listenfd_ = make_listen();
