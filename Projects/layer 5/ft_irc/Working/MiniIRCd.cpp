@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:58:49 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/11/25 14:32:11 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/27 08:59:27 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,11 @@
 #define MAXLINE 512
 #define LISTEN_BACKLOG 16
 
-MiniIRCd::MiniIRCd(const std::string& port) : port_(port), listenfd_(-1) {}
+// MiniIRCd::MiniIRCd(const std::string& port) : port_(port), listenfd_(-1) {}
+// MiniIRCd::~MiniIRCd() { if (listenfd_ != -1) close(listenfd_); }
+
+MiniIRCd::MiniIRCd(const std::string& port, const std::string& password)
+    : port_(port), server_password_(password), listenfd_(-1) {}
 MiniIRCd::~MiniIRCd() { if (listenfd_ != -1) close(listenfd_); }
 
 int MiniIRCd::make_listen() {
@@ -130,6 +134,10 @@ void MiniIRCd::handle_nick(const IRCMessage& msg, const int& fd)
 			sendLine(fd, (std::string("433 * ") + newnick + " :Nickname is already in use"));
 		} else {
 			Client& c = clients_[fd];
+			if (!server_password_.empty() && !c.pass_ok) {
+				sendLine(fd, "464 * :Password required");
+				return ;
+			}
 			if (!c.nick.empty()) nick_map_.erase(c.nick);
 			c.nick = newnick;
 			nick_map_[newnick] = fd;
@@ -149,6 +157,11 @@ void MiniIRCd::handle_user(const IRCMessage& msg, const int& fd)
 	}
 		
 	Client& c = clients_[fd];
+	if (!server_password_.empty() && !c.pass_ok) {
+		sendLine(fd, "464 * :Password required");
+		return ;
+	}
+	
 	c.user = msg.params[0];
 	if (!msg.trailing.empty()) c.real = msg.trailing;
 	if (!c.nick.empty() && !c.registered) {
@@ -264,6 +277,27 @@ void MiniIRCd::handle_cap(const IRCMessage& msg, const int& fd)
 	}
 }
 
+void MiniIRCd::handle_pass(const IRCMessage& msg, const int& fd, std::vector<struct pollfd>& pfds, int i)
+{
+	if (msg.params.empty()) {
+		sendLine(fd, "461 PASS :Not enough parameters");
+		return;
+	}
+	std::string pw = msg.params[0];
+	if (!pw.empty() && pw[0] == ':') pw = pw.substr(1);
+
+	if (server_password_.empty()) {
+		clients_[fd].pass_ok = true;
+		return;
+	}
+
+	if (pw == server_password_) {
+		clients_[fd].pass_ok = true;
+	} else {
+		sendLine(fd, "464 * :Password incorrect");
+		handle_quit(fd, pfds, i);
+	}
+}
 
 int MiniIRCd::run() {
 	listenfd_ = make_listen();
@@ -345,6 +379,8 @@ int MiniIRCd::run() {
 						//put all this into "handle_command"
 						if (cmd == "PING") {
 							handle_ping(msg, fd, line);
+						} else if (cmd == "PASS") {
+							handle_pass(msg, fd, pfds, i);
 						} else if (cmd == "NICK") {
 							handle_nick(msg, fd);
 						} else if (cmd == "USER") {

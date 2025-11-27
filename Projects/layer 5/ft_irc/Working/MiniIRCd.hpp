@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:53:18 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/11/25 14:29:41 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/27 08:47:59 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,18 +25,20 @@ struct Client {
 	std::string user;
 	std::string real;
 	bool registered;
+	bool pass_ok;
 	std::string inbuf;
-	Client(): fd(-1), registered(false) {}
+	Client(): fd(-1), registered(false), pass_ok(false) {}
 };
 
 class MiniIRCd {
 public:
-	MiniIRCd(const std::string& port);
+	MiniIRCd(const std::string& port, const std::string& password = " ");
 	~MiniIRCd();
 	int run(); // blocking run loop, returns 0 on clean exit
 
 private:
 	std::string port_;
+	std::string server_password_;
 	int listenfd_;
 	std::map<int, Client> clients_;
 	std::map<std::string, int> nick_map_;
@@ -44,6 +46,7 @@ private:
 
 	int make_listen();
 	void handle_ping(const IRCMessage& msg, const int& fd, const std::string& line);
+	void handle_pass(const IRCMessage& msg, const int& fd, std::vector<struct pollfd>& pfds, int i);
 	void handle_nick(const IRCMessage& msg, const int& fd);
 	void handle_user(const IRCMessage& msg, const int& fd);
 	void handle_join(const IRCMessage& msg, const int& fd);
