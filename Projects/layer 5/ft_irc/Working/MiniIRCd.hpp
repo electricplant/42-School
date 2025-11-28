@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:53:18 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/11/27 08:47:59 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/28 09:15:45 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ struct Client {
 	bool registered;
 	bool pass_ok;
 	std::string inbuf;
+	std::string outbuf;
 	Client(): fd(-1), registered(false), pass_ok(false) {}
 };
 
@@ -43,6 +44,12 @@ private:
 	std::map<int, Client> clients_;
 	std::map<std::string, int> nick_map_;
 	std::map<std::string, std::vector<int> > channels_;
+	std::vector<struct pollfd> pfds_;
+
+	int find_pollfd_index(int fd);
+	void flush_outgoing(int idx);
+	void sendLine(int fd, const std::string& line);
+	void send_numeric(int fd, const std::string& target, int code, const std::string& msg);
 
 	int make_listen();
 	void handle_ping(const IRCMessage& msg, const int& fd, const std::string& line);

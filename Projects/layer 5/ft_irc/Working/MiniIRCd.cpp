@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:58:49 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/11/27 08:59:27 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/28 09:16:24 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,7 @@
 
 #define MAXLINE 512
 #define LISTEN_BACKLOG 16
-
-// MiniIRCd::MiniIRCd(const std::string& port) : port_(port), listenfd_(-1) {}
-// MiniIRCd::~MiniIRCd() { if (listenfd_ != -1) close(listenfd_); }
+#define MAX_EAGAIN_RETRIES 5
 
 MiniIRCd::MiniIRCd(const std::string& port, const std::string& password)
     : port_(port), server_password_(password), listenfd_(-1) {}
@@ -64,15 +62,95 @@ int MiniIRCd::make_listen() {
 	return listenfd;
 }
 
-static void sendLine(int fd, const std::string& line) {
+int MiniIRCd::find_pollfd_index(int fd) {
+	for (size_t i = 0; i < pfds_.size(); ++i) {
+		if (pfds_[i].fd == fd) return (int)i;
+	}
+	return -1;
+}
+
+void MiniIRCd::flush_outgoing(int idx) {
+	if (idx < 0 || (size_t)idx >= pfds_.size()) return;
+	int fd = pfds_[idx].fd;
+	Client &c = clients_[fd];
+	while (!c.outbuf.empty()) {
+		ssize_t n = ::send(fd, c.outbuf.data(), c.outbuf.size(), MSG_NOSIGNAL);
+		if (n > 0) {
+			c.outbuf.erase(0, (size_t)n);
+			continue;
+		}
+		if (n == -1) {
+			if (errno == EINTR) continue;
+			if (errno == EAGAIN || errno == EWOULDBLOCK) {
+				// socket not writable now; keep data in outbuf and wait for next POLLOUT
+				return;
+			}
+			// unrecoverable error -> close client
+			std::cerr << "flush_outgoing: send error fd=" << fd << " errno=" << errno << "\n";
+			// best-effort cleanup: simulate quit (use existing handler)
+			handle_quit(fd, pfds_, idx);
+			return;
+		}
+		// n == 0 means peer closed -> cleanup
+		handle_quit(fd, pfds_, idx);
+		return;
+	}
+	// if we drained the buffer, stop listening for POLLOUT
+	pfds_[idx].events &= ~POLLOUT;
+	pfds_[idx].events |= POLLIN;
+}
+
+void MiniIRCd::sendLine(int fd, const std::string& line) {
 	std::string out = line + "\r\n";
-	size_t sent = 0;
-	while (sent < out.size()) {
-		ssize_t n = send(fd, out.data() + sent, out.size() - sent, 0);
-		if (n <= 0) break;
-		sent += n;
+	if (out.empty()) return;
+	// try an immediate send first
+	Client &c = clients_[fd];
+	ssize_t n = ::send(fd, out.data(), out.size(), MSG_NOSIGNAL);
+	if (n > 0) {
+		if ((size_t)n == out.size()) {
+			return; // fully sent
+		}
+		// partial send: buffer remainder
+		c.outbuf.append(out.data() + n, out.size() - (size_t)n);
+	} else if (n == -1) {
+		if (errno == EINTR) {
+			// try again once
+			n = ::send(fd, out.data(), out.size(), MSG_NOSIGNAL);
+			if (n > 0) {
+				if ((size_t)n == out.size()) return;
+				c.outbuf.append(out.data() + n, out.size() - (size_t)n);
+			} else if (n == -1 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
+				c.outbuf.append(out);
+			} else {
+				std::cerr << "sendLine: unrecoverable send error fd=" << fd << " errno=" << errno << "\n";
+				int idx = find_pollfd_index(fd);
+				handle_quit(fd, pfds_, idx);
+				return;
+			}
+		} else if (errno == EAGAIN || errno == EWOULDBLOCK) {
+			// socket would block: queue entire message
+			c.outbuf.append(out);
+		} else {
+			std::cerr << "sendLine: unrecoverable send error fd=" << fd << " errno=" << errno << "\n";
+			int idx = find_pollfd_index(fd);
+			handle_quit(fd, pfds_, idx);
+			return;
+		}
+	} else {
+		// n == 0: peer closed
+		int idx = find_pollfd_index(fd);
+		handle_quit(fd, pfds_, idx);
+		return;
+	}
+
+	// ensure we will be notified when socket becomes writable
+	int idx = find_pollfd_index(fd);
+	if (idx >= 0) {
+		pfds_[idx].events |= POLLOUT;
 	}
 }
+
+
 
 static void debug_print_raw(const std::string &label, const std::string &s) {
 	// print printable chars and hex for others (helps to see CR/LF/extra bytes)
@@ -94,7 +172,7 @@ static std::string nick_or_fd(const Client& c) {
 	std::ostringstream os; os << "fd" << c.fd; return os.str();
 }
 
-static void send_numeric(int fd, const std::string& target, int code, const std::string& msg) {
+void MiniIRCd::send_numeric(int fd, const std::string& target, int code, const std::string& msg) {
 	std::ostringstream os;
 	std::string tgt = target.empty() ? "*" : target;
 	std::string text = msg;
@@ -143,7 +221,7 @@ void MiniIRCd::handle_nick(const IRCMessage& msg, const int& fd)
 			nick_map_[newnick] = fd;
 			if (!c.user.empty() && !c.registered) {
 				c.registered = true;
-				send_numeric(fd, c.nick, 001, ":Welcome to miniircd");
+				send_numeric(fd, c.nick, 001, ":Welcome to miniircd, made by Jeanne and Dean");
 			}
 		}
 	}
@@ -166,7 +244,7 @@ void MiniIRCd::handle_user(const IRCMessage& msg, const int& fd)
 	if (!msg.trailing.empty()) c.real = msg.trailing;
 	if (!c.nick.empty() && !c.registered) {
 		c.registered = true;
-		send_numeric(fd, c.nick, 001, ":Welcome to miniircd");
+		send_numeric(fd, c.nick, 001, ":Welcome to miniircd, made by Jeanne and Dean");
 	}
 }
 
@@ -175,11 +253,11 @@ void MiniIRCd::handle_join(const IRCMessage& msg, const int& fd)
 		if (msg.params.empty()) {
 		sendLine(fd, "461 JOIN :Not enough parameters");
 	} else {
-		std::string chan = msg.params[0];
-		if (chan.empty()) return ;
+		std::string chan = msg.params[0]; //max channel name length (including #) is 200 characters
+		if (chan.empty()) return ; //return 461 response
 		if (chan[0] != '#') chan = std::string("#") + chan;
 		Client& c = clients_[fd];
-		std::vector<int>& v = channels_[chan];
+		std::vector<int>& v = channels_[chan]; //we could switch to std::unordered_set<int>, more efficient
 		bool already = false;
 		for (size_t k=0;k<v.size();++k) if (v[k]==fd) { already = true; break; }
 		if (!already) v.push_back(fd);
@@ -299,36 +377,36 @@ void MiniIRCd::handle_pass(const IRCMessage& msg, const int& fd, std::vector<str
 	}
 }
 
+
 int MiniIRCd::run() {
 	listenfd_ = make_listen();
 	if (listenfd_ < 0) { std::cerr << "listen failed\n"; return 1; }
 	std::cout << "listening on port " << port_ << "\n";
 
-	std::vector<struct pollfd> pfds;
-	pfds.push_back(pollfd());
-	pfds[0].fd = listenfd_; pfds[0].events = POLLIN;
+	pfds_.push_back(pollfd());
+	pfds_[0].fd = listenfd_; pfds_[0].events = POLLIN;
 
 	while (1) {
-		int rc = poll(&pfds[0], pfds.size(), -1); //if incoming connection, poll[0].revents will be set to POLLIN
+		int rc = poll(&pfds_[0], pfds_.size(), -1); //if incoming connection, poll[0].revents will be set to POLLIN
 		if (rc < 0) {
 			if (errno == EINTR) continue;
 			break;
 		}
-		if (pfds[0].revents & POLLIN) { // = incoming connection
+		if (pfds_[0].revents & POLLIN) { // = incoming connection
 			int newfd = accept(listenfd_, NULL, NULL);
 			if (newfd >= 0) {
 				int flags = fcntl(newfd, F_GETFL, 0); 
 				fcntl(newfd, F_SETFL, flags | O_NONBLOCK);
-				Client c; c.fd = newfd; c.registered = false;
+				Client c; c.fd = newfd; c.registered = false; c.pass_ok = false;
 				clients_[newfd] = c;
 				struct pollfd p; p.fd = newfd; p.events = POLLIN; p.revents = 0;
-				pfds.push_back(p);
+				pfds_.push_back(p);
 				std::cout << "accept fd=" << newfd << "\n";
 			}
 		}
-		for (int i = (int)pfds.size()-1; i >= 1; --i) { //iterate through each user and check what their status is
-			int fd = pfds[i].fd;
-			short re = pfds[i].revents;
+		for (int i = (int)pfds_.size()-1; i >= 1; --i) { //iterate through each user and check what their status is
+			int fd = pfds_[i].fd;
+			short re = pfds_[i].revents;
 			if (re == 0) continue;
 			if (re & (POLLERR|POLLHUP|POLLNVAL)) re = POLLIN;
 			if (re & POLLIN) {
@@ -352,7 +430,7 @@ int MiniIRCd::run() {
 					if (!c.nick.empty()) nick_map_.erase(c.nick);
 					close(fd);
 					clients_.erase(fd);
-					pfds.erase(pfds.begin()+i);
+					pfds_.erase(pfds_.begin()+i);
 					std::cout << "fd " << fd << " disconnected\n";
 					continue;
 				} else {
@@ -380,7 +458,7 @@ int MiniIRCd::run() {
 						if (cmd == "PING") {
 							handle_ping(msg, fd, line);
 						} else if (cmd == "PASS") {
-							handle_pass(msg, fd, pfds, i);
+							handle_pass(msg, fd, pfds_, i);
 						} else if (cmd == "NICK") {
 							handle_nick(msg, fd);
 						} else if (cmd == "USER") {
@@ -392,7 +470,7 @@ int MiniIRCd::run() {
 						} else if (cmd == "CAP") {
 							handle_cap(msg, fd);
 						} else if (cmd == "QUIT") {
-							handle_quit(fd, pfds, i);
+							handle_quit(fd, pfds_, i);
 							break;
 						} else {
 							sendLine(fd, std::string(":miniircd NOTICE * :Unknown command ") + cmd);
@@ -400,6 +478,9 @@ int MiniIRCd::run() {
 					} // end processing lines
 				}
 			} // end POLLIN
+			if (re & POLLOUT) {
+				flush_outgoing(i);
+			}
 		} // end clients loop
 	} // main loop
 
