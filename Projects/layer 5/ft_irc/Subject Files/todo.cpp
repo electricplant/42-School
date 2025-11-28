@@ -24,6 +24,37 @@
 5.1. Check the same commands in NC with different syntaxes /Both
 6. Find ideal storage medium for maximum parameter list, (how many words in the possible maximum length command?)
 
+// UPDATE (à valider)
+
+1. Connect to a real IRC server (RFC 1459 or other) and test commands
+with IRSSI on it /both ?
+
+2. Inside the Server class, command parsing /Dean?
+
+3.a. Create Basic_user + Operator classes with functions that
+correspond to all the useful commands:
+    - KICK
+    - MODE
+    - INVITE
+    - TOPIC
+    - JOIN
+    ...     /Jeanne
+3.b. Create a Channel class that has a container of users, and some booleans like :
+    - is channel in +t mode?
+    - is channel in +i mode? ...
+    As well as :
+    - users'list length
+    - an std::string containing channel's topic
+    ...
+    /Jeanne
+
+4.a. Inside the Server class, create a dynamic list of all users and channels /Dean?
+4.b. the server must send parsing errors / unknown cmd errors to users
+     or forward errors detected by channels to users /Dean? :))
+
+
+
+
 //BONUS
 
 //File transfer
