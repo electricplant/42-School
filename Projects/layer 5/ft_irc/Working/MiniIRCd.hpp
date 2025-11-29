@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:53:18 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/11/28 09:15:45 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/29 09:04:08 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ private:
 	void send_numeric(int fd, const std::string& target, int code, const std::string& msg);
 
 	int make_listen();
-	void handle_ping(const IRCMessage& msg, const int& fd, const std::string& line);
+	void handle_ping(const IRCMessage& msg, const int& fd);
 	void handle_pass(const IRCMessage& msg, const int& fd, std::vector<struct pollfd>& pfds, int i);
 	void handle_nick(const IRCMessage& msg, const int& fd);
 	void handle_user(const IRCMessage& msg, const int& fd);

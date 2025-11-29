@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 14:16:15 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/11/25 14:30:11 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/29 08:31:26 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 /*
 
-1. add password /Dean
+1. add password /Dean - Mostly done, needs parsing
 2. What access does the operator need? /Jeanne
 2.1 add operators (copy of clients?) /Jeanne
 3. for operators, implement KICK, INVITE, TOPIC, MODE /Jeanne
@@ -29,7 +29,7 @@
 1. Connect to a real IRC server (RFC 1459 or other) and test commands
 with IRSSI on it /both ?
 
-2. Inside the Server class, command parsing /Dean?
+2. Inside the Server class, command parsing /Dean
 
 3.a. Create Basic_user + Operator classes with functions that
 correspond to all the useful commands:

@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:58:49 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/11/28 09:16:24 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/29 09:04:22 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,21 +182,14 @@ void MiniIRCd::send_numeric(int fd, const std::string& target, int code, const s
 	sendLine(fd, os.str());
 }
 
-
-void MiniIRCd::handle_ping(const IRCMessage& msg, const int& fd, const std::string& line)
+void MiniIRCd::handle_ping(const IRCMessage& msg, const int& fd)
 {
-		debug_print_raw("RECV PING raw", line);
-
 	if (!msg.trailing.empty()) {
-		sendLine(fd, (std::string("weird3")));
 		std::ostringstream os; os << "PONG :" << msg.trailing;
 		sendLine(fd, os.str());
 	} else if (!msg.params.empty()) {
-		sendLine(fd, (std::string("weird2")));
 		std::ostringstream os; os << "PONG :" << msg.params[0];
 		sendLine(fd, os.str());
-	} else {
-		sendLine(fd, (std::string("weird")));
 	}
 }
 
@@ -261,7 +254,7 @@ void MiniIRCd::handle_join(const IRCMessage& msg, const int& fd)
 		bool already = false;
 		for (size_t k=0;k<v.size();++k) if (v[k]==fd) { already = true; break; }
 		if (!already) v.push_back(fd);
-		
+
 		std::ostringstream joinmsg;
 		joinmsg << ":" << nick_or_fd(c) << " JOIN :" << chan;
 		for (size_t k=0;k<v.size();++k) sendLine(v[k], joinmsg.str());
@@ -456,7 +449,7 @@ int MiniIRCd::run() {
 
 						//put all this into "handle_command"
 						if (cmd == "PING") {
-							handle_ping(msg, fd, line);
+							handle_ping(msg, fd);
 						} else if (cmd == "PASS") {
 							handle_pass(msg, fd, pfds_, i);
 						} else if (cmd == "NICK") {
