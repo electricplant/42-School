@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:52:54 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/11/29 10:06:17 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/11/30 09:37:35 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,12 @@ void parseArgs(const std::string port, const std::string password)
 	if (!(p > 0 && p <= 65535))
 		throw std::runtime_error("Port must be between 1 and 65535");
 
+
+	for (size_t i = 0; i < password.size(); ++i) {
+		unsigned char ch = static_cast<unsigned char>(password[i]);
+		if (!((ch >= ' ' && ch <= 'Z') || (ch >= 'a' && ch <= '~')))
+			throw std::runtime_error("Password not composed of letters/numbers/symbols");
+	}
 	if (password.size() > 512)
 		throw std::runtime_error("Password too long, 512 chars max");
 }
