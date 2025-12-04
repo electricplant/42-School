@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:58:49 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/12/04 14:03:50 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/12/04 14:28:26 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,7 +192,7 @@ void MiniIRCd::handle_ping(const IRCMessage& msg, const int& fd)
 }
 
 void MiniIRCd::handle_nick(const IRCMessage& msg, const int& fd)
-{
+{ //nick is not updated when added after initial registration
 	std::string newnick;
 	if (!msg.params.empty()) newnick = msg.params[0];
 	if (newnick.empty()) {
