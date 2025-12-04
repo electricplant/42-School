@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:53:18 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/11/29 09:04:08 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/12/04 12:35:40 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 
 struct IRCMessage;
 
-struct Client {
+struct User {
 	int fd;
 	std::string nick;
 	std::string user;
@@ -28,7 +28,7 @@ struct Client {
 	bool pass_ok;
 	std::string inbuf;
 	std::string outbuf;
-	Client(): fd(-1), registered(false), pass_ok(false) {}
+	User(): fd(-1), registered(false), pass_ok(false) {}
 };
 
 class MiniIRCd {
@@ -41,7 +41,7 @@ private:
 	std::string port_;
 	std::string server_password_;
 	int listenfd_;
-	std::map<int, Client> clients_;
+	std::map<int, User> clients_;
 	std::map<std::string, int> nick_map_;
 	std::map<std::string, std::vector<int> > channels_;
 	std::vector<struct pollfd> pfds_;

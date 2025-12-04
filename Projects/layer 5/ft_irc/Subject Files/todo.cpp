@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 14:16:15 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/11/29 08:31:26 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/12/04 12:29:49 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,9 @@
 5. verify tests using NC /Both
 5.1. Check the same commands in NC with different syntaxes /Both
 6. Find ideal storage medium for maximum parameter list, (how many words in the possible maximum length command?)
+7. Change try/catch in main to if/else
+8. add try/catch for the poll() loop in case of CTRL-C/D/etc.
+9. change Client to User
 
 // UPDATE (à valider)
 

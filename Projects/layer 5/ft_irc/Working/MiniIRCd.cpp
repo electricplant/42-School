@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:58:49 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/11/30 08:49:36 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/12/04 12:36:00 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int MiniIRCd::find_pollfd_index(int fd) {
 void MiniIRCd::flush_outgoing(int idx) {
 	if (idx < 0 || (size_t)idx >= pfds_.size()) return;
 	int fd = pfds_[idx].fd;
-	Client &c = clients_[fd];
+	User &c = clients_[fd];
 	while (!c.outbuf.empty()) {
 		ssize_t n = ::send(fd, c.outbuf.data(), c.outbuf.size(), MSG_NOSIGNAL);
 		if (n > 0) {
@@ -104,7 +104,7 @@ void MiniIRCd::sendLine(int fd, const std::string& line) {
 	std::string out = line + "\r\n";
 	if (out.empty()) return;
 	// try an immediate send first
-	Client &c = clients_[fd];
+	User &c = clients_[fd];
 	ssize_t n = ::send(fd, out.data(), out.size(), MSG_NOSIGNAL);
 	if (n > 0) {
 		if ((size_t)n == out.size()) {
@@ -167,7 +167,7 @@ static void debug_print_raw(const std::string &label, const std::string &s) {
 	std::cerr << std::endl;
 }
 
-static std::string nick_or_fd(const Client& c) {
+static std::string nick_or_fd(const User& c) {
 	if (!c.nick.empty()) return c.nick;
 	std::ostringstream os; os << "fd" << c.fd; return os.str();
 }
@@ -204,7 +204,7 @@ void MiniIRCd::handle_nick(const IRCMessage& msg, const int& fd)
 		if (nick_map_.find(newnick) != nick_map_.end()) {
 			sendLine(fd, (std::string("433 * ") + newnick + " :Nickname is already in use"));
 		} else {
-			Client& c = clients_[fd];
+			User& c = clients_[fd];
 			if (!server_password_.empty() && !c.pass_ok) {
 				sendLine(fd, "464 * :Password required");
 				return ;
@@ -223,11 +223,11 @@ void MiniIRCd::handle_nick(const IRCMessage& msg, const int& fd)
 void MiniIRCd::handle_user(const IRCMessage& msg, const int& fd)
 {
 	if (msg.params.size() < 3) {
-		sendLine(fd, "461 USER :Not enough parameters");
+		sendLine(fd, "461 USER :Not enough parameters"); 
 		return;
 	}
 		
-	Client& c = clients_[fd];
+	User& c = clients_[fd];
 	if (!server_password_.empty() && !c.pass_ok) {
 		sendLine(fd, "464 * :Password required");
 		return ;
@@ -249,7 +249,7 @@ void MiniIRCd::handle_join(const IRCMessage& msg, const int& fd)
 		std::string chan = msg.params[0]; //max channel name length (including #) is 200 characters
 		if (chan.empty()) return ; //return 461 response
 		if (chan[0] != '#') chan = std::string("#") + chan;
-		Client& c = clients_[fd];
+		User& c = clients_[fd];
 		std::vector<int>& v = channels_[chan]; //we could switch to std::unordered_set<int>, more efficient
 		bool already = false;
 		for (size_t k=0;k<v.size();++k) if (v[k]==fd) { already = true; break; }
@@ -261,7 +261,7 @@ void MiniIRCd::handle_join(const IRCMessage& msg, const int& fd)
 		std::ostringstream names;
 		names << ":miniircd 353 " << (c.nick.empty() ? "*" : c.nick) << " = " << chan << " :";
 		for (size_t k=0;k<v.size();++k) {
-			Client& oc = clients_[v[k]];
+			User& oc = clients_[v[k]];
 			names << (oc.nick.empty() ? nick_or_fd(oc) : oc.nick) << (k+1<v.size() ? " " : "");
 		}
 		sendLine(fd, names.str());
@@ -276,7 +276,7 @@ void MiniIRCd::handle_privmsg(const IRCMessage& msg, const int& fd)
 	if (msg.params.empty()) { sendLine(fd, "411 :No recipient given"); return ; }
 	std::string target = msg.params[0];
 	std::string text = msg.trailing;
-	Client& sender = clients_[fd];
+	User& sender = clients_[fd];
 	if (target.size() > 0 && target[0] == '#') {
 		std::vector<int>& v = channels_[target];
 		for (size_t k=0;k<v.size();++k) {
@@ -300,9 +300,9 @@ void MiniIRCd::handle_privmsg(const IRCMessage& msg, const int& fd)
 
 void MiniIRCd::handle_quit(const int& fd, std::vector<struct pollfd>& pfds, int i)
 {
-	Client c = clients_[fd];
+	User c = clients_[fd];
 	std::ostringstream q;
-	q << ":" << nick_or_fd(c) << " QUIT :Client Quit";
+	q << ":" << nick_or_fd(c) << " QUIT :User Quit";
 	for (std::map<std::string, std::vector<int> >::iterator it=channels_.begin(); it!=channels_.end(); ++it) {
 		std::vector<int>& v = it->second;
 		for (size_t k=0;k<v.size();++k) if (v[k] != fd) sendLine(v[k], q.str());
@@ -388,9 +388,9 @@ int MiniIRCd::run() {
 		if (pfds_[0].revents & POLLIN) { // = incoming connection
 			int newfd = accept(listenfd_, NULL, NULL);
 			if (newfd >= 0) {
-				int flags = fcntl(newfd, F_GETFL, 0); 
+				int flags = fcntl(newfd, F_GETFL, 0); //can we use other flags?
 				fcntl(newfd, F_SETFL, flags | O_NONBLOCK);
-				Client c; c.fd = newfd; c.registered = false; c.pass_ok = false;
+				User c; c.fd = newfd; c.registered = false; c.pass_ok = false;
 				clients_[newfd] = c;
 				struct pollfd p; p.fd = newfd; p.events = POLLIN; p.revents = 0;
 				pfds_.push_back(p);
@@ -406,7 +406,7 @@ int MiniIRCd::run() {
 				char buf[1024];
 				ssize_t n = recv(fd, buf, sizeof(buf), 0);
 				if (n <= 0) {
-					Client c = clients_[fd];
+					User c = clients_[fd];
 					std::string quitmsg = (c.registered ? c.nick : std::string("guest")) + " has quit";
 					for (std::map<std::string, std::vector<int> >::iterator it=channels_.begin(); it!=channels_.end(); ++it) {
 						std::vector<int>& v = it->second;
