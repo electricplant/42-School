@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:52:54 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/11/30 09:37:35 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/12/04 12:39:03 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,15 +38,12 @@ int main(int argc, char** argv)
 	std::string port = "";
 	std::string password = "";
 
-	try {
-		if (argc != 3)
-			throw std::runtime_error("Excpected input: port password");
-		parseArgs(argv[1], argv[2]);
-	} catch (std::exception& e)
+	if (argc != 3)
 	{
-		std::cout << "Error: " << e.what() << '\n';
+		std::cout << "Excpected input: port password\n";
 		return 1;
 	}
+	parseArgs(argv[1], argv[2]);
 
 	port = argv[1];
 	password = argv[2];

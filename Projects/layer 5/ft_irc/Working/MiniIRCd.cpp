@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:58:49 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/12/04 12:36:00 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/12/04 14:03:50 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,8 +150,6 @@ void MiniIRCd::sendLine(int fd, const std::string& line) {
 	}
 }
 
-
-
 static void debug_print_raw(const std::string &label, const std::string &s) {
 	// print printable chars and hex for others (helps to see CR/LF/extra bytes)
 	std::cerr << label << ": ";
@@ -243,11 +241,10 @@ void MiniIRCd::handle_user(const IRCMessage& msg, const int& fd)
 
 void MiniIRCd::handle_join(const IRCMessage& msg, const int& fd)
 {
-		if (msg.params.empty()) {
+		if (msg.params.empty() || msg.params[0].empty()) {
 		sendLine(fd, "461 JOIN :Not enough parameters");
 	} else {
 		std::string chan = msg.params[0]; //max channel name length (including #) is 200 characters
-		if (chan.empty()) return ; //return 461 response
 		if (chan[0] != '#') chan = std::string("#") + chan;
 		User& c = clients_[fd];
 		std::vector<int>& v = channels_[chan]; //we could switch to std::unordered_set<int>, more efficient
@@ -388,8 +385,7 @@ int MiniIRCd::run() {
 		if (pfds_[0].revents & POLLIN) { // = incoming connection
 			int newfd = accept(listenfd_, NULL, NULL);
 			if (newfd >= 0) {
-				int flags = fcntl(newfd, F_GETFL, 0); //can we use other flags?
-				fcntl(newfd, F_SETFL, flags | O_NONBLOCK);
+				fcntl(newfd, F_SETFL, O_NONBLOCK);
 				User c; c.fd = newfd; c.registered = false; c.pass_ok = false;
 				clients_[newfd] = c;
 				struct pollfd p; p.fd = newfd; p.events = POLLIN; p.revents = 0;

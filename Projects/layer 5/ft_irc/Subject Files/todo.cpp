@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 14:16:15 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/12/04 12:29:49 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/12/04 13:34:37 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,25 +14,18 @@
 
 /*
 
-1. add password /Dean - Mostly done, needs parsing
 2. What access does the operator need? /Jeanne
 2.1 add operators (copy of clients?) /Jeanne
 3. for operators, implement KICK, INVITE, TOPIC, MODE /Jeanne
 3.1. for Mode, add i, t, k, o, l /Jeanne
-4. test PRIVMSG /Jeanne
 5. verify tests using NC /Both
 5.1. Check the same commands in NC with different syntaxes /Both
 6. Find ideal storage medium for maximum parameter list, (how many words in the possible maximum length command?)
-7. Change try/catch in main to if/else
-8. add try/catch for the poll() loop in case of CTRL-C/D/etc.
-9. change Client to User
 
 // UPDATE (à valider)
 
 1. Connect to a real IRC server (RFC 1459 or other) and test commands
 with IRSSI on it /both ?
-
-2. Inside the Server class, command parsing /Dean
 
 3.a. Create Basic_user + Operator classes with functions that
 correspond to all the useful commands:
@@ -46,16 +39,12 @@ correspond to all the useful commands:
     - is channel in +t mode?
     - is channel in +i mode? ...
     As well as :
-    - users'list length
+    - user list length
     - an std::string containing channel's topic
     ...
     /Jeanne
 
 4.a. Inside the Server class, create a dynamic list of all users and channels /Dean?
-4.b. the server must send parsing errors / unknown cmd errors to users
-     or forward errors detected by channels to users /Dean? :))
-
-
 
 
 //BONUS
