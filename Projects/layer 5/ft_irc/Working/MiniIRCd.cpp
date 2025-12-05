@@ -125,14 +125,15 @@ int MiniIRCd::find_pollfd_index(int fd) {
 	return -1;
 }
 
-void MiniIRCd::flush_outgoing(int idx) {
+void MiniIRCd::flush_outgoing(int idx)
+{
 	if (idx < 0 || (size_t)idx >= pfds_.size()) return;
 	int fd = pfds_[idx].fd;
-	Client &c = clients_[fd];
-	while (!c.outbuf.empty()) {
-		ssize_t n = ::send(fd, c.outbuf.data(), c.outbuf.size(), MSG_NOSIGNAL);
+	User &u = users_.at(fd);
+	while (!u.outbuf.empty()) {
+		ssize_t n = ::send(fd, u.outbuf.data(), u.outbuf.size(), MSG_NOSIGNAL);
 		if (n > 0) {
-			c.outbuf.erase(0, (size_t)n);
+			u.outbuf.erase(0, (size_t)n);
 			continue;
 		}
 		if (n == -1) {
@@ -160,23 +161,23 @@ void MiniIRCd::sendLine(int fd, const std::string& line) {
 	std::string out = line + "\r\n";
 	if (out.empty()) return;
 	// try an immediate send first
-	Client &c = clients_[fd];
+	User &u = users_.at(fd);
 	ssize_t n = ::send(fd, out.data(), out.size(), MSG_NOSIGNAL);
 	if (n > 0) {
 		if ((size_t)n == out.size()) {
 			return; // fully sent
 		}
 		// partial send: buffer remainder
-		c.outbuf.append(out.data() + n, out.size() - (size_t)n);
+		u.outbuf.append(out.data() + n, out.size() - (size_t)n);
 	} else if (n == -1) {
 		if (errno == EINTR) {
 			// try again once
 			n = ::send(fd, out.data(), out.size(), MSG_NOSIGNAL);
 			if (n > 0) {
 				if ((size_t)n == out.size()) return;
-				c.outbuf.append(out.data() + n, out.size() - (size_t)n);
+				u.outbuf.append(out.data() + n, out.size() - (size_t)n);
 			} else if (n == -1 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
-				c.outbuf.append(out);
+				u.outbuf.append(out);
 			} else {
 				std::cerr << "sendLine: unrecoverable send error fd=" << fd << " errno=" << errno << "\n";
 				int idx = find_pollfd_index(fd);
@@ -185,7 +186,7 @@ void MiniIRCd::sendLine(int fd, const std::string& line) {
 			}
 		} else if (errno == EAGAIN || errno == EWOULDBLOCK) {
 			// socket would block: queue entire message
-			c.outbuf.append(out);
+			u.outbuf.append(out);
 		} else {
 			std::cerr << "sendLine: unrecoverable send error fd=" << fd << " errno=" << errno << "\n";
 			int idx = find_pollfd_index(fd);
@@ -223,9 +224,9 @@ static void debug_print_raw(const std::string &label, const std::string &s) {
 	std::cerr << std::endl;
 }
 
-static std::string nick_or_fd(const Client& c) {
-	if (!c.nick.empty()) return c.nick;
-	std::ostringstream os; os << "fd" << c.fd; return os.str();
+static std::string nick_or_fd(const User& u) {
+	if (!u.nick.empty()) return u.nick;
+	std::ostringstream os; os << "fd" << u.usr_fd; return os.str();
 }
 
 void MiniIRCd::send_numeric(int fd, const std::string& target, int code, const std::string& msg) {
@@ -260,17 +261,17 @@ void MiniIRCd::handle_nick(const IRCMessage& msg, const int& fd)
 		if (nick_map_.find(newnick) != nick_map_.end()) {
 			sendLine(fd, (std::string("433 * ") + newnick + " :Nickname is already in use"));
 		} else {
-			Client& c = clients_[fd];
-			if (!server_password_.empty() && !c.pass_ok) {
+			User& u = users_.at(fd);
+			if (!server_password_.empty() && !u.pass_ok) {
 				sendLine(fd, "464 * :Password required");
 				return ;
 			}
-			if (!c.nick.empty()) nick_map_.erase(c.nick);
-			c.nick = newnick;
+			if (!u.nick.empty()) nick_map_.erase(u.nick);
+			u.nick = newnick;
 			nick_map_[newnick] = fd;
-			if (!c.user.empty() && !c.registered) {
-				c.registered = true;
-				send_numeric(fd, c.nick, 001, ":Welcome to miniircd, made by Jeanne and Dean");
+			if (!u.user.empty() && !u.registered) {
+				u.registered = true;
+				send_numeric(fd, u.nick, 001, ":Welcome to miniircd, made by Jeanne and Dean");
 			}
 		}
 	}
@@ -283,79 +284,75 @@ void MiniIRCd::handle_user(const IRCMessage& msg, const int& fd)
 		return;
 	}
 		
-	Client& c = clients_[fd];
-	if (!server_password_.empty() && !c.pass_ok) {
+	User& u = users_.at(fd);
+	if (!server_password_.empty() && !u.pass_ok) {
 		sendLine(fd, "464 * :Password required");
 		return ;
 	}
 	
-	c.user = msg.params[0];
-	if (!msg.trailing.empty()) c.real = msg.trailing;
-	if (!c.nick.empty() && !c.registered) {
-		c.registered = true;
-		send_numeric(fd, c.nick, 001, ":Welcome to miniircd, made by Jeanne and Dean");
+	u.user = msg.params[0];
+	if (!msg.trailing.empty()) u.real = msg.trailing;
+	if (!u.nick.empty() && !u.registered) {
+		u.registered = true;
+		send_numeric(fd, u.nick, 001, ":Welcome to miniircd, made by Jeanne and Dean");
 	}
 }
 
 void MiniIRCd::handle_join(const IRCMessage& msg, const int& fd)
 {
-		if (msg.params.empty())
+	if (msg.params.empty())
+		sendLine(fd, "461 JOIN :Not enough parameters");
+	else
+	{
+		//max channel name length (including #) is 200 characters
+		std::string chan = msg.params[0];
+		if (chan.empty())
+			return ; //return 461 response
+
+		if (chan[0] != '#')
+			chan = std::string("#") + chan;
+		User usr = users_.at(fd);
+		
+		std::map<std::string, Channel>::iterator chan_it = channels_.find(chan);
+		bool join_success = true;
+		std::string detected_error = "";
+		
+		// This channel doesn't exist yet
+		if (chan_it == channels_.end())
 		{
-			sendLine(fd, "461 JOIN :Not enough parameters");
+			// Update 2 of the server's lists
+			channels_[chan] = Channel(chan, usr);
+			chnl_members_[chan].push_back(fd);
+			// No errors expected
 		}
 		else
 		{
-			std::string chan = msg.params[0]; //max channel name length (including #) is 200 characters
-			if (chan.empty())
-				return ; //return 461 response
-
-			if (chan[0] != '#')
-				chan = std::string("#") + chan;
-			
-			Client& c = clients_[fd];
-
-			std::map<std::string, Channel*>::iterator map_it;
-			map_it = channels_.find(chan);
-			if (map_it != channels_.end())
+			Channel existing_channel = chan_it->second;
+			join_success = existing_channel.channel_join(usr, "", detected_error);
+			if (!join_success)
 			{
-				// the channel could detect potential errors
-				// USER IS NOT INVITED or CHANNEL IS FULL
-					map_it.second::
-				//
-				break;
+				sendLine(fd, detected_error);
+				return;
 			}
-			bool already = false;
-
-			// for (size_t k=0; k<v.size();++k)
-			// {
-			// 	if (v[k]==fd)
-			// 	{
-			// 		already = true;
-			// 		// the channel could detect potential errors
-
-			// 		//
-			// 		break;
-			// 	}
-			// }
-			if (!already)
-				v.push_back(fd);
-
-			std::ostringstream joinmsg;
-			joinmsg << ":" << nick_or_fd(c) << " JOIN :" << chan;
-			for (size_t k=0;k<v.size();++k)
-				sendLine(v[k], joinmsg.str());
-			std::ostringstream names;
-			names << ":miniircd 353 " << (c.nick.empty() ? "*" : c.nick) << " = " << chan << " :";
-			for (size_t k=0;k<v.size();++k)
-			{
-				Client& oc = clients_[v[k]];
-				names << (oc.nick.empty() ? nick_or_fd(oc) : oc.nick) << (k+1<v.size() ? " " : "");
-			}
-			sendLine(fd, names.str());
-			std::ostringstream endnames;
-			endnames << ":miniircd 366 " << (c.nick.empty() ? "*" : c.nick) << " " << chan << " :End of /NAMES list.";
-			sendLine(fd, endnames.str());
 		}
+
+		std::ostringstream joinmsg;
+		joinmsg << ":" << nick_or_fd(usr) << " JOIN :" << chan;
+		for (size_t k = 0; k < chnl_members_[chan].size(); ++k)
+			sendLine(chnl_members_[chan][k], joinmsg.str());
+		
+		std::ostringstream names;
+		names << ":miniircd 353 " << (usr.nick.empty() ? "*" : usr.nick) << " = " << chan << " :";
+		for (size_t k = 0; k < chnl_members_[chan].size(); ++k)
+		{
+			User& a_user = users_.at(chnl_members_[chan][k]);
+			names << (a_user.nick.empty() ? nick_or_fd(a_user) : a_user.nick) << (k + 1 < chnl_members_[chan].size() ? " " : "");
+		}
+		sendLine(fd, names.str());
+		std::ostringstream endnames;
+		endnames << ":miniircd 366 " << (usr.nick.empty() ? "*" : usr.nick) << " " << chan << " :End of /NAMES list.";
+		sendLine(fd, endnames.str());
+	}
 }
 
 void MiniIRCd::handle_privmsg(const IRCMessage& msg, const int& fd)
@@ -363,9 +360,9 @@ void MiniIRCd::handle_privmsg(const IRCMessage& msg, const int& fd)
 	if (msg.params.empty()) { sendLine(fd, "411 :No recipient given"); return ; }
 	std::string target = msg.params[0];
 	std::string text = msg.trailing;
-	Client& sender = clients_[fd];
+	User& sender = users_.at(fd);
 	if (target.size() > 0 && target[0] == '#') {
-		std::vector<int>& v = channels_[target];
+		std::vector<int>& v = chnl_members_[target];
 		for (size_t k=0;k<v.size();++k) {
 			if (v[k] == fd) continue;
 			std::ostringstream pm;
@@ -387,20 +384,24 @@ void MiniIRCd::handle_privmsg(const IRCMessage& msg, const int& fd)
 
 void MiniIRCd::handle_quit(const int& fd, std::vector<struct pollfd>& pfds, int i)
 {
-	Client c = clients_[fd];
+	User u = users_.at(fd);
 	std::ostringstream q;
-	q << ":" << nick_or_fd(c) << " QUIT :Client Quit";
-	for (std::map<std::string, std::vector<int> >::iterator it=channels_.begin(); it!=channels_.end(); ++it) {
+	q << ":" << nick_or_fd(u) << " QUIT :Client Quit";
+	for (std::map<std::string, std::vector<int> >::iterator it=chnl_members_.begin(); it!=chnl_members_.end(); ++it)
+	{
 		std::vector<int>& v = it->second;
-		for (size_t k=0;k<v.size();++k) if (v[k] != fd) sendLine(v[k], q.str());
+		for (size_t k = 0; k < v.size(); ++k)
+			if (v[k] != fd)
+				sendLine(v[k], q.str());
 	}
 	sendLine(fd, "ERROR :Closing Link");
 	close(fd);
-	if (!c.nick.empty()) nick_map_.erase(c.nick);
-	clients_.erase(fd);
+	if (!u.nick.empty()) nick_map_.erase(u.nick);
+	users_.erase(fd);
 	pfds.erase(pfds.begin()+i);
 	std::cout << "fd " << fd << " quit\n";
 }
+
 //does not print nick upon exit
 void MiniIRCd::handle_cap(const IRCMessage& msg, const int& fd)
 {
@@ -445,12 +446,12 @@ void MiniIRCd::handle_pass(const IRCMessage& msg, const int& fd, std::vector<str
 	if (!pw.empty() && pw[0] == ':') pw = pw.substr(1);
 
 	if (server_password_.empty()) {
-		clients_[fd].pass_ok = true;
+		users_[fd].pass_ok = true;
 		return;
 	}
 
 	if (pw == server_password_) {
-		clients_[fd].pass_ok = true;
+		users_[fd].pass_ok = true;
 	} else {
 		sendLine(fd, "464 * :Password incorrect");
 		handle_quit(fd, pfds, i);
@@ -458,76 +459,117 @@ void MiniIRCd::handle_pass(const IRCMessage& msg, const int& fd, std::vector<str
 }
 
 
-int MiniIRCd::run() {
+int MiniIRCd::run()
+{
 	listenfd_ = make_listen();
-	if (listenfd_ < 0) { std::cerr << "listen failed\n"; return 1; }
+	if (listenfd_ < 0)
+	{
+		std::cerr << "listen failed\n";
+		return 1;
+	}
+
 	std::cout << "listening on port " << port_ << "\n";
 
-	// a new pollfd is add a the END of pfds_
-	// but you initialize the [0] of pfds_
 	pfds_.push_back(pollfd());
+	// the server's main socket is on pfds_[0]:
 	pfds_[0].fd = listenfd_; pfds_[0].events = POLLIN;
 
-	while (1) {
-		int rc = poll(&pfds_[0], pfds_.size(), -1); //if incoming connection, poll[0].revents will be set to POLLIN
-		if (rc < 0) {
+	while (1)
+	{
+		//if incoming connection, poll[0].revents will be set to POLLIN
+		int rc = poll(&pfds_[0], pfds_.size(), -1);
+		if (rc < 0)
+		{
 			if (errno == EINTR) continue;
 			break;
 		}
-		if (pfds_[0].revents & POLLIN) { // = incoming connection
+		// incoming new connection :
+		if (pfds_[0].revents & POLLIN)
+		{ 
 			int newfd = accept(listenfd_, NULL, NULL);
-			if (newfd >= 0) {
-				int flags = fcntl(newfd, F_GETFL, 0); 
-				fcntl(newfd, F_SETFL, flags | O_NONBLOCK);
-				Client c; c.fd = newfd; c.registered = false; c.pass_ok = false;
-				clients_[newfd] = c;
+			if (newfd >= 0)
+			{
+				fcntl(newfd, F_SETFL, O_NONBLOCK);
+				User usr(newfd);
+				users_[newfd] = usr;
 				struct pollfd p; p.fd = newfd; p.events = POLLIN; p.revents = 0;
 				pfds_.push_back(p);
-				std::cout << "accept fd=" << newfd << "\n";
+				std::cout << "accept fd = " << newfd << "\n";
 			}
 		}
-		for (int i = (int)pfds_.size()-1; i >= 1; --i) { //iterate through each user and check what their status is
-			int fd = pfds_[i].fd;
+		//iterate through each client and check what their status is :
+		for (int i = (int)pfds_.size() - 1; i >= 1; --i)
+		{ 
+			int client_fd = pfds_[i].fd;
 			short re = pfds_[i].revents;
-			if (re == 0) continue;
-			if (re & (POLLERR|POLLHUP|POLLNVAL)) re = POLLIN;
-			if (re & POLLIN) {
+			if (re == 0)
+				continue;
+			if (re & (POLLERR | POLLHUP | POLLNVAL))
+				re = POLLIN;
+			if (re & POLLIN)
+			{
 				char buf[1024];
-				ssize_t n = recv(fd, buf, sizeof(buf), 0);
-				if (n <= 0) {
-					Client c = clients_[fd];
-					std::string quitmsg = (c.registered ? c.nick : std::string("guest")) + " has quit";
-					for (std::map<std::string, std::vector<int> >::iterator it=channels_.begin(); it!=channels_.end(); ++it) {
-						std::vector<int>& v = it->second;
-						for (size_t k=0;k<v.size();++k) {
-							if (v[k] == fd) continue;
+				ssize_t n = recv(client_fd, buf, sizeof(buf), 0);
+				if (n <= 0)
+				{
+					// We are sure that users_.at(client_fd) has returned
+					// a reference to a User instance :
+					User usr = users_.at(client_fd);
+					std::string quitmsg = (usr.registered ? usr.nick : std::string("guest")) + " has quit";
+					
+					// erase the fd of the user who quitted the server
+					// from each channel :
+					std::map<std::string, std::vector<int> >::iterator it;
+					for (it = chnl_members_.begin(); it != chnl_members_.end(); ++it)
+					{
+						std::vector<int> channel_fds = it->second;
+						for (size_t k = 0; k < channel_fds.size(); ++k)
+						{
+							if (channel_fds[k] == client_fd)
+								continue;
+							// tell other users of this channel, that smbdy has quit :
 							std::ostringstream os;
-							os << ":" << nick_or_fd(c) << " QUIT :" << quitmsg;
-							sendLine(v[k], os.str());
+							// os << ":" << nick_or_fd(c) << " QUIT :" << quitmsg;
+							os << ":" << usr.usr_fd << " QUIT :" << quitmsg;
+							sendLine(channel_fds[k], os.str());
 						}
-						std::vector<int> nv;
-						for (size_t k=0;k<v.size();++k) if (v[k] != fd) nv.push_back(v[k]);
-						v.swap(nv);
+
+						std::vector<int> channel_new_fds;
+						for (size_t k = 0;k < channel_fds.size(); ++k)
+						{
+							if (channel_fds[k] != client_fd)
+								channel_new_fds.push_back(channel_fds[k]);
+						}
+						channel_fds.swap(channel_new_fds);
 					}
-					if (!c.nick.empty()) nick_map_.erase(c.nick);
-					close(fd);
-					clients_.erase(fd);
-					pfds_.erase(pfds_.begin()+i);
-					std::cout << "fd " << fd << " disconnected\n";
+					// And erase quitted user from server's list
+					if (!usr.nick.empty())
+						nick_map_.erase(usr.nick);
+					close(client_fd);
+					users_.erase(client_fd);
+					pfds_.erase(pfds_.begin() + i);
+					std::cout << "fd " << client_fd << " disconnected\n";
 					continue;
-				} else {
-					clients_[fd].inbuf.append(buf, buf + n);
+				} 
+				else
+				{
+					// We are sure that users_.at(client_fd) will return
+					// a reference to a User instance :
+					// (otherwise .at() throws an exception)
+					User actual_user = users_.at(client_fd);
+					actual_user.inbuf.append(buf, buf + n);
 					size_t pos;
-					while ((pos = clients_[fd].inbuf.find("\r\n")) != std::string::npos ||
-						(pos = clients_[fd].inbuf.find("\n")) != std::string::npos) {
-						std::string line = clients_[fd].inbuf.substr(0, pos);
+					while ((pos = actual_user.inbuf.find("\r\n")) != std::string::npos ||
+						(pos = actual_user.inbuf.find("\n")) != std::string::npos)
+					{
+						std::string line = actual_user.inbuf.substr(0, pos);
 						size_t erase_len = 1; 
-						if (clients_[fd].inbuf.size() > pos && clients_[fd].inbuf[pos] == '\r') {
-							if (clients_[fd].inbuf.size() > pos+1 && clients_[fd].inbuf[pos+1] == '\n') erase_len = 2;
+						if (actual_user.inbuf.size() > pos && actual_user.inbuf[pos] == '\r') {
+							if (actual_user.inbuf.size() > pos+1 && actual_user.inbuf[pos+1] == '\n') erase_len = 2;
 						} else {
 							erase_len = 1;
 						}
-						clients_[fd].inbuf.erase(0, pos + erase_len);
+						actual_user.inbuf.erase(0, pos + erase_len);
 
 						if (line.size() > MAXLINE) line = line.substr(0, MAXLINE);
 						debug_print_raw("RECV raw", line);
@@ -538,31 +580,34 @@ int MiniIRCd::run() {
 
 						//put all this into "handle_command"
 						if (cmd == "PING") {
-							handle_ping(msg, fd);
+							handle_ping(msg, client_fd);
 						} else if (cmd == "PASS") {
-							handle_pass(msg, fd, pfds_, i);
+							handle_pass(msg, client_fd, pfds_, i);
 						} else if (cmd == "NICK") {
-							handle_nick(msg, fd);
+							handle_nick(msg, client_fd);
 						} else if (cmd == "USER") {
-							handle_user(msg, fd);
+							handle_user(msg, client_fd);
 						} else if (cmd == "JOIN") {
-							handle_join(msg, fd);
+							// /!\ Join should handle several channels with eventual pswds
+							// example : JOIN #channel,#channel2 pswd,pswd2(or nothing as pswd)
+							// https://modern.ircdocs.horse/#join-message 
+							// How to handle it inside IRCMessage?
+							handle_join(msg, client_fd);
 						} else if (cmd == "PRIVMSG") {
-							handle_privmsg(msg, fd);
+							handle_privmsg(msg, client_fd);
 						} else if (cmd == "CAP") {
-							handle_cap(msg, fd);
+							handle_cap(msg, client_fd);
 						} else if (cmd == "QUIT") {
-							handle_quit(fd, pfds_, i);
+							handle_quit(client_fd, pfds_, i);
 							break;
 						} else {
-							sendLine(fd, std::string(":miniircd NOTICE * :Unknown command ") + cmd);
+							sendLine(client_fd, std::string(":miniircd NOTICE * :Unknown command ") + cmd);
 						}
 					} // end processing lines
 				}
 			} // end POLLIN
-			if (re & POLLOUT) {
+			if (re & POLLOUT)
 				flush_outgoing(i);
-			}
 		} // end clients loop
 	} // main loop
 

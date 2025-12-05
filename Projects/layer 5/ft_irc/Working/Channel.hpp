@@ -1,5 +1,5 @@
-#ifndef CHANOP_H
-#define CHANOP_H
+#ifndef CHANNEL_H
+#define CHANNEL_H
 
 #include <string>
 #include <set>
@@ -10,17 +10,17 @@
 #include <algorithm>
 
 class User;
-class Server;
+// class Server;
 
-#include "MiniIRCd.hpp"
+// #include "MiniIRCd.hpp"
 
 class Channel
 {
     private:
     
-    std::map<std::string, User*> users_;
+    std::map<std::string, User> users_;
 
-    public: 
+    public:
 
     bool i_mode;
     bool k_mode;
@@ -36,30 +36,23 @@ class Channel
     std::set<std::string> invited_users;
 
 
+    // CONSTRUCTORS
+    // for the first user :
+    Channel(std::string name, User& usr):
+        i_mode(false), k_mode(false), l_mode(false), t_mode(false),
+        topic(""), key(""), channel_name(name)
+    {  add_user(usr);  }
 
-    // CONSTRUCTOR
-    Channel(std::string name): channel_name(name),
-            i_mode(false), k_mode(false), l_mode(false), t_mode(false),
-            topic(""), key("")
-    {
-
-    };
-
+    Channel()
+    {}
+    ~Channel()
+    {}
 	// void sendLine(int fd, const std::string& line);
 
-    bool channel_join(std::string cl_nick, int fd, User* usr, std::string error_msg, std::string key);
-    void add_user(std::string cl_nick, int fd, User* usr);
-    // int add_user(User* usr)
-    // {
-        
-    // }
-    // OR channel_join(User* usr); 
-    // possible errors:
-    // ERR_CHANNELISFULL (471)
-    // ERR_INVITEONLYCHAN (473)
-
+    // for all the users 
+    bool channel_join(User& usr, std::string key, std::string& returned_error);
+    void add_user(User& usr);
 };
 
 #include "User.hpp"
-
 #endif

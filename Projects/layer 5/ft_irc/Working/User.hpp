@@ -26,19 +26,52 @@ class User
 {
     public :
 
-    int fd;
+    int usr_fd;
     bool registered;
 	bool pass_ok;
     std::string nick;
 	std::string user;
 	std::string real;
-	User(): fd(-1), registered(false), pass_ok(false) {}
+    std::string inbuf;
+	std::string outbuf;
+
+	User(int newfd): usr_fd(newfd), registered(false), pass_ok(false) {}
 
 
-    User(std::string new_nick, std::string new_user, std::string new_real, int new_fd):
-        nick(new_nick), user(new_user), real(new_real), fd(new_fd)
-    {};
+    // User(std::string new_nick, std::string new_user, std::string new_real, int new_fd):
+    //     nick(new_nick), user(new_user), real(new_real), usr_fd(new_fd)
+    // {};
 
+    User(const User& another)
+    {
+        if (this != &another)
+        {
+            this->usr_fd = another.usr_fd;
+            this->registered = another.registered;
+            this->pass_ok = another.pass_ok;
+            this->nick = another.nick;
+            this->user = another.user;
+            this->real = another.real;
+        }
+    }
+
+    User& operator=(const User& another)
+    {
+        if (this != &another)
+        {
+            this->usr_fd = another.usr_fd;
+            this->registered = another.registered;
+            this->pass_ok = another.pass_ok;
+            this->nick = another.nick;
+            this->user = another.user;
+            this->real = another.real;
+        }
+
+        return (*this);
+    }
+
+    User() {}
+    ~User() {}
     // chanop_mode
     // bool o_mode;
     // std::set<std::string> im_chanop_of;

@@ -19,7 +19,7 @@
 
 struct IRCMessage;
 class Channel;
-
+class User;
 
 struct Client {
 	int fd;
@@ -43,10 +43,15 @@ private:
 	std::string port_;
 	std::string server_password_;
 	int listenfd_;
-	std::map<int, Client> clients_;
+	// std::map<int, Client> clients_;
 	std::map<std::string, int> nick_map_;
-	// std::map<std::string, std::vector<int> > channels_;
 	std::vector<struct pollfd> pfds_;
+	
+	std::map<int, User> users_;
+	// channel's name + list of its members' fds
+	std::map<std::string, std::vector<int> > chnl_members_;
+	// list of channels, listed by names
+	std::map<std::string, Channel> channels_; 
 
 	int find_pollfd_index(int fd);
 	void flush_outgoing(int idx);
@@ -62,8 +67,9 @@ private:
 	void handle_privmsg(const IRCMessage& msg, const int& fd);
 	void handle_quit(const int& fd, std::vector<struct pollfd>& pfds, int i);
 	void handle_cap(const IRCMessage& msg, const int& fd);
-
-	std::map<std::string, Channel*> channels_;
 };
 
 #include "Channel.hpp"
+#include "User.hpp"
+#include "IRCParser.hpp"
+
