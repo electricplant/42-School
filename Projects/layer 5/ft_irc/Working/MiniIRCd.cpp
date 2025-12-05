@@ -23,7 +23,7 @@
 #include <poll.h>
 #include <errno.h>
 #include <string.h>
-
+ #include <arpa/inet.h>
 #include <stdio.h>
 
 #include <iostream>
@@ -45,20 +45,76 @@ int MiniIRCd::make_listen() {
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
-	if (getaddrinfo(NULL, port_.c_str(), &hints, &res) != 0) return -1;
+	
+	res = NULL;
+	// std::cout << "res = " << res << "\n";
+	
+	int getaddrinfo_res = getaddrinfo(NULL, port_.c_str(), &hints, &res);
+	if (getaddrinfo_res != 0)
+	{
+		std::cerr << "getaddrinfo failed\n";
+		if (res == NULL)
+			std::cerr << "res == NULL\n";
+
+		return -1;
+	}
+	else
+	{
+		if (res == NULL)
+			std::cerr << "res == NULL\n";
+		else 
+		{
+			std::cout << "res = " ;
+		    const struct sockaddr_in *addr4 =
+    			reinterpret_cast<const struct sockaddr_in*>(res->ai_addr);
+			char ipStr[INET_ADDRSTRLEN];   // 16 octets, assez grand pour IPv4
+			inet_ntop(AF_INET, &(addr4->sin_addr), ipStr, sizeof(ipStr));
+			std::cout << "Adresse IP retournée par getaddrinfo : " << ipStr << '\n';
+		}
+			
+		std::cerr << "getaddrinfo SUCCESS, ans res = " << res << " \n";
+	}
+
+
+	int hah= 1;
 	for (rp = res; rp; rp = rp->ai_next) {
+
+		std::cout << "Try n°" << hah << ", res_addr = " << res->ai_addr->sa_data[0] << "\n";
+
 		listenfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+		// error:
 		if (listenfd < 0) continue;
 		setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
-		if (bind(listenfd, rp->ai_addr, rp->ai_addrlen) == 0) break;
-		close(listenfd);
-		listenfd = -1;
+		
+		int bind_res = bind(listenfd, rp->ai_addr, rp->ai_addrlen) ;
+		if (bind_res == 0)
+		{
+			std::cout << "Found address n°" << hah << ", " ;
+			const struct sockaddr_in *addr4 =
+    			reinterpret_cast<const struct sockaddr_in*>(res->ai_addr);
+			char ipStr[INET_ADDRSTRLEN];   // 16 octets, assez grand pour IPv4
+			inet_ntop(AF_INET, &(addr4->sin_addr), ipStr, sizeof(ipStr));
+			std::cout  << ipStr << '\n';
+			// << rp->ai_addr->sa_data << std::endl;
+			break;
+		}
+		else 
+		{
+			close(listenfd);
+			listenfd = -1;
+			std::cout << "Didn't find address n°" << hah << ", " << rp->ai_addr->sa_data << std::endl;
+		}
+		hah++;
 	}
 	freeaddrinfo(res);
 	if (listenfd < 0) return -1;
 	if (listen(listenfd, LISTEN_BACKLOG) < 0) { close(listenfd); return -1; }
+	
+	// We'll probably have avoid using "int flags"
 	int flags = fcntl(listenfd, F_GETFL, 0);
 	fcntl(listenfd, F_SETFL, flags | O_NONBLOCK);
+	// fcntl(fd, F_SETFL, O_NONBLOCK); cf SUBJECT
+	
 	return listenfd;
 }
 
@@ -243,32 +299,63 @@ void MiniIRCd::handle_user(const IRCMessage& msg, const int& fd)
 
 void MiniIRCd::handle_join(const IRCMessage& msg, const int& fd)
 {
-		if (msg.params.empty()) {
-		sendLine(fd, "461 JOIN :Not enough parameters");
-	} else {
-		std::string chan = msg.params[0]; //max channel name length (including #) is 200 characters
-		if (chan.empty()) return ; //return 461 response
-		if (chan[0] != '#') chan = std::string("#") + chan;
-		Client& c = clients_[fd];
-		std::vector<int>& v = channels_[chan]; //we could switch to std::unordered_set<int>, more efficient
-		bool already = false;
-		for (size_t k=0;k<v.size();++k) if (v[k]==fd) { already = true; break; }
-		if (!already) v.push_back(fd);
-
-		std::ostringstream joinmsg;
-		joinmsg << ":" << nick_or_fd(c) << " JOIN :" << chan;
-		for (size_t k=0;k<v.size();++k) sendLine(v[k], joinmsg.str());
-		std::ostringstream names;
-		names << ":miniircd 353 " << (c.nick.empty() ? "*" : c.nick) << " = " << chan << " :";
-		for (size_t k=0;k<v.size();++k) {
-			Client& oc = clients_[v[k]];
-			names << (oc.nick.empty() ? nick_or_fd(oc) : oc.nick) << (k+1<v.size() ? " " : "");
+		if (msg.params.empty())
+		{
+			sendLine(fd, "461 JOIN :Not enough parameters");
 		}
-		sendLine(fd, names.str());
-		std::ostringstream endnames;
-		endnames << ":miniircd 366 " << (c.nick.empty() ? "*" : c.nick) << " " << chan << " :End of /NAMES list.";
-		sendLine(fd, endnames.str());
-	}
+		else
+		{
+			std::string chan = msg.params[0]; //max channel name length (including #) is 200 characters
+			if (chan.empty())
+				return ; //return 461 response
+
+			if (chan[0] != '#')
+				chan = std::string("#") + chan;
+			
+			Client& c = clients_[fd];
+
+			std::map<std::string, Channel*>::iterator map_it;
+			map_it = channels_.find(chan);
+			if (map_it != channels_.end())
+			{
+				// the channel could detect potential errors
+				// USER IS NOT INVITED or CHANNEL IS FULL
+					map_it.second::
+				//
+				break;
+			}
+			bool already = false;
+
+			// for (size_t k=0; k<v.size();++k)
+			// {
+			// 	if (v[k]==fd)
+			// 	{
+			// 		already = true;
+			// 		// the channel could detect potential errors
+
+			// 		//
+			// 		break;
+			// 	}
+			// }
+			if (!already)
+				v.push_back(fd);
+
+			std::ostringstream joinmsg;
+			joinmsg << ":" << nick_or_fd(c) << " JOIN :" << chan;
+			for (size_t k=0;k<v.size();++k)
+				sendLine(v[k], joinmsg.str());
+			std::ostringstream names;
+			names << ":miniircd 353 " << (c.nick.empty() ? "*" : c.nick) << " = " << chan << " :";
+			for (size_t k=0;k<v.size();++k)
+			{
+				Client& oc = clients_[v[k]];
+				names << (oc.nick.empty() ? nick_or_fd(oc) : oc.nick) << (k+1<v.size() ? " " : "");
+			}
+			sendLine(fd, names.str());
+			std::ostringstream endnames;
+			endnames << ":miniircd 366 " << (c.nick.empty() ? "*" : c.nick) << " " << chan << " :End of /NAMES list.";
+			sendLine(fd, endnames.str());
+		}
 }
 
 void MiniIRCd::handle_privmsg(const IRCMessage& msg, const int& fd)
@@ -376,6 +463,8 @@ int MiniIRCd::run() {
 	if (listenfd_ < 0) { std::cerr << "listen failed\n"; return 1; }
 	std::cout << "listening on port " << port_ << "\n";
 
+	// a new pollfd is add a the END of pfds_
+	// but you initialize the [0] of pfds_
 	pfds_.push_back(pollfd());
 	pfds_[0].fd = listenfd_; pfds_[0].events = POLLIN;
 

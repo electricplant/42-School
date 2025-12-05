@@ -18,6 +18,8 @@
 #include <algorithm>
 
 struct IRCMessage;
+class Channel;
+
 
 struct Client {
 	int fd;
@@ -43,7 +45,7 @@ private:
 	int listenfd_;
 	std::map<int, Client> clients_;
 	std::map<std::string, int> nick_map_;
-	std::map<std::string, std::vector<int> > channels_;
+	// std::map<std::string, std::vector<int> > channels_;
 	std::vector<struct pollfd> pfds_;
 
 	int find_pollfd_index(int fd);
@@ -61,5 +63,7 @@ private:
 	void handle_quit(const int& fd, std::vector<struct pollfd>& pfds, int i);
 	void handle_cap(const IRCMessage& msg, const int& fd);
 
-
+	std::map<std::string, Channel*> channels_;
 };
+
+#include "Channel.hpp"
