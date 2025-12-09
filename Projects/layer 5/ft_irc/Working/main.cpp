@@ -55,8 +55,7 @@ int main(int argc, char** argv)
 	// From what I understood, try/catch is useful when there is a running
 	// process, and at a certain time an error can occur (like a server goes down)
 	// but we don't know when exactly.
-	// Or if catching an exception means we don't interrupt a process...
-	// Wheras, in our main, we know that our errors are argv != 3, or 
+	// In our main, we know that our errors are argv != 3, or 
 	// other chars than "0123..." in the argv[1], or errors in argv[2],
 	// and each of these errors should stop our programm. 
 

@@ -5,9 +5,15 @@
 #include <set>
 #include <map>
 #include <vector>
-#include <iomanip>
+#include <iostream>
 #include <sstream>
 #include <algorithm>
+
+#define INVITE  105
+#define KEY     107
+#define LENGTH  108
+#define OPER    111
+#define TOPIC   116
 
 class User;
 // class Server;
@@ -18,40 +24,48 @@ class Channel
 {
     private:
     
-    std::map<std::string, User> users_;
-
-    public:
-
     bool i_mode;
     bool k_mode;
     bool l_mode;
+    bool o_mode;
     bool t_mode;
 
     int length;
+    int max_length;
     std::string topic;
     std::string key;
     std::string channel_name;
     std::set<std::string> chanop_list;
     std::set<std::string> user_list;
     std::set<std::string> invited_users;
+    // Need to implement smth to forward messages
+    // to all the users
+    std::map<std::string, User> users_;
 
+
+    public:
 
     // CONSTRUCTORS
-    // for the first user :
-    Channel(std::string name, User& usr):
-        i_mode(false), k_mode(false), l_mode(false), t_mode(false),
-        topic(""), key(""), channel_name(name)
-    {  add_user(usr);  }
 
-    Channel()
-    {}
-    ~Channel()
-    {}
-	// void sendLine(int fd, const std::string& line);
+    // For the first user :
+    Channel(std::string name, User& usr);
+    // Default :
+    Channel();
+    ~Channel();
 
-    // for all the users 
+    // For all the users 
+    // Join
     bool channel_join(User& usr, std::string key, std::string& returned_error);
     void add_user(User& usr);
+    // Mode
+    void channel_mode(std::vector<std::string> mode_params, std::string user_name, std::string& returned_info);
+    void add_mode(std::string modes, std::vector<std::string> mode_params);
+    void cancel_mode(std::string modes);
+    void print_channel_modes(std::string user_name, std::string& returned_info);
+    // Problems when trying to connect to the same channel
+    // with different IRSSI users :
+    // The WHO and WHOIS commands seem necessary.
+    // Also, reviewing PRIVMSG may be necessary.
 };
 
 #include "User.hpp"

@@ -21,17 +21,17 @@ struct IRCMessage;
 class Channel;
 class User;
 
-struct Client {
-	int fd;
-	std::string nick;
-	std::string user;
-	std::string real;
-	bool registered;
-	bool pass_ok;
-	std::string inbuf;
-	std::string outbuf;
-	Client(): fd(-1), registered(false), pass_ok(false) {}
-};
+// struct Client {
+// 	int fd;
+// 	std::string nick;
+// 	std::string user;
+// 	std::string real;
+// 	bool registered;
+// 	bool pass_ok;
+// 	std::string inbuf;
+// 	std::string outbuf;
+// 	Client(): fd(-1), registered(false), pass_ok(false) {}
+// };
 
 class MiniIRCd {
 public:
@@ -67,6 +67,8 @@ private:
 	void handle_privmsg(const IRCMessage& msg, const int& fd);
 	void handle_quit(const int& fd, std::vector<struct pollfd>& pfds, int i);
 	void handle_cap(const IRCMessage& msg, const int& fd);
+	void handle_mode(User& actual_user, IRCMessage msg);
+
 };
 
 #include "Channel.hpp"

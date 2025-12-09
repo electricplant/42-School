@@ -110,7 +110,7 @@ int MiniIRCd::make_listen() {
 	if (listenfd < 0) return -1;
 	if (listen(listenfd, LISTEN_BACKLOG) < 0) { close(listenfd); return -1; }
 	
-	// We'll probably have avoid using "int flags"
+	// We'll probably have to avoid using "int flags"
 	int flags = fcntl(listenfd, F_GETFL, 0);
 	fcntl(listenfd, F_SETFL, flags | O_NONBLOCK);
 	// fcntl(fd, F_SETFL, O_NONBLOCK); cf SUBJECT
@@ -458,6 +458,26 @@ void MiniIRCd::handle_pass(const IRCMessage& msg, const int& fd, std::vector<str
 	}
 }
 
+void MiniIRCd::handle_mode(User& actual_user, IRCMessage msg)
+{
+	if (!this->channels_.empty())
+	{
+		std::map<std::string, Channel>::iterator selected_chnl = this->channels_.find(*(msg.params.begin()));
+
+		if (selected_chnl != channels_.end())
+		{
+			std::cout << "Channel \"" << selected_chnl->first << "\" found in Server \n";
+			
+			// Erasing channel name from msg.params
+			std::rotate(msg.params.begin(), msg.params.begin() + 1, msg.params.end());
+			msg.params.pop_back();
+			
+			std::string channel_response;
+			selected_chnl->second.channel_mode(msg.params, actual_user.nick, channel_response);
+			sendLine(actual_user.usr_fd, channel_response);
+		}
+	}
+}
 
 int MiniIRCd::run()
 {
@@ -529,8 +549,7 @@ int MiniIRCd::run()
 								continue;
 							// tell other users of this channel, that smbdy has quit :
 							std::ostringstream os;
-							// os << ":" << nick_or_fd(c) << " QUIT :" << quitmsg;
-							os << ":" << usr.usr_fd << " QUIT :" << quitmsg;
+							os << ":" << nick_or_fd(usr) << " QUIT :" << quitmsg;
 							sendLine(channel_fds[k], os.str());
 						}
 
@@ -581,6 +600,8 @@ int MiniIRCd::run()
 						//put all this into "handle_command"
 						if (cmd == "PING") {
 							handle_ping(msg, client_fd);
+						} else if (cmd == "CAP") {
+							handle_cap(msg, client_fd);
 						} else if (cmd == "PASS") {
 							handle_pass(msg, client_fd, pfds_, i);
 						} else if (cmd == "NICK") {
@@ -595,8 +616,17 @@ int MiniIRCd::run()
 							handle_join(msg, client_fd);
 						} else if (cmd == "PRIVMSG") {
 							handle_privmsg(msg, client_fd);
-						} else if (cmd == "CAP") {
-							handle_cap(msg, client_fd);
+						} else if (cmd == "MODE") {
+							// MODE can also be called on users 
+							// we should ignore it.
+							// ex : "MODE dan +i" = Setting the "invisible" user mode on dan.
+							
+							// in handle_mode() params :
+							// I am using an instance of User instead of just his fd (client_fd).
+							// Beacause I will need client's fd to send him replies from the server (sendLine),
+							// and in each Channel, users are stored by their names : the Channel
+							// will need to print their names and send to other users, know who is invited...						
+							handle_mode(actual_user, msg);
 						} else if (cmd == "QUIT") {
 							handle_quit(client_fd, pfds_, i);
 							break;
