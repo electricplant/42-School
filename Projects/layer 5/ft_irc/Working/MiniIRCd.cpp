@@ -253,25 +253,54 @@ void MiniIRCd::handle_ping(const IRCMessage& msg, const int& fd)
 void MiniIRCd::handle_nick(const IRCMessage& msg, const int& fd)
 {
 	std::string newnick;
-	if (!msg.params.empty()) newnick = msg.params[0];
-	if (newnick.empty()) {
+	if (!msg.params.empty())
+		newnick = msg.params[0];
+	if (newnick.empty())
+	{
 		sendLine(fd, "431 * :No nickname given");
-	} else {
-		if (newnick[0] == ':') newnick = newnick.substr(1);
-		if (nick_map_.find(newnick) != nick_map_.end()) {
+	}
+	else
+	{
+		if (newnick[0] == ':')
+			newnick = newnick.substr(1);
+
+		if (nick_map_.find(newnick) != nick_map_.end())
+		{
 			sendLine(fd, (std::string("433 * ") + newnick + " :Nickname is already in use"));
-		} else {
+		}
+		else
+		{
 			User& u = users_.at(fd);
-			if (!server_password_.empty() && !u.pass_ok) {
+			if (!server_password_.empty() && !u.pass_ok)
+			{
 				sendLine(fd, "464 * :Password required");
 				return ;
 			}
-			if (!u.nick.empty()) nick_map_.erase(u.nick);
+			std::string orignick = u.nick;
+			// if (!u.nick.empty())
+				nick_map_.erase(orignick);
+
 			u.nick = newnick;
 			nick_map_[newnick] = fd;
-			if (!u.user.empty() && !u.registered) {
+			if (!u.user.empty() && !u.registered)
+			{
 				u.registered = true;
 				send_numeric(fd, u.nick, 001, ":Welcome to miniircd, made by Jeanne and Dean");
+			}
+			else
+			{
+				std::map<int, User>::iterator usr_it = users_.begin();
+				while (usr_it != users_.end())
+				{
+					sendLine(usr_it->first, orignick + " NICK :" + newnick);
+					usr_it++;
+				}
+				// if (u.nick.empty())
+				// 	sendLine(fd, nick_or_fd(u) + " NICK :" + newnick);
+				// else
+				// 	sendLine(fd, orignick + " NICK :" + newnick);
+
+				// send_numeric(fd, u.nick, 001, ":Welcome to miniircd, made by Jeanne and Dean");
 			}
 		}
 	}
@@ -320,6 +349,7 @@ void MiniIRCd::handle_join(const IRCMessage& msg, const int& fd)
 		// This channel doesn't exist yet
 		if (chan_it == channels_.end())
 		{
+			std::cout << usr.nick << " joined " << chan << "\n";
 			// Update 2 of the server's lists
 			channels_[chan] = Channel(chan, usr);
 			chnl_members_[chan].push_back(fd);
@@ -334,6 +364,7 @@ void MiniIRCd::handle_join(const IRCMessage& msg, const int& fd)
 				sendLine(fd, detected_error);
 				return;
 			}
+			chnl_members_[chan].push_back(fd);
 		}
 
 		std::ostringstream joinmsg;
@@ -357,23 +388,51 @@ void MiniIRCd::handle_join(const IRCMessage& msg, const int& fd)
 
 void MiniIRCd::handle_privmsg(const IRCMessage& msg, const int& fd)
 {
-	if (msg.params.empty()) { sendLine(fd, "411 :No recipient given"); return ; }
+	if (msg.params.empty())
+	{
+		sendLine(fd, "411 :No recipient given");
+		return ;
+	}
 	std::string target = msg.params[0];
 	std::string text = msg.trailing;
-	User& sender = users_.at(fd);
-	if (target.size() > 0 && target[0] == '#') {
-		std::vector<int>& v = chnl_members_[target];
-		for (size_t k=0;k<v.size();++k) {
-			if (v[k] == fd) continue;
+
+	std::map<int, User>::iterator usr_finder;
+	usr_finder = users_.find(fd);
+	if (usr_finder == users_.end()) 
+		return ; // fd corresponds to no user
+
+	User& sender = usr_finder->second;
+	// send msg to a channel
+	if (target.size() > 0 && target[0] == '#')
+	{
+		std::map<std::string, std::vector<int> >::iterator chnl_it;
+		chnl_it = this->chnl_members_.find(target);
+		if (chnl_it == this->chnl_members_.end())
+		{
+			// Attempt to send messages to non existing channel
+			return;
+		}
+
+		std::vector<int>& v = chnl_it->second;
+		for (size_t k = 0; k < v.size(); ++k)
+		{
+			if (v[k] == fd)
+				continue;
 			std::ostringstream pm;
 			pm << ":" << nick_or_fd(sender) << " PRIVMSG " << target << " :" << text;
 			sendLine(v[k], pm.str());
 		}
-	} else {
-		std::map<std::string,int>::iterator it = nick_map_.find(target);
-		if (it == nick_map_.end()) {
+	}
+	else
+	{
+		// send msg to another user
+		std::map<std::string, int>::iterator it = nick_map_.find(target);
+		if (it == nick_map_.end())
+		{
 			sendLine(fd, (std::string("401 ") + target + " :No such nick/channel"));
-		} else {
+		}
+		else
+		{
 			int od = it->second;
 			std::ostringstream pm;
 			pm << ":" << nick_or_fd(sender) << " PRIVMSG " << target << " :" << text;

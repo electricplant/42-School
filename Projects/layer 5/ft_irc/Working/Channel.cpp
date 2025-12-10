@@ -69,6 +69,7 @@ void Channel::channel_mode(std::vector<std::string> mode_params, std::string use
 
     if (this->chanop_list.find(user_name) == this->chanop_list.end())
     {
+        // ERR_CHANOPRIVSNEEDED (482)
         returned_info = "482 " + user_name + " " + this->channel_name + " :You're not channel operator";
         return ;
     }
@@ -97,9 +98,9 @@ void Channel::add_mode(std::string modes, std::vector<std::string> mode_params)
     size_t counter = 1; //is for k,l,o,t : they need other parameters
     size_t total_prms = mode_params.size();
 
+    the_mode++;
     while (the_mode != modes.end() && !error)
     {
-        the_mode++;
         int mode_letter = *the_mode;
         // std::cout << "mode_letter " << mode_letter << "\n";
         // std::cout << "counter " << counter << "\n";
@@ -162,7 +163,8 @@ void Channel::add_mode(std::string modes, std::vector<std::string> mode_params)
                                 << this->topic << std::endl;
                 }
                 break;
-        } 
+        }
+        the_mode++;
     }
     // std::stringstream ss;
     // ss << "RESULT : +";
@@ -185,14 +187,13 @@ void Channel::add_mode(std::string modes, std::vector<std::string> mode_params)
 
 void Channel::cancel_mode(std::string modes)
 {
-    std::cout << "=> cancel_mode func\n";
+    std::cout << "=> cancel_mode func MODES : " << modes << "\n";
 
     std::string::iterator the_mode = modes.begin();
 
+    the_mode++;
     while (the_mode != modes.end())
     {
-        
-        the_mode++;
         int mode_letter = *the_mode;
 
         std::cout << "mode_letter " << mode_letter << "\n";
@@ -221,7 +222,9 @@ void Channel::cancel_mode(std::string modes)
                 this->t_mode = false;
                 break;
         }
+        the_mode++;
     }
+
     std::cout << this->channel_name << " : mode -";
     if (!this->i_mode)
         std::cout << "i";
