@@ -8,6 +8,7 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+#include <stdint.h>
 
 #define INVITE  105
 #define KEY     107
@@ -53,15 +54,22 @@ class Channel
     Channel();
     ~Channel();
 
-    // For all the users 
+    // For all the users
+    std::string get_chnl_name()
+    {
+        return this->channel_name;
+    }
+    
     // Join
     bool channel_join(User& usr, std::string key, std::string& returned_error);
     void add_user(User& usr);
     // Mode
-    void channel_mode(std::vector<std::string> mode_params, std::string user_name, std::string& returned_info);
-    void add_mode(std::string modes, std::vector<std::string> mode_params);
-    void cancel_mode(std::string modes);
-    void print_channel_modes(std::string user_name, std::string& returned_info);
+    bool channel_mode(std::vector<std::string> mode_params, std::string user_name, std::string& returned_info);
+    bool add_mode(std::string modes, std::vector<std::string> mode_params, std::string user_name, std::string& returned_info);
+    // bool add_mode(std::string modes, std::vector<std::string> mode_params);
+    bool cancel_mode(std::string modes, std::string user_name, std::string& returned_info);
+    void print_channel_modes(bool for_chanops, uint8_t all_modifs, std::string user_name, std::string& returned_info, std::string sign);
+
     // Problems when trying to connect to the same channel
     // with different IRSSI users :
     // The WHO and WHOIS commands seem necessary.

@@ -76,7 +76,7 @@ int MiniIRCd::make_listen() {
 	}
 
 
-	int hah= 1;
+	int hah = 1;
 	for (rp = res; rp; rp = rp->ai_next) {
 
 		std::cout << "Try n°" << hah << ", res_addr = " << res->ai_addr->sa_data[0] << "\n";
@@ -519,6 +519,7 @@ void MiniIRCd::handle_pass(const IRCMessage& msg, const int& fd, std::vector<str
 
 void MiniIRCd::handle_mode(User& actual_user, IRCMessage msg)
 {
+	std::cout << "handle_mode()\n";
 	if (!this->channels_.empty())
 	{
 		std::map<std::string, Channel>::iterator selected_chnl = this->channels_.find(*(msg.params.begin()));
@@ -531,10 +532,35 @@ void MiniIRCd::handle_mode(User& actual_user, IRCMessage msg)
 			std::rotate(msg.params.begin(), msg.params.begin() + 1, msg.params.end());
 			msg.params.pop_back();
 			
-			std::string channel_response;
-			selected_chnl->second.channel_mode(msg.params, actual_user.nick, channel_response);
-			sendLine(actual_user.usr_fd, channel_response);
+			bool res;
+			std::string chnl_res;
+			res = selected_chnl->second.channel_mode(msg.params, actual_user.nick, chnl_res);
+			if (!res)
+				sendLine(actual_user.usr_fd, chnl_res);
+			else
+			{
+				std::map<std::string, std::vector<int> >::iterator chnl_mem_it; 
+				chnl_mem_it = this->chnl_members_.find(selected_chnl->second.get_chnl_name());
+				if (chnl_mem_it != chnl_members_.end())
+				{
+					std::vector<int>& v = chnl_mem_it->second;
+					for (size_t k = 0; k < v.size(); ++k)
+						sendLine(v[k], chnl_res);
+				}
+			}
 		}
+		else
+		{
+			// ERR_NOSUCHCHANNEL (403)
+			std::string error_msg = "403 " + actual_user.nick + " " + *(msg.params.begin()) + " :No such channel";
+			sendLine(actual_user.usr_fd, error_msg);
+		}
+	} // redundant 
+	else
+	{
+		// ERR_NOSUCHCHANNEL (403)
+		std::string error_msg = "403 " + actual_user.nick + " " + *(msg.params.begin()) + " :No such channel";
+		sendLine(actual_user.usr_fd, error_msg);
 	}
 }
 
@@ -668,23 +694,23 @@ int MiniIRCd::run()
 						} else if (cmd == "USER") {
 							handle_user(msg, client_fd);
 						} else if (cmd == "JOIN") {
-							// /!\ Join should handle several channels with eventual pswds
-							// example : JOIN #channel,#channel2 pswd,pswd2(or nothing as pswd)
-							// https://modern.ircdocs.horse/#join-message 
-							// How to handle it inside IRCMessage?
+						// /!\ Join should handle several channels with eventual pswds
+						// example : JOIN #channel,#channel2 pswd,pswd2(or nothing as pswd)
+						// https://modern.ircdocs.horse/#join-message 
+						// How to handle it inside IRCMessage?
 							handle_join(msg, client_fd);
 						} else if (cmd == "PRIVMSG") {
 							handle_privmsg(msg, client_fd);
 						} else if (cmd == "MODE") {
-							// MODE can also be called on users 
-							// we should ignore it.
-							// ex : "MODE dan +i" = Setting the "invisible" user mode on dan.
-							
-							// in handle_mode() params :
-							// I am using an instance of User instead of just his fd (client_fd).
-							// Beacause I will need client's fd to send him replies from the server (sendLine),
-							// and in each Channel, users are stored by their names : the Channel
-							// will need to print their names and send to other users, know who is invited...						
+						// MODE can also be called on users 
+						// we should ignore it.
+						// ex : "MODE dan +i" = Setting the "invisible" user mode on dan.
+						
+						// in handle_mode() params :
+						// I am using an instance of User instead of just his fd (client_fd).
+						// Beacause I will need client's fd to send him replies from the server(sendLine),
+						// and in each Channel, users are stored by their names : the Channel
+						// will need to print their names and send to other users, know who is invited...						
 							handle_mode(actual_user, msg);
 						} else if (cmd == "QUIT") {
 							handle_quit(client_fd, pfds_, i);
@@ -692,7 +718,8 @@ int MiniIRCd::run()
 						} else {
 							sendLine(client_fd, std::string(":miniircd NOTICE * :Unknown command ") + cmd);
 						}
-					} // end processing lines
+					}
+					// end processing lines
 				}
 			} // end POLLIN
 			if (re & POLLOUT)

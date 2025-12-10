@@ -4,7 +4,7 @@
 
 // For the first user :
 Channel::Channel(std::string name, User& usr):
-    i_mode(false), k_mode(false), l_mode(false), t_mode(false),
+    i_mode(false), k_mode(false), l_mode(false), o_mode(false), t_mode(false),
     length(0), max_length(0), topic(""), key(""), channel_name(name)
 {  add_user(usr);  }
 
@@ -55,7 +55,7 @@ bool Channel::channel_join(User& usr, std::string key, std::string& returned_err
 
 // MODE
 
-void Channel::channel_mode(std::vector<std::string> mode_params, std::string user_name, std::string& returned_info)
+bool Channel::channel_mode(std::vector<std::string> mode_params, std::string user_name, std::string& returned_info)
 {
     // "mode_params" begins with "+ikl..."
     std::cout << "channel_mode() called\n";
@@ -63,15 +63,22 @@ void Channel::channel_mode(std::vector<std::string> mode_params, std::string use
     if (mode_params.empty())
     {
         // Every channel's user can see Channel's modes.
-        print_channel_modes(user_name, returned_info);
-        return ;
+        uint8_t all_modes = 0;
+        if (this->i_mode) all_modes |= 1;
+        if (this->k_mode) all_modes |= 2;
+        if (this->l_mode) all_modes |= 4;
+        if (this->o_mode) all_modes |= 8;
+        if (this->t_mode) all_modes |= 16;
+        
+        print_channel_modes(false, all_modes, user_name, returned_info, "+");
+        return (false);
     }
 
     if (this->chanop_list.find(user_name) == this->chanop_list.end())
     {
         // ERR_CHANOPRIVSNEEDED (482)
         returned_info = "482 " + user_name + " " + this->channel_name + " :You're not channel operator";
-        return ;
+        return (false);
     }
 
     std::string modes = *(mode_params.begin());
@@ -80,183 +87,199 @@ void Channel::channel_mode(std::vector<std::string> mode_params, std::string use
         std::string sign = modes.substr(0, 1);
         std::cout << "sign " << sign << "\n";
         if (sign == "+")
-            add_mode(modes, mode_params);
+            return (add_mode(modes, mode_params, user_name, returned_info));
         else if (sign == "-")
-            cancel_mode(modes);
-        print_channel_modes(user_name, returned_info);
+            return (cancel_mode(modes, user_name, returned_info));
     }
-    return ;
+    returned_info = "";
+    return (false);
 }
 
-void Channel::add_mode(std::string modes, std::vector<std::string> mode_params)
+bool Channel::add_mode(std::string modes, std::vector<std::string> mode_params, std::string user_name, std::string& returned_info)
 {
     bool error = false;
     std::cout << "=> add_mode func\n";
-    bool tmp_k_mode = false, tmp_l_mode = false, tmp_t_mode = false;
+    uint8_t all_modifs = 0;
 
     std::string::iterator the_mode = modes.begin();
-    size_t counter = 1; //is for k,l,o,t : they need other parameters
+    size_t param_counter = 1; //is for k,l,o,t : they need other parameters
     size_t total_prms = mode_params.size();
 
     the_mode++;
     while (the_mode != modes.end() && !error)
     {
         int mode_letter = *the_mode;
-        // std::cout << "mode_letter " << mode_letter << "\n";
-        // std::cout << "counter " << counter << "\n";
-        // std::cout << "total_prms " << total_prms << "\n";
-        // size_t i = -1;
-        // while (++i < total_prms)
-        //     std::cout << mode_params[i] << " "; 
-        // std::cout << std::endl;
-        
         switch (mode_letter)
         {
             case INVITE:
-                this->i_mode = true;
-                std::cout << this->channel_name << " : mode +i "
-                                << std::endl;
+                if (!this->i_mode)
+                {
+                    all_modifs |= 1;
+                    this->i_mode = true;
+                    // std::cout << this->channel_name << " : mode +i "
+                    //             << std::endl;
+                }
                 break;
             case KEY:
-                if (tmp_k_mode == false && counter < total_prms)
+                if (param_counter < total_prms)
                 {
-                    tmp_k_mode = true;
                     this->k_mode = true;
+                    all_modifs |= 2;
                     //"key" syntax is quite permissive
                     std::stringstream ss;
-                    ss << mode_params[counter];
+                    ss << mode_params[param_counter];
                     this->key = ss.str(); 
-                    counter++;
-                    
-                    std::cout << this->channel_name << " : mode +k "
-                                << this->key << std::endl;
+                    param_counter++;
+                    // std::cout << this->channel_name << " : mode +k "
+                    //             << this->key << std::endl;
                 }
                 break;
             case LENGTH:
-                if (tmp_l_mode == false && counter < total_prms)
+                if (param_counter < total_prms)
                 {
-                    this->max_length = std::atoi((mode_params[counter]).c_str());
-                    if (this->max_length)
+                    this->max_length = std::atoi((mode_params[param_counter]).c_str());
+                    param_counter++;
+                    if (this->max_length != 0)
                     {
-                        tmp_l_mode = true;
                         this->l_mode = true;
-                        counter++;
-                        std::cout << this->channel_name << " : mode +l "
-                                    << this->max_length << std::endl;
+                        all_modifs |= 4;
+                        // std::cout << this->channel_name << " : mode +l "
+                        //             << this->max_length << std::endl;
                     }
-                    else
-                        error = true;
                 }
                 break;
             case OPER:
                 // not yet
                 break;
             case TOPIC:
-                if (tmp_t_mode == false && counter < total_prms)
+                if (param_counter < total_prms)
                 {
-                    tmp_t_mode = true;
                     this->t_mode = true;
-                    this->topic = mode_params[counter];
-                    counter++;
+                    all_modifs |= 16;
+                    this->topic = mode_params[param_counter];
+                    param_counter++;
 
-                    std::cout << this->channel_name << " : mode +t "
-                                << this->topic << std::endl;
+                    // std::cout << this->channel_name << " : mode +t "
+                    //             << this->topic << std::endl;
                 }
+                break;
+            default:
+                error = true;
                 break;
         }
         the_mode++;
     }
-    // std::stringstream ss;
-    // ss << "RESULT : +";
-    // if (i_mode)
-    //     ss << "i";
-    // if (k_mode)
-    //     ss << "k";
-    // if (l_mode)
-    //     ss << "l";
-    // if (t_mode)
-    //     ss << "t";
-
-    // if (key != "")
-    //     ss << " " << key;
-    // if (max_length != 0)
-    //     ss << " " << max_length;
-    // std::cout << ss.str() << std::endl; 
-    return ;
+    
+    // if smth changed
+    if (all_modifs == 0)
+    {
+        returned_info = "";
+        std::cout << "No mode added in " << this->get_chnl_name() << "\n";
+        return (false);
+    }
+    else
+    {
+        std::cout << "Mode(s) added in " << this->get_chnl_name() << "\n";
+        print_channel_modes(true, all_modifs, user_name, returned_info, "+");
+        return (true);
+    }
 }
 
-void Channel::cancel_mode(std::string modes)
+bool Channel::cancel_mode(std::string modes, std::string user_name, std::string& returned_info)
 {
     std::cout << "=> cancel_mode func MODES : " << modes << "\n";
 
+    bool error = false;
+    uint8_t all_modifs = 0;
     std::string::iterator the_mode = modes.begin();
 
     the_mode++;
-    while (the_mode != modes.end())
+    while (the_mode != modes.end() && !error)
     {
         int mode_letter = *the_mode;
-
-        std::cout << "mode_letter " << mode_letter << "\n";
-
-        // size_t i = -1;
-        // while (++i < total_prms)
-        //     std::cout << mode_params[i] << " "; 
-        // std::cout << std::endl;
+        // std::cout << "mode_letter " << mode_letter << "\n";
 
         switch (mode_letter)
         {
             case INVITE:
-                this->i_mode = false;
+                if (this->i_mode)
+                {
+                    this->i_mode = false;
+                    all_modifs |= 1;
+                }
                 break;
             case KEY:
-                this->k_mode = false;
+                if (this->k_mode)
+                {
+                    this->k_mode = false;
+                    all_modifs |= 2;
+                }
                 break;
             case LENGTH:
-                this->l_mode = false;
-                this->max_length = 0;
+                if (this->l_mode)
+                {
+                    this->l_mode = false;
+                    this->max_length = 0;
+                    all_modifs |= 4;
+                }
                 break;
             case OPER:
                 // not yet
                 break;
             case TOPIC:
-                this->t_mode = false;
+                if (this->t_mode)
+                {
+                    this->t_mode = false;
+                    all_modifs |= 16;
+                }
+                break;
+            default:
+                error = true;
                 break;
         }
         the_mode++;
     }
 
-    std::cout << this->channel_name << " : mode -";
-    if (!this->i_mode)
-        std::cout << "i";
-    if (!this->k_mode)
-        std::cout << "k";
-    if (!this->l_mode)
-        std::cout << "l";
-    // if (!this->o_mode)
-    //     std::cout << "o";
-    if (!this->t_mode)
-        std::cout << "t";
-    std::cout << "\n";
-
-    return ; //temp
+    // if nothing changed
+    if (all_modifs == 0)
+    {
+        returned_info = "";
+        std::cout << "No mode canceled in " << this->get_chnl_name() << "\n";
+        return (false);
+    }
+    else
+    {
+        std::cout << "Mode(s) canceled in " << this->get_chnl_name() << "\n";
+        print_channel_modes(true, all_modifs, user_name, returned_info, "-");
+        return (true);
+    }
 }
 
-void Channel::print_channel_modes(std::string user_name, std::string& returned_info)
+
+void Channel::print_channel_modes(bool chanops_only, uint8_t all_modifs, std::string user_name, std::string& returned_info, std::string sign)
 {
+    //124 64 32 16 8 4 2 1
     std::stringstream ss;
-    ss <<  "324 " + user_name + " " + this->channel_name + " +";
-    if (this->i_mode)
+
+    // TWO cases:
+    if (!chanops_only) 
+        ss <<  "324 " + user_name + " " + this->channel_name + " " + sign;
+    else
+        ss << ":" + user_name + "!~usr@host MODE " + this->channel_name + " " + sign;
+    if (all_modifs & 1)
         ss << "i";
-    if (this->k_mode) 
+    if (all_modifs & 2) 
         ss << "k";
-    if (this->l_mode) 
+    if (all_modifs & 4) 
         ss << "l";
-    if (this->t_mode) 
+    if (all_modifs & 8) 
+        ss << "o";
+    if (all_modifs & 16) 
         ss << "t";
 
-    if (this->k_mode)
+    if (all_modifs & 2)
         ss << " " + this->key;
-    if (this->l_mode)
+    if (all_modifs & 4)
     {
         ss << " " ; ss << this->max_length;
     }
