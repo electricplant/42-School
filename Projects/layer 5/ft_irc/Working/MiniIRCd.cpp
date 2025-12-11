@@ -43,7 +43,7 @@ static void signal_handler(int signum)
 }
 
 MiniIRCd::MiniIRCd(const std::string& port, const std::string& password)
-    : port_(port), server_password_(password), listenfd_(-1) {}
+    : oper_password_("operpass"), port_(port), server_password_(password), listenfd_(-1) {}
 MiniIRCd::~MiniIRCd() { if (listenfd_ != -1) close(listenfd_); }
 
 int MiniIRCd::make_listen() {
@@ -330,8 +330,10 @@ void MiniIRCd::handle_user(const IRCMessage& msg, const int& fd)
 	}
 	
 	u.user = msg.params[0];
-	if (!msg.trailing.empty()) u.real = msg.trailing;
-	if (!u.nick.empty() && !u.registered) {
+	if (!msg.trailing.empty())
+		u.real = msg.trailing;
+	if (!u.nick.empty() && !u.registered)
+	{
 		u.registered = true;
 		send_numeric(fd, u.nick, 001, ":Welcome to miniircd, made by Jeanne and Dean");
 	}
@@ -527,6 +529,38 @@ void MiniIRCd::handle_pass(const IRCMessage& msg, const int& fd, std::vector<str
 	}
 }
 
+void MiniIRCd::handle_oper(User& actual_user, IRCMessage msg)
+{
+	// Useless because IRSSI sets the nickname automatically:
+	// if (!actual_user.nick.empty() && !actual_user.registered)
+	// {
+	// 	// ERR_NOTREGISTERED (451)
+	// 	sendLine(actual_user.usr_fd, "451 * :You have not registered");
+	// 	return ;
+	// }
+
+	if (msg.params.size() < 2)
+	{
+		// ERR_NEEDMOREPARAMS (461)
+		sendLine(actual_user.usr_fd, "461 " + actual_user.nick + " OPER :Not enough parameters");
+		return ;
+	}
+
+	if (msg.params[1] == this->oper_password_)
+	{
+		this->opers_[actual_user.usr_fd] = actual_user;
+		// RPL_YOUREOPER (381)
+		sendLine(actual_user.usr_fd, "381 " + actual_user.nick + " :You are now an IRC operator");
+	}
+	else
+	{
+		// ERR_PASSWDMISMATCH (464)
+		sendLine(actual_user.usr_fd, "464 " + actual_user.nick + " :Password incorrect");
+	}
+
+}
+
+
 void MiniIRCd::handle_mode(User& actual_user, IRCMessage msg)
 {
 	std::cout << "handle_mode()\n";
@@ -717,6 +751,8 @@ int MiniIRCd::run()
 							handle_nick(msg, client_fd);
 						} else if (cmd == "USER") {
 							handle_user(msg, client_fd);
+						} else if (cmd == "OPER") {
+							handle_oper(actual_user, msg);
 						} else if (cmd == "JOIN") {
 						// /!\ Join should handle several channels with eventual pswds
 						// example : JOIN #channel,#channel2 pswd,pswd2(or nothing as pswd)

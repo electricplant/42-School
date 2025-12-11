@@ -43,14 +43,18 @@ public:
 	int run(); // blocking run loop, returns 0 on clean exit
 
 private:
+	std::string oper_password_;
 	std::string port_;
 	std::string server_password_;
 	int listenfd_;
 	// std::map<int, Client> clients_;
+
 	std::map<std::string, int> nick_map_;
 	std::vector<struct pollfd> pfds_;
 	
 	std::map<int, User> users_;
+	std::map<int, User> opers_;
+
 	// channel's name + list of its members' fds
 	std::map<std::string, std::vector<int> > chnl_members_;
 	// list of channels, listed by names
@@ -71,6 +75,8 @@ private:
 	void handle_quit(const int& fd, std::vector<struct pollfd>& pfds, int i);
 	void handle_cap(const IRCMessage& msg, const int& fd);
 	void handle_mode(User& actual_user, IRCMessage msg);
+	void handle_oper(User& actual_user, IRCMessage msg);
+
 
 };
 

@@ -70,14 +70,14 @@ class User
         return (*this);
     }
 
-    User() {}
-    ~User() {}
+    User(): usr_fd(-1), registered(false), pass_ok(false) {}
+    virtual ~User() {}
     // chanop_mode
     // bool o_mode;
     // std::set<std::string> im_chanop_of;
 
     // invited
-    std::set<std::string> im_invited_to;
+    // std::set<std::string> im_invited_to;
 };
 
 
