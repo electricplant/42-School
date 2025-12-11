@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:58:49 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/11/30 08:49:36 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/12/11 10:43:55 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -292,7 +292,9 @@ void MiniIRCd::handle_nick(const IRCMessage& msg, const int& fd)
 				std::map<int, User>::iterator usr_it = users_.begin();
 				while (usr_it != users_.end())
 				{
-					sendLine(usr_it->first, orignick + " NICK :" + newnick);
+					std::ostringstream nick_change;
+					nick_change << ":" << orignick << "!~" << u.user << "@localhost NICK :" << newnick;
+					sendLine(usr_it->first, nick_change.str());
 					usr_it++;
 				}
 				// if (u.nick.empty())
@@ -579,6 +581,7 @@ int MiniIRCd::run()
 	// the server's main socket is on pfds_[0]:
 	pfds_[0].fd = listenfd_; pfds_[0].events = POLLIN;
 
+	
 	while (1)
 	{
 		//if incoming connection, poll[0].revents will be set to POLLIN
