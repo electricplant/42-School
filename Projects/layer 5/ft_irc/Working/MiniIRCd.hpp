@@ -77,7 +77,9 @@ private:
 	void handle_cap(const IRCMessage& msg, const int& fd);
 	void handle_who(const IRCMessage& msg, const int& fd);
 	void handle_mode(User& actual_user, IRCMessage msg);
-	void handle_oper(User& actual_user, IRCMessage msg);
+	void handle_oper(User& actual_user, const IRCMessage& msg);
+	void handle_kill(const int& killer_fd, std::vector<struct pollfd>& pfds, int i, const IRCMessage& msg);
+
 
 
 };

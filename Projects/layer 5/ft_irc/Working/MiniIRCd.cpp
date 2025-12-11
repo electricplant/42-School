@@ -541,6 +541,53 @@ void MiniIRCd::handle_quit(const int& fd, std::vector<struct pollfd>& pfds, int 
 	std::cout << "fd " << fd << " quit\n";
 }
 
+void MiniIRCd::handle_kill(const int& killer_fd, std::vector<struct pollfd>& pfds, int i, const IRCMessage& msg)
+{
+	// Not oper
+	std::map<int, User>::iterator oper_it;
+	oper_it = opers_.find(killer_fd);
+	if (oper_it == opers_.end())
+	{
+		std::cout << "kill error 1\n";
+		sendLine(killer_fd, "481 " + nick_or_fd(killer_fd) + " :Permission Denied- You're not an IRC operator");
+		return ;
+	}
+	// Parameters
+	if (msg.params.size() < 2)
+	{
+		std::cout << "kill error 2: msg.params[0]: " << msg.params[0] << "\n";
+		std::cout << "msg.params.size() : " << msg.params.size()  << "\n";
+
+		sendLine(killer_fd, "461 " + oper_it->second.nick + " KILL :Not enough parameters");
+		return ;
+	}
+	// If it wants to kill a non existing user
+	std::map<std::string, int>::iterator nick_it;
+	nick_it = this->nick_map_.find(msg.params[0]);
+	if (nick_it == nick_map_.end())
+	{
+		std::cout << "kill error 3\n";
+	
+		// ERR_NOSUCHNICK (401)
+		sendLine(killer_fd, "401 " + oper_it->second.nick + msg.params[0] + " :No such nickname");
+		return ;
+	}
+	
+	// or kill himself or another operator
+	oper_it = opers_.find(nick_it->second);
+	if (oper_it != opers_.end() || nick_it->second == killer_fd)
+	{
+		std::cout << "kill error 4\n";
+
+		sendLine(killer_fd, "483 :You cant kill yourself or another operator!");
+		return ;
+	}
+
+	// All OK, can kill
+	sendLine(nick_it->second, "ERROR :You are kicked out of the server : " + msg.params[1]);
+	handle_quit(nick_it->second, pfds, i);
+}
+
 void MiniIRCd::handle_cap(const IRCMessage& msg, const int& fd)
 {
 	std::string sub = msg.params.size() ? msg.params[0] : "";
@@ -624,7 +671,7 @@ void MiniIRCd::handle_pass(const IRCMessage& msg, const int& fd, std::vector<str
 	}
 }
 
-void MiniIRCd::handle_oper(User& actual_user, IRCMessage msg)
+void MiniIRCd::handle_oper(User& actual_user, const IRCMessage& msg)
 {
 	// Useless because IRSSI sets the nickname automatically:
 	// if (!actual_user.nick.empty() && !actual_user.registered)
@@ -874,6 +921,8 @@ int MiniIRCd::run()
 						} else if (cmd == "QUIT") {
 							handle_quit(client_fd, pfds_, i);
 							break;
+						} else if (cmd == "KILL") {
+							handle_kill(client_fd, pfds_, i, msg);
 						} else {
 							sendLine(client_fd, std::string(":miniircd NOTICE * :Unknown command ") + cmd);
 						}
