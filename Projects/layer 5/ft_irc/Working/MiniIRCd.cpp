@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:58:49 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/12/11 11:37:17 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/12/11 12:47:07 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -398,6 +398,74 @@ void MiniIRCd::handle_join(const IRCMessage& msg, const int& fd)
 	}
 }
 
+//Works except when the channel operator leaves, IRSSI has a problem
+void MiniIRCd::handle_part(const IRCMessage& msg, const int& fd)
+{
+	if (msg.params.empty()) {
+		sendLine(fd, "461 PART :Not enough parameters");
+		return;
+	}
+
+	std::string chan = msg.params[0];
+	if (chan.empty())
+		return;
+
+	if (chan[0] != '#')
+		chan = std::string("#") + chan;
+	
+	User& u = users_.at(fd);
+
+	std::map<std::string, std::vector<int> >::iterator chnl_it = chnl_members_.find(chan);
+	if (chnl_it == chnl_members_.end()) {
+		sendLine(fd, "403 " + u.nick + " " + chan + " :No such channel");
+		return;
+	}
+
+	std::vector<int>& members = chnl_it->second;
+
+	bool user_in_channel = false;
+	for (size_t k = 0; k < members.size(); ++k) {
+		if (members[k] == fd) {
+			user_in_channel = true;
+			break;
+		}
+	}
+
+	if (!user_in_channel) {
+		sendLine(fd, "442 " + u.nick + " " + chan + " :You're not even in there");
+		return;
+	}
+
+	std::ostringstream part_msg;
+	part_msg << ":" << u.nick << "!~" << u.user << "@localhost PART " << chan;
+	if (!msg.trailing.empty()) {
+		part_msg << " :" << msg.trailing;
+	}
+
+	for (size_t k = 0; k < members.size(); ++k) {
+		if (users_.find(members[k]) != users_.end()) {
+			sendLine(members[k], part_msg.str());
+		}
+	}
+
+	std::vector<int> new_members;
+	for (size_t k = 0; k < members.size(); ++k) {
+		if (members[k] != fd) {
+			new_members.push_back(members[k]);
+		}
+	}
+	members.swap(new_members);
+
+	if (members.empty()) {
+		chnl_members_.erase(chnl_it);
+		channels_.erase(chan);
+	}
+
+	std::cout << u.nick << " parted " << chan << "\n";
+	
+}
+
+
 void MiniIRCd::handle_privmsg(const IRCMessage& msg, const int& fd)
 {
 	if (msg.params.empty())
@@ -473,7 +541,6 @@ void MiniIRCd::handle_quit(const int& fd, std::vector<struct pollfd>& pfds, int 
 	std::cout << "fd " << fd << " quit\n";
 }
 
-//does not print nick upon exit
 void MiniIRCd::handle_cap(const IRCMessage& msg, const int& fd)
 {
 	std::string sub = msg.params.size() ? msg.params[0] : "";
@@ -506,6 +573,34 @@ void MiniIRCd::handle_cap(const IRCMessage& msg, const int& fd)
 		sendLine(fd, std::string(":miniircd NOTICE * :Unknown CAP subcommand"));
 	}
 }
+
+void MiniIRCd::handle_who(const IRCMessage& msg, const int& fd)
+{
+	User& requester = users_.at(fd);
+	if (msg.params.empty()) {
+		sendLine(fd, ":miniircd 461 " + requester.nick + " WHO :Not enough parameters");
+		return;
+	}
+	std::string chan = msg.params[0];
+	if (chan[0] !=  '#') chan = "#" + chan;
+
+	std::map<std::string, std::vector<int> >::iterator it = chnl_members_.find(chan);
+	if (it == chnl_members_.end()) {
+		sendLine(fd, ":miniircd 403 " + requester.nick + " " + chan + " :No such channel");
+		return;
+	}
+	const std::vector<int>& members = it->second;
+	for (size_t k = 0; k < members.size(); ++k) {
+		User& m = users_.at(members[k]);
+		std::ostringstream reply;
+		reply << ":miniircd 352 " << requester.nick << " " << chan << " ~" << m.user
+			  << " " << "localhost miniircd " << m.nick
+			  << " H :0 " << m.real;
+		sendLine(fd, reply.str());
+	}
+	sendLine(fd, ":miniircd 315 " + requester.nick + " " + chan + " :End of WHO list");
+}
+
 
 void MiniIRCd::handle_pass(const IRCMessage& msg, const int& fd, std::vector<struct pollfd>& pfds, int i)
 {
@@ -759,6 +854,10 @@ int MiniIRCd::run()
 						// https://modern.ircdocs.horse/#join-message 
 						// How to handle it inside IRCMessage?
 							handle_join(msg, client_fd);
+						} else if (cmd == "PART") {
+							handle_part(msg, client_fd);
+						} else if (cmd == "WHO") {
+							handle_who(msg, client_fd);
 						} else if (cmd == "PRIVMSG") {
 							handle_privmsg(msg, client_fd);
 						} else if (cmd == "MODE") {

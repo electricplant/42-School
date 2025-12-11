@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:53:18 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/12/11 11:31:33 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/12/11 12:19:18 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,9 +71,11 @@ private:
 	void handle_nick(const IRCMessage& msg, const int& fd);
 	void handle_user(const IRCMessage& msg, const int& fd);
 	void handle_join(const IRCMessage& msg, const int& fd);
+	void handle_part(const IRCMessage& msg, const int& fd);
 	void handle_privmsg(const IRCMessage& msg, const int& fd);
 	void handle_quit(const int& fd, std::vector<struct pollfd>& pfds, int i);
 	void handle_cap(const IRCMessage& msg, const int& fd);
+	void handle_who(const IRCMessage& msg, const int& fd);
 	void handle_mode(User& actual_user, IRCMessage msg);
 	void handle_oper(User& actual_user, IRCMessage msg);
 
