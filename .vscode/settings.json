@@ -61,7 +61,8 @@
 		"list": "cpp",
 		"map": "cpp",
 		"set": "cpp",
-		"ranges": "cpp"
+		"ranges": "cpp",
+		"csignal": "cpp"
 	},
 	"C_Cpp.default.cppStandard": "c++98"
 }
