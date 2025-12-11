@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:58:49 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/12/11 10:43:55 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/12/11 11:37:17 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,14 @@
 #define MAXLINE 512
 #define LISTEN_BACKLOG 16
 #define MAX_EAGAIN_RETRIES 5
+
+volatile sig_atomic_t MiniIRCd::shutdown = 0;
+
+static void signal_handler(int signum)
+{
+	(void)signum;
+	MiniIRCd::shutdown = 1;
+}
 
 MiniIRCd::MiniIRCd(const std::string& port, const std::string& password)
     : port_(port), server_password_(password), listenfd_(-1) {}
@@ -568,6 +576,16 @@ void MiniIRCd::handle_mode(User& actual_user, IRCMessage msg)
 
 int MiniIRCd::run()
 {
+	//SIGNAL PROTECTION
+	struct sigaction sa;
+	memset(&sa, 0, sizeof(sa));
+	sa.sa_handler = signal_handler;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+	sigaction(SIGINT, &sa, NULL);
+	sigaction(SIGTERM, &sa, NULL);
+
+
 	listenfd_ = make_listen();
 	if (listenfd_ < 0)
 	{
@@ -582,13 +600,16 @@ int MiniIRCd::run()
 	pfds_[0].fd = listenfd_; pfds_[0].events = POLLIN;
 
 	
-	while (1)
+	while (!shutdown)
 	{
 		//if incoming connection, poll[0].revents will be set to POLLIN
 		int rc = poll(&pfds_[0], pfds_.size(), -1);
 		if (rc < 0)
 		{
-			if (errno == EINTR) continue;
+			if (errno == EINTR) {
+				if (shutdown) break;
+				continue;
+			}
 			break;
 		}
 		// incoming new connection :

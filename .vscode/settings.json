@@ -56,7 +56,12 @@
 		"format": "cpp",
 		"span": "cpp",
 		"variant": "cpp",
-		"fstream": "cpp"
+		"fstream": "cpp",
+		"cstring": "cpp",
+		"list": "cpp",
+		"map": "cpp",
+		"set": "cpp",
+		"ranges": "cpp"
 	},
 	"C_Cpp.default.cppStandard": "c++98"
 }

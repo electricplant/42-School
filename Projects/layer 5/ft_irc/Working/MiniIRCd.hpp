@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 15:53:18 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/11/29 09:04:08 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/12/11 11:31:33 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <iomanip>
 #include <sstream>
 #include <algorithm>
+#include <csignal>
 
 struct IRCMessage;
 class Channel;
@@ -35,6 +36,8 @@ class User;
 
 class MiniIRCd {
 public:
+	static volatile sig_atomic_t shutdown;
+
 	MiniIRCd(const std::string& port, const std::string& password = " ");
 	~MiniIRCd();
 	int run(); // blocking run loop, returns 0 on clean exit
