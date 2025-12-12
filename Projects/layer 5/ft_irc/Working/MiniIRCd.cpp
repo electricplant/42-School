@@ -285,7 +285,7 @@ void MiniIRCd::handle_nick(const IRCMessage& msg, const int& fd)
 				return ;
 			}
 			std::string orignick = u.nick;
-			// if (!u.nick.empty())
+			if (!u.nick.empty())
 				nick_map_.erase(orignick);
 
 			u.nick = newnick;
@@ -536,12 +536,14 @@ void MiniIRCd::handle_quit(const int& fd, std::vector<struct pollfd>& pfds, int 
 	sendLine(fd, "ERROR :Closing Link");
 	close(fd);
 	if (!u.nick.empty()) nick_map_.erase(u.nick);
+
 	users_.erase(fd);
+	opers_.erase(fd);
 	pfds.erase(pfds.begin()+i);
 	std::cout << "fd " << fd << " quit\n";
 }
 
-void MiniIRCd::handle_kill(const int& killer_fd, std::vector<struct pollfd>& pfds, int i, const IRCMessage& msg)
+void MiniIRCd::handle_kill(const int& killer_fd, const IRCMessage& msg)
 {
 	// Not oper
 	std::map<int, User>::iterator oper_it;
@@ -553,7 +555,7 @@ void MiniIRCd::handle_kill(const int& killer_fd, std::vector<struct pollfd>& pfd
 		return ;
 	}
 	// Parameters
-	if (msg.params.size() < 2)
+	if (msg.params.size() < 1 || msg.trailing.empty())
 	{
 		std::cout << "kill error 2: msg.params[0]: " << msg.params[0] << "\n";
 		std::cout << "msg.params.size() : " << msg.params.size()  << "\n";
@@ -579,13 +581,22 @@ void MiniIRCd::handle_kill(const int& killer_fd, std::vector<struct pollfd>& pfd
 	{
 		std::cout << "kill error 4\n";
 
-		sendLine(killer_fd, "483 :You cant kill yourself or another operator!");
+		sendLine(killer_fd, "483 KILL :You cant kill yourself or another operator!");
 		return ;
 	}
 
 	// All OK, can kill
-	sendLine(nick_it->second, "ERROR :You are kicked out of the server : " + msg.params[1]);
-	handle_quit(nick_it->second, pfds, i);
+	sendLine(nick_it->second, "ERROR :You are kicked out of the server : " + msg.trailing);
+	int victim_fd = -1;
+	for (size_t k = 0; k < pfds_.size(); ++k)
+	{
+		if (pfds_[k].fd == nick_it->second)
+		{
+			victim_fd = (int)k;
+			break;
+		}
+	}
+	handle_quit(nick_it->second, pfds_, victim_fd);
 }
 
 void MiniIRCd::handle_cap(const IRCMessage& msg, const int& fd)
@@ -705,14 +716,13 @@ void MiniIRCd::handle_oper(User& actual_user, const IRCMessage& msg)
 
 void MiniIRCd::handle_mode(User& actual_user, IRCMessage msg)
 {
-	std::cout << "handle_mode()\n";
 	if (!this->channels_.empty())
 	{
 		std::map<std::string, Channel>::iterator selected_chnl = this->channels_.find(*(msg.params.begin()));
 
 		if (selected_chnl != channels_.end())
 		{
-			std::cout << "Channel \"" << selected_chnl->first << "\" found in Server \n";
+			// std::cout << "Channel \"" << selected_chnl->first << "\" found in Server \n";
 			
 			// Erasing channel name from msg.params
 			std::rotate(msg.params.begin(), msg.params.begin() + 1, msg.params.end());
@@ -737,6 +747,9 @@ void MiniIRCd::handle_mode(User& actual_user, IRCMessage msg)
 		}
 		else
 		{
+			std::string unfound_wrd = *(msg.params.begin());
+			if (unfound_wrd.at(0) != '#')
+				return ;
 			// ERR_NOSUCHCHANNEL (403)
 			std::string error_msg = "403 " + actual_user.nick + " " + *(msg.params.begin()) + " :No such channel";
 			sendLine(actual_user.usr_fd, error_msg);
@@ -744,6 +757,9 @@ void MiniIRCd::handle_mode(User& actual_user, IRCMessage msg)
 	} // redundant 
 	else
 	{
+		std::string unfound_wrd = *(msg.params.begin());
+		if (unfound_wrd.at(0) != '#')
+			return ;
 		// ERR_NOSUCHCHANNEL (403)
 		std::string error_msg = "403 " + actual_user.nick + " " + *(msg.params.begin()) + " :No such channel";
 		sendLine(actual_user.usr_fd, error_msg);
@@ -817,8 +833,6 @@ int MiniIRCd::run()
 				ssize_t n = recv(client_fd, buf, sizeof(buf), 0);
 				if (n <= 0)
 				{
-					// We are sure that users_.at(client_fd) has returned
-					// a reference to a User instance :
 					User usr = users_.at(client_fd);
 					std::string quitmsg = (usr.registered ? usr.nick : std::string("guest")) + " has quit";
 					
@@ -920,9 +934,13 @@ int MiniIRCd::run()
 							handle_mode(actual_user, msg);
 						} else if (cmd == "QUIT") {
 							handle_quit(client_fd, pfds_, i);
+							std::cout << "quit break\n";
+							
 							break;
 						} else if (cmd == "KILL") {
-							handle_kill(client_fd, pfds_, i, msg);
+							handle_kill(client_fd, msg);
+							std::cout << "kll break\n";
+							break;
 						} else {
 							sendLine(client_fd, std::string(":miniircd NOTICE * :Unknown command ") + cmd);
 						}
@@ -931,7 +949,10 @@ int MiniIRCd::run()
 				}
 			} // end POLLIN
 			if (re & POLLOUT)
+			{
 				flush_outgoing(i);
+
+			}
 		} // end clients loop
 	} // main loop
 
