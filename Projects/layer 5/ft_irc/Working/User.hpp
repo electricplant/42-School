@@ -35,6 +35,12 @@ class User
     std::string inbuf;
 	std::string outbuf;
 
+
+    std::string get_host_mask() const
+    {
+        return (this->nick + "!~" + this->user + "@localhost");
+    }
+
 	User(int newfd): usr_fd(newfd), registered(false), pass_ok(false) {}
 
 

@@ -342,17 +342,22 @@ void MiniIRCd::handle_user(const IRCMessage& msg, const int& fd)
 void MiniIRCd::handle_join(const IRCMessage& msg, const int& fd)
 {
 	if (msg.params.empty())
-		sendLine(fd, "461 JOIN :Not enough parameters");
+		sendLine(fd, ":miniircd 461 JOIN :Not enough parameters");
 	else
 	{
+		User usr = users_.at(fd);
+		bool new_chanop = false;
 		//max channel name length (including #) is 200 characters
 		std::string chan = msg.params[0];
 		if (chan.empty())
-			return ; //return 461 response
+		{
+			// ERR_NEEDMOREPARAMS (461)
+			sendLine(fd, ":miniircd 461 " + nick_or_fd(usr) + " JOIN :Not enough parameters");
+			return ;
+		}
 
 		if (chan[0] != '#')
 			chan = std::string("#") + chan;
-		User usr = users_.at(fd);
 		
 		std::map<std::string, Channel>::iterator chan_it = channels_.find(chan);
 		bool join_success = true;
@@ -365,6 +370,7 @@ void MiniIRCd::handle_join(const IRCMessage& msg, const int& fd)
 			// Update 2 of the server's lists
 			channels_[chan] = Channel(chan, usr);
 			chnl_members_[chan].push_back(fd);
+			new_chanop = true;
 			// No errors expected
 		}
 		else
@@ -379,19 +385,36 @@ void MiniIRCd::handle_join(const IRCMessage& msg, const int& fd)
 			chnl_members_[chan].push_back(fd);
 		}
 
+		// Warn all channel members :
 		std::ostringstream joinmsg;
-		joinmsg << ":" << nick_or_fd(usr) << " JOIN :" << chan;
+		// joinmsg << ":" << usr.nick << " JOIN :" << chan;
+		joinmsg << ":" << usr.get_host_mask() << " JOIN :" << chan;
 		for (size_t k = 0; k < chnl_members_[chan].size(); ++k)
 			sendLine(chnl_members_[chan][k], joinmsg.str());
 		
+		// If it is a chanop
+		if (new_chanop)
+			sendLine(fd, ":miniircd MODE " + chan + " +o " + usr.nick);
+
+		// Send topic to the new channel member - RPL_TOPIC (332)
+		Channel chnl = channels_.at(chan);
+		if (!chnl.get_chnl_topic().empty())
+			sendLine(fd, ":miniircd 332 " + usr.nick + " " + chan + " :" + chnl.get_chnl_topic());
+
+		// Send list of chanel members to the new member
 		std::ostringstream names;
 		names << ":miniircd 353 " << (usr.nick.empty() ? "*" : usr.nick) << " = " << chan << " :";
 		for (size_t k = 0; k < chnl_members_[chan].size(); ++k)
 		{
+			std::string prefix = "";
 			User& a_user = users_.at(chnl_members_[chan][k]);
-			names << (a_user.nick.empty() ? nick_or_fd(a_user) : a_user.nick) << (k + 1 < chnl_members_[chan].size() ? " " : "");
+			bool is_chanop = chnl.find_chnl_op(a_user.nick);
+			if (is_chanop)
+				prefix = "@";
+			names << (a_user.nick.empty() ? nick_or_fd(a_user) : prefix + a_user.nick) << (k + 1 < chnl_members_[chan].size() ? " " : "");
 		}
 		sendLine(fd, names.str());
+		
 		std::ostringstream endnames;
 		endnames << ":miniircd 366 " << (usr.nick.empty() ? "*" : usr.nick) << " " << chan << " :End of /NAMES list.";
 		sendLine(fd, endnames.str());
@@ -402,7 +425,7 @@ void MiniIRCd::handle_join(const IRCMessage& msg, const int& fd)
 void MiniIRCd::handle_part(const IRCMessage& msg, const int& fd)
 {
 	if (msg.params.empty()) {
-		sendLine(fd, "461 PART :Not enough parameters");
+		sendLine(fd, ":miniircd 461 PART :Not enough parameters");
 		return;
 	}
 
@@ -417,7 +440,7 @@ void MiniIRCd::handle_part(const IRCMessage& msg, const int& fd)
 
 	std::map<std::string, std::vector<int> >::iterator chnl_it = chnl_members_.find(chan);
 	if (chnl_it == chnl_members_.end()) {
-		sendLine(fd, "403 " + u.nick + " " + chan + " :No such channel");
+		sendLine(fd, ":miniircd 403 " + u.nick + " " + chan + " :No such channel");
 		return;
 	}
 
@@ -432,12 +455,13 @@ void MiniIRCd::handle_part(const IRCMessage& msg, const int& fd)
 	}
 
 	if (!user_in_channel) {
-		sendLine(fd, "442 " + u.nick + " " + chan + " :You're not even in there");
+		sendLine(fd, ":miniircd 442 " + u.nick + " " + chan + " :You're not even in there");
 		return;
 	}
 
 	std::ostringstream part_msg;
-	part_msg << ":" << u.nick << "!~" << u.user << "@localhost PART " << chan;
+	// part_msg << ":" << u.nick << "!~" << u.user << "@localhost PART " << chan;
+	part_msg << ":" << u.get_host_mask() << " PART " << chan;
 	if (!msg.trailing.empty()) {
 		part_msg << " :" << msg.trailing;
 	}
@@ -448,6 +472,7 @@ void MiniIRCd::handle_part(const IRCMessage& msg, const int& fd)
 		}
 	}
 
+	// update channel list and server lists
 	std::vector<int> new_members;
 	for (size_t k = 0; k < members.size(); ++k) {
 		if (members[k] != fd) {

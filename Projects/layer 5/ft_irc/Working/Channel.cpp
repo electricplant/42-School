@@ -58,7 +58,6 @@ bool Channel::channel_join(User& usr, std::string key, std::string& returned_err
 bool Channel::channel_mode(std::vector<std::string> mode_params, std::string user_name, std::string& returned_info)
 {
     // "mode_params" begins with "+ikl..."
-    std::cout << "channel_mode() called\n";
     
     if (mode_params.empty())
     {
@@ -71,6 +70,13 @@ bool Channel::channel_mode(std::vector<std::string> mode_params, std::string use
         if (this->t_mode) all_modes |= 16;
         
         print_channel_modes(false, all_modes, user_name, returned_info, "+");
+        return (false);
+    }
+    else if (mode_params.size() == 1
+        && (*mode_params[0].begin() != '-' && *mode_params[0].begin() != '+') )
+    {
+        // Every channel's user can ask for banlist "#channel b"
+        // Out of the scope for this project
         return (false);
     }
 
