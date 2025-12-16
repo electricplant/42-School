@@ -153,11 +153,11 @@ void MiniIRCd::flush_outgoing(int idx)
 			// unrecoverable error -> close client
 			std::cerr << "flush_outgoing: send error fd=" << fd << " errno=" << errno << "\n";
 			// best-effort cleanup: simulate quit (use existing handler)
-			handle_quit(fd, pfds_, idx);
+			handle_quit(fd, idx);
 			return;
 		}
 		// n == 0 means peer closed -> cleanup
-		handle_quit(fd, pfds_, idx);
+		handle_quit(fd, idx);
 		return;
 	}
 	// if we drained the buffer, stop listening for POLLOUT
@@ -165,11 +165,12 @@ void MiniIRCd::flush_outgoing(int idx)
 	pfds_[idx].events |= POLLIN;
 }
 
-void MiniIRCd::sendLine(int fd, const std::string& line) {
+void MiniIRCd::sendLine(int fd, const std::string& line)
+{
 	std::string out = line + "\r\n";
 	if (out.empty()) return;
-	// try an immediate send first
-	User &u = users_.at(fd);
+	
+	User u = users_.at(fd);
 	ssize_t n = ::send(fd, out.data(), out.size(), MSG_NOSIGNAL);
 	if (n > 0) {
 		if ((size_t)n == out.size()) {
@@ -189,7 +190,7 @@ void MiniIRCd::sendLine(int fd, const std::string& line) {
 			} else {
 				std::cerr << "sendLine: unrecoverable send error fd=" << fd << " errno=" << errno << "\n";
 				int idx = find_pollfd_index(fd);
-				handle_quit(fd, pfds_, idx);
+				handle_quit(fd, idx);
 				return;
 			}
 		} else if (errno == EAGAIN || errno == EWOULDBLOCK) {
@@ -198,13 +199,13 @@ void MiniIRCd::sendLine(int fd, const std::string& line) {
 		} else {
 			std::cerr << "sendLine: unrecoverable send error fd=" << fd << " errno=" << errno << "\n";
 			int idx = find_pollfd_index(fd);
-			handle_quit(fd, pfds_, idx);
+			handle_quit(fd, idx);
 			return;
 		}
 	} else {
 		// n == 0: peer closed
 		int idx = find_pollfd_index(fd);
-		handle_quit(fd, pfds_, idx);
+		handle_quit(fd, idx);
 		return;
 	}
 
@@ -472,7 +473,7 @@ void MiniIRCd::handle_part(const IRCMessage& msg, const int& fd)
 		}
 	}
 
-	// update channel list and server lists
+	// update channel list 
 	std::vector<int> new_members;
 	for (size_t k = 0; k < members.size(); ++k) {
 		if (members[k] != fd) {
@@ -546,26 +547,57 @@ void MiniIRCd::handle_privmsg(const IRCMessage& msg, const int& fd)
 	}
 }
 
-void MiniIRCd::handle_quit(const int& fd, std::vector<struct pollfd>& pfds, int i)
+// better to just use const int fd, instead of its reference -> valgrind problems
+void MiniIRCd::handle_quit(const int fd, int i)
 {
 	User u = users_.at(fd);
 	std::ostringstream q;
-	q << ":" << nick_or_fd(u) << " QUIT :Client Quit";
+	// q << ":" << nick_or_fd(u) << " QUIT :Client Quit";
+	q << ":" << u.get_host_mask() << " QUIT :Client Quit";
 	for (std::map<std::string, std::vector<int> >::iterator it=chnl_members_.begin(); it!=chnl_members_.end(); ++it)
 	{
 		std::vector<int>& v = it->second;
 		for (size_t k = 0; k < v.size(); ++k)
 			if (v[k] != fd)
-				sendLine(v[k], q.str());
+				sendLine(v[k], q.str()); // alert all group members
+			else
+				v.erase(v.begin() + k); // erase quitted user's fd
 	}
 	sendLine(fd, "ERROR :Closing Link");
 	close(fd);
-	if (!u.nick.empty()) nick_map_.erase(u.nick);
+	std::map<std::string, int>::iterator nick_it;
+	nick_it = this->nick_map_.find(u.nick);
+	if (nick_it != this->nick_map_.end())
+		nick_map_.erase(u.nick);
 
-	users_.erase(fd);
-	opers_.erase(fd);
-	pfds.erase(pfds.begin()+i);
+
+	// std::map<int, User>::iterator u_it;
+	// u_it = users_.find(fd);
+	// if (u_it != users_.end())
+	this->users_.erase(fd);
+	// u_it = this->opers_.find(fd);
+	// if (u_it != this->opers_.end())
+	this->opers_.erase(fd);
+	this->pfds_.erase(this->pfds_.begin() + i);
 	std::cout << "fd " << fd << " quit\n";
+
+
+	// std::cout << "AFTER QUIT : \n";
+	// std::map<int, User>::iterator u_it = this->users_.begin();
+	// std::cout << "list of users_ (" << this->users_.size() << ") :\n";
+	// while (u_it != this->users_.end())
+	// {
+	// 	std::cout << u_it->second.nick << std::endl;
+	// 	u_it++;
+	// }
+	// u_it = this->opers_.begin();
+	// std::cout << "list of opers_ (" << this->opers_.size() << ") :\n";
+	// while (u_it != this->opers_.end())
+	// {
+	// 	std::cout << u_it->second.nick << std::endl;
+	// 	u_it++;
+	// }
+	// std::cout << "pfds size : " << pfds_.size() << "\n";
 }
 
 void MiniIRCd::handle_kill(const int& killer_fd, const IRCMessage& msg)
@@ -621,7 +653,13 @@ void MiniIRCd::handle_kill(const int& killer_fd, const IRCMessage& msg)
 			break;
 		}
 	}
-	handle_quit(nick_it->second, pfds_, victim_fd);
+	if (victim_fd != -1)
+	{
+		// std::cout << "AFTER KILL:\n";
+		handle_quit(nick_it->second, victim_fd);
+	}
+	else
+		std::cout << "handle_kill victim_fd not found\n";
 }
 
 void MiniIRCd::handle_cap(const IRCMessage& msg, const int& fd)
@@ -685,7 +723,7 @@ void MiniIRCd::handle_who(const IRCMessage& msg, const int& fd)
 }
 
 
-void MiniIRCd::handle_pass(const IRCMessage& msg, const int& fd, std::vector<struct pollfd>& pfds, int i)
+void MiniIRCd::handle_pass(const IRCMessage& msg, const int& fd, int i)
 {
 	if (msg.params.empty()) {
 		sendLine(fd, "461 PASS :Not enough parameters");
@@ -703,7 +741,7 @@ void MiniIRCd::handle_pass(const IRCMessage& msg, const int& fd, std::vector<str
 		users_[fd].pass_ok = true;
 	} else {
 		sendLine(fd, "464 * :Password incorrect");
-		handle_quit(fd, pfds, i);
+		handle_quit(fd, i);
 	}
 }
 
@@ -873,8 +911,16 @@ int MiniIRCd::run()
 								continue;
 							// tell other users of this channel, that smbdy has quit :
 							std::ostringstream os;
-							os << ":" << nick_or_fd(usr) << " QUIT :" << quitmsg;
-							sendLine(channel_fds[k], os.str());
+							os << ":" << usr.get_host_mask() << " QUIT :" << quitmsg;
+							// try
+							// {
+								sendLine(channel_fds[k], os.str());
+							// }
+							// catch (std::exception& e)
+							// {
+							// 	std::cout << "cannot sendLine to fd " << channel_fds[k] << std::endl;
+							// 	// return ;
+							// }
 						}
 
 						std::vector<int> channel_new_fds;
@@ -889,6 +935,10 @@ int MiniIRCd::run()
 					if (!usr.nick.empty())
 						nick_map_.erase(usr.nick);
 					close(client_fd);
+					std::map<int, User>::iterator op_it;
+					op_it = opers_.find(client_fd);
+					if (op_it != opers_.end())
+						opers_.erase(client_fd);
 					users_.erase(client_fd);
 					pfds_.erase(pfds_.begin() + i);
 					std::cout << "fd " << client_fd << " disconnected\n";
@@ -927,7 +977,7 @@ int MiniIRCd::run()
 						} else if (cmd == "CAP") {
 							handle_cap(msg, client_fd);
 						} else if (cmd == "PASS") {
-							handle_pass(msg, client_fd, pfds_, i);
+							handle_pass(msg, client_fd, i);
 						} else if (cmd == "NICK") {
 							handle_nick(msg, client_fd);
 						} else if (cmd == "USER") {
@@ -958,13 +1008,13 @@ int MiniIRCd::run()
 						// will need to print their names and send to other users, know who is invited...						
 							handle_mode(actual_user, msg);
 						} else if (cmd == "QUIT") {
-							handle_quit(client_fd, pfds_, i);
+							handle_quit(client_fd, i);
 							std::cout << "quit break\n";
 							
 							break;
 						} else if (cmd == "KILL") {
 							handle_kill(client_fd, msg);
-							std::cout << "kll break\n";
+							std::cout << "kill break, killer fd :" << client_fd << "\n";
 							break;
 						} else {
 							sendLine(client_fd, std::string(":miniircd NOTICE * :Unknown command ") + cmd);

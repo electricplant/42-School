@@ -9,10 +9,8 @@ Channel::Channel(std::string name, User& usr):
 {  add_user(usr);  }
 
 // Default :
-Channel::Channel()
-{}
-Channel::~Channel()
-{}
+Channel::Channel(){}
+Channel::~Channel(){}
 
 
 // JOIN
@@ -100,6 +98,7 @@ bool Channel::channel_mode(std::vector<std::string> mode_params, std::string use
     returned_info = "";
     return (false);
 }
+
 
 bool Channel::add_mode(std::string modes, std::vector<std::string> mode_params, std::string user_name, std::string& returned_info)
 {
@@ -191,6 +190,8 @@ bool Channel::add_mode(std::string modes, std::vector<std::string> mode_params, 
     }
 }
 
+
+
 bool Channel::cancel_mode(std::string modes, std::string user_name, std::string& returned_info)
 {
     std::cout << "=> cancel_mode func MODES : " << modes << "\n";
@@ -260,6 +261,7 @@ bool Channel::cancel_mode(std::string modes, std::string user_name, std::string&
         return (true);
     }
 }
+
 
 
 void Channel::print_channel_modes(bool chanops_only, uint8_t all_modifs, std::string user_name, std::string& returned_info, std::string sign)

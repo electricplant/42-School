@@ -67,13 +67,13 @@ private:
 
 	int make_listen();
 	void handle_ping(const IRCMessage& msg, const int& fd);
-	void handle_pass(const IRCMessage& msg, const int& fd, std::vector<struct pollfd>& pfds, int i);
+	void handle_pass(const IRCMessage& msg, const int& fd, int i);
 	void handle_nick(const IRCMessage& msg, const int& fd);
 	void handle_user(const IRCMessage& msg, const int& fd);
 	void handle_join(const IRCMessage& msg, const int& fd);
 	void handle_part(const IRCMessage& msg, const int& fd);
 	void handle_privmsg(const IRCMessage& msg, const int& fd);
-	void handle_quit(const int& fd, std::vector<struct pollfd>& pfds, int i);
+	void handle_quit(const int fd, int i);
 	void handle_cap(const IRCMessage& msg, const int& fd);
 	void handle_who(const IRCMessage& msg, const int& fd);
 	void handle_mode(User& actual_user, IRCMessage msg);

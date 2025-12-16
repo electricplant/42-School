@@ -17,7 +17,6 @@
 #define TOPIC   116
 
 class User;
-// class Server;
 
 // #include "MiniIRCd.hpp"
 
@@ -82,7 +81,7 @@ class Channel
     bool cancel_mode(std::string modes, std::string user_name, std::string& returned_info);
     void print_channel_modes(bool for_chanops, uint8_t all_modifs, std::string user_name, std::string& returned_info, std::string sign);
     // Part
-    
+
 
     // Problems when trying to connect to the same channel
     // with different IRSSI users :
