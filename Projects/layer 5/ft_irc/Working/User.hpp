@@ -36,6 +36,7 @@ class User
 	std::string outbuf;
 
 
+    // u.nick << "!~" << u.user << "@localhost
     std::string get_host_mask() const
     {
         return (this->nick + "!~" + this->user + "@localhost");

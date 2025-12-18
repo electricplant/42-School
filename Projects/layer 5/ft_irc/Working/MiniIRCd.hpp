@@ -50,15 +50,20 @@ private:
 	// std::map<int, Client> clients_;
 
 	std::map<std::string, int> nick_map_;
+	std::map<std::string, int>::iterator nicks_it_;
 	std::vector<struct pollfd> pfds_;
-	
+	std::vector<struct pollfd>::iterator pfds_it_;
+
 	std::map<int, User> users_;
 	std::map<int, User> opers_;
+	std::map<int, User>::iterator usr_it_;
 
 	// channel's name + list of its members' fds
 	std::map<std::string, std::vector<int> > chnl_members_;
+	std::map<std::string, std::vector<int> >::iterator chnl_mem_it_;
 	// list of channels, listed by names
-	std::map<std::string, Channel> channels_; 
+	std::map<std::string, Channel> channels_;
+	std::map<std::string, Channel>::iterator chnls_it_;
 
 	int find_pollfd_index(int fd);
 	void flush_outgoing(int idx);
@@ -67,7 +72,7 @@ private:
 
 	int make_listen();
 	void handle_ping(const IRCMessage& msg, const int& fd);
-	void handle_pass(const IRCMessage& msg, const int& fd, int i);
+	bool handle_pass(const IRCMessage& msg, const int& fd, int i);
 	void handle_nick(const IRCMessage& msg, const int& fd);
 	void handle_user(const IRCMessage& msg, const int& fd);
 	void handle_join(const IRCMessage& msg, const int& fd);
@@ -78,7 +83,7 @@ private:
 	void handle_who(const IRCMessage& msg, const int& fd);
 	void handle_mode(User& actual_user, IRCMessage msg);
 	void handle_oper(User& actual_user, const IRCMessage& msg);
-	void handle_kill(const int& killer_fd, const IRCMessage& msg);
+	void handle_kill(const int killer_fd, const IRCMessage& msg);
 
 
 

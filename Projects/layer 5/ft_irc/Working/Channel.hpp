@@ -24,23 +24,23 @@ class Channel
 {
     private:
     
-    bool i_mode;
-    bool k_mode;
-    bool l_mode;
-    bool o_mode;
-    bool t_mode;
+    bool i_mode_;
+    bool k_mode_;
+    bool l_mode_;
+    bool o_mode_;
+    bool t_mode_;
 
-    int length;
-    int max_length;
-    std::string topic;
-    std::string key;
-    std::string channel_name;
-    std::set<std::string> chanop_list;
-    std::set<std::string> user_list;
-    std::set<std::string> invited_users;
+    int length_;
+    int max_length_;
+    std::string topic_;
+    std::string key_;
+    std::string channel_name_;
+    std::set<std::string> chanop_list_;
+    std::set<std::string> user_list_;
+    std::set<std::string> invited_users_;
     // Need to implement smth to forward messages
     // to all the users
-    std::map<std::string, User> users_;
+    // std::map<std::string, User> users_;
 
 
     public:
@@ -56,18 +56,18 @@ class Channel
     // For all the users
     std::string get_chnl_name() const
     {
-        return this->channel_name;
+        return this->channel_name_;
     }
 
     std::string get_chnl_topic() const
     {
-        return this->topic;
+        return this->topic_;
     }
 
-    bool find_chnl_op(std::string usr_nick) const
+    bool is_chnl_op(std::string usr_nick) const
     {
-        std::set<std::string>::iterator chanop_it = this->chanop_list.find(usr_nick);
-        if (chanop_it == this->chanop_list.end())
+        std::set<std::string>::iterator chanop_it = this->chanop_list_.find(usr_nick);
+        if (chanop_it == this->chanop_list_.end())
             return (false);
         return (true);
     }
@@ -81,7 +81,7 @@ class Channel
     bool cancel_mode(std::string modes, std::string user_name, std::string& returned_info);
     void print_channel_modes(bool for_chanops, uint8_t all_modifs, std::string user_name, std::string& returned_info, std::string sign);
     // Part
-
+    void channel_part(const std::string user_nick);
 
     // Problems when trying to connect to the same channel
     // with different IRSSI users :

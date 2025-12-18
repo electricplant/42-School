@@ -261,6 +261,7 @@ void MiniIRCd::handle_ping(const IRCMessage& msg, const int& fd)
 
 void MiniIRCd::handle_nick(const IRCMessage& msg, const int& fd)
 {
+
 	std::string newnick;
 	if (!msg.params.empty())
 		newnick = msg.params[0];
@@ -298,13 +299,13 @@ void MiniIRCd::handle_nick(const IRCMessage& msg, const int& fd)
 			}
 			else
 			{
-				std::map<int, User>::iterator usr_it = users_.begin();
-				while (usr_it != users_.end())
+				this->usr_it_ = users_.begin();
+				while (this->usr_it_ != users_.end())
 				{
 					std::ostringstream nick_change;
 					nick_change << ":" << orignick << "!~" << u.user << "@localhost NICK :" << newnick;
-					sendLine(usr_it->first, nick_change.str());
-					usr_it++;
+					sendLine(this->usr_it_->first, nick_change.str());
+					this->usr_it_++;
 				}
 				// if (u.nick.empty())
 				// 	sendLine(fd, nick_or_fd(u) + " NICK :" + newnick);
@@ -360,12 +361,12 @@ void MiniIRCd::handle_join(const IRCMessage& msg, const int& fd)
 		if (chan[0] != '#')
 			chan = std::string("#") + chan;
 		
-		std::map<std::string, Channel>::iterator chan_it = channels_.find(chan);
+		this->chnls_it_ = channels_.find(chan);
 		bool join_success = true;
 		std::string detected_error = "";
 		
 		// This channel doesn't exist yet
-		if (chan_it == channels_.end())
+		if (this->chnls_it_ == channels_.end())
 		{
 			std::cout << usr.nick << " joined " << chan << "\n";
 			// Update 2 of the server's lists
@@ -376,7 +377,7 @@ void MiniIRCd::handle_join(const IRCMessage& msg, const int& fd)
 		}
 		else
 		{
-			Channel existing_channel = chan_it->second;
+			Channel existing_channel = this->chnls_it_->second;
 			join_success = existing_channel.channel_join(usr, "", detected_error);
 			if (!join_success)
 			{
@@ -409,7 +410,7 @@ void MiniIRCd::handle_join(const IRCMessage& msg, const int& fd)
 		{
 			std::string prefix = "";
 			User& a_user = users_.at(chnl_members_[chan][k]);
-			bool is_chanop = chnl.find_chnl_op(a_user.nick);
+			bool is_chanop = chnl.is_chnl_op(a_user.nick);
 			if (is_chanop)
 				prefix = "@";
 			names << (a_user.nick.empty() ? nick_or_fd(a_user) : prefix + a_user.nick) << (k + 1 < chnl_members_[chan].size() ? " " : "");
@@ -422,7 +423,10 @@ void MiniIRCd::handle_join(const IRCMessage& msg, const int& fd)
 	}
 }
 
-//Works except when the channel operator leaves, IRSSI has a problem
+// If the user types "/part " without a word starting whith "#"
+// IRSSI considers that the user wants to quit the actual channel
+// So "/part channel reason" -> "channel reason" will be considered
+// as trailing, not /part argument
 void MiniIRCd::handle_part(const IRCMessage& msg, const int& fd)
 {
 	if (msg.params.empty()) {
@@ -439,13 +443,15 @@ void MiniIRCd::handle_part(const IRCMessage& msg, const int& fd)
 	
 	User& u = users_.at(fd);
 
-	std::map<std::string, std::vector<int> >::iterator chnl_it = chnl_members_.find(chan);
-	if (chnl_it == chnl_members_.end()) {
+	this->chnl_mem_it_ = chnl_members_.find(chan);
+	if (this->chnl_mem_it_ == chnl_members_.end()) {
 		sendLine(fd, ":miniircd 403 " + u.nick + " " + chan + " :No such channel");
 		return;
 	}
+	// Such channel exists
+	Channel& this_channel = this->channels_.at(chan);
 
-	std::vector<int>& members = chnl_it->second;
+	std::vector<int>& members = this->chnl_mem_it_->second;
 
 	bool user_in_channel = false;
 	for (size_t k = 0; k < members.size(); ++k) {
@@ -473,7 +479,7 @@ void MiniIRCd::handle_part(const IRCMessage& msg, const int& fd)
 		}
 	}
 
-	// update channel list 
+	// Update channel listw in MiniIRCd
 	std::vector<int> new_members;
 	for (size_t k = 0; k < members.size(); ++k) {
 		if (members[k] != fd) {
@@ -482,13 +488,13 @@ void MiniIRCd::handle_part(const IRCMessage& msg, const int& fd)
 	}
 	members.swap(new_members);
 
+	this_channel.channel_part(u.nick);
 	if (members.empty()) {
-		chnl_members_.erase(chnl_it);
+		chnl_members_.erase(this->chnl_mem_it_);
 		channels_.erase(chan);
 	}
 
-	std::cout << u.nick << " parted " << chan << "\n";
-	
+	std::cout << u.nick << " parted " << chan << "\n";	
 }
 
 
@@ -502,24 +508,23 @@ void MiniIRCd::handle_privmsg(const IRCMessage& msg, const int& fd)
 	std::string target = msg.params[0];
 	std::string text = msg.trailing;
 
-	std::map<int, User>::iterator usr_finder;
-	usr_finder = users_.find(fd);
-	if (usr_finder == users_.end()) 
+	// std::map<int, User>::iterator usr_finder;
+	this->usr_it_ = users_.find(fd);
+	if (this->usr_it_ == users_.end()) 
 		return ; // fd corresponds to no user
 
-	User& sender = usr_finder->second;
+	User& sender = this->usr_it_->second;
 	// send msg to a channel
 	if (target.size() > 0 && target[0] == '#')
 	{
-		std::map<std::string, std::vector<int> >::iterator chnl_it;
-		chnl_it = this->chnl_members_.find(target);
-		if (chnl_it == this->chnl_members_.end())
+		this->chnl_mem_it_ = this->chnl_members_.find(target);
+		if (this->chnl_mem_it_ == this->chnl_members_.end())
 		{
 			// Attempt to send messages to non existing channel
 			return;
 		}
 
-		std::vector<int>& v = chnl_it->second;
+		std::vector<int>& v = this->chnl_mem_it_->second;
 		for (size_t k = 0; k < v.size(); ++k)
 		{
 			if (v[k] == fd)
@@ -532,14 +537,15 @@ void MiniIRCd::handle_privmsg(const IRCMessage& msg, const int& fd)
 	else
 	{
 		// send msg to another user
-		std::map<std::string, int>::iterator it = nick_map_.find(target);
-		if (it == nick_map_.end())
+		// std::map<std::string, int>::iterator it = nick_map_.find(target);
+		this->nicks_it_ = nick_map_.find(target);
+		if (this->nicks_it_ == nick_map_.end())
 		{
 			sendLine(fd, (std::string("401 ") + target + " :No such nick/channel"));
 		}
 		else
 		{
-			int od = it->second;
+			int od = this->nicks_it_->second;
 			std::ostringstream pm;
 			pm << ":" << nick_or_fd(sender) << " PRIVMSG " << target << " :" << text;
 			sendLine(od, pm.str());
@@ -554,9 +560,10 @@ void MiniIRCd::handle_quit(const int fd, int i)
 	std::ostringstream q;
 	// q << ":" << nick_or_fd(u) << " QUIT :Client Quit";
 	q << ":" << u.get_host_mask() << " QUIT :Client Quit";
-	for (std::map<std::string, std::vector<int> >::iterator it=chnl_members_.begin(); it!=chnl_members_.end(); ++it)
+	for (this->chnl_mem_it_ =chnl_members_.begin(); this->chnl_mem_it_!=chnl_members_.end(); ++this->chnl_mem_it_)
 	{
-		std::vector<int>& v = it->second;
+		std::cout << "Eject user from channel " << this->chnl_mem_it_->first << std::endl;
+		std::vector<int>& v = this->chnl_mem_it_->second;
 		for (size_t k = 0; k < v.size(); ++k)
 			if (v[k] != fd)
 				sendLine(v[k], q.str()); // alert all group members
@@ -565,9 +572,8 @@ void MiniIRCd::handle_quit(const int fd, int i)
 	}
 	sendLine(fd, "ERROR :Closing Link");
 	close(fd);
-	std::map<std::string, int>::iterator nick_it;
-	nick_it = this->nick_map_.find(u.nick);
-	if (nick_it != this->nick_map_.end())
+	this->nicks_it_ = this->nick_map_.find(u.nick);
+	if (this->nicks_it_ != this->nick_map_.end())
 		nick_map_.erase(u.nick);
 
 
@@ -600,12 +606,12 @@ void MiniIRCd::handle_quit(const int fd, int i)
 	// std::cout << "pfds size : " << pfds_.size() << "\n";
 }
 
-void MiniIRCd::handle_kill(const int& killer_fd, const IRCMessage& msg)
+void MiniIRCd::handle_kill(const int killer_fd, const IRCMessage& msg)
 {
 	// Not oper
-	std::map<int, User>::iterator oper_it;
-	oper_it = opers_.find(killer_fd);
-	if (oper_it == opers_.end())
+	
+	this->usr_it_ = opers_.find(killer_fd);
+	if (this->usr_it_ == opers_.end())
 	{
 		std::cout << "kill error 1\n";
 		sendLine(killer_fd, "481 " + nick_or_fd(killer_fd) + " :Permission Denied- You're not an IRC operator");
@@ -617,24 +623,24 @@ void MiniIRCd::handle_kill(const int& killer_fd, const IRCMessage& msg)
 		std::cout << "kill error 2: msg.params[0]: " << msg.params[0] << "\n";
 		std::cout << "msg.params.size() : " << msg.params.size()  << "\n";
 
-		sendLine(killer_fd, "461 " + oper_it->second.nick + " KILL :Not enough parameters");
+		sendLine(killer_fd, "461 " + this->usr_it_->second.nick + " KILL :Not enough parameters");
 		return ;
 	}
 	// If it wants to kill a non existing user
-	std::map<std::string, int>::iterator nick_it;
-	nick_it = this->nick_map_.find(msg.params[0]);
-	if (nick_it == nick_map_.end())
+	// std::map<std::string, int>::iterator nick_it;
+	this->nicks_it_ = this->nick_map_.find(msg.params[0]);
+	if (this->nicks_it_ == nick_map_.end())
 	{
 		std::cout << "kill error 3\n";
 	
 		// ERR_NOSUCHNICK (401)
-		sendLine(killer_fd, "401 " + oper_it->second.nick + msg.params[0] + " :No such nickname");
+		sendLine(killer_fd, "401 " + this->usr_it_->second.nick + msg.params[0] + " :No such nickname");
 		return ;
 	}
 	
 	// or kill himself or another operator
-	oper_it = opers_.find(nick_it->second);
-	if (oper_it != opers_.end() || nick_it->second == killer_fd)
+	this->usr_it_ = opers_.find(this->nicks_it_->second);
+	if (this->usr_it_ != opers_.end() || this->nicks_it_->second == killer_fd)
 	{
 		std::cout << "kill error 4\n";
 
@@ -643,11 +649,11 @@ void MiniIRCd::handle_kill(const int& killer_fd, const IRCMessage& msg)
 	}
 
 	// All OK, can kill
-	sendLine(nick_it->second, "ERROR :You are kicked out of the server : " + msg.trailing);
+	sendLine(this->nicks_it_->second, "ERROR :You are kicked out of the server : " + msg.trailing);
 	int victim_fd = -1;
 	for (size_t k = 0; k < pfds_.size(); ++k)
 	{
-		if (pfds_[k].fd == nick_it->second)
+		if (pfds_[k].fd == this->nicks_it_->second)
 		{
 			victim_fd = (int)k;
 			break;
@@ -656,7 +662,7 @@ void MiniIRCd::handle_kill(const int& killer_fd, const IRCMessage& msg)
 	if (victim_fd != -1)
 	{
 		// std::cout << "AFTER KILL:\n";
-		handle_quit(nick_it->second, victim_fd);
+		handle_quit(this->nicks_it_->second, victim_fd);
 	}
 	else
 		std::cout << "handle_kill victim_fd not found\n";
@@ -705,12 +711,13 @@ void MiniIRCd::handle_who(const IRCMessage& msg, const int& fd)
 	std::string chan = msg.params[0];
 	if (chan[0] !=  '#') chan = "#" + chan;
 
-	std::map<std::string, std::vector<int> >::iterator it = chnl_members_.find(chan);
-	if (it == chnl_members_.end()) {
+	// std::map<std::string, std::vector<int> >::iterator it = chnl_members_.find(chan);
+	this->chnl_mem_it_ = chnl_members_.find(chan);
+	if (this->chnl_mem_it_ == chnl_members_.end()) {
 		sendLine(fd, ":miniircd 403 " + requester.nick + " " + chan + " :No such channel");
 		return;
 	}
-	const std::vector<int>& members = it->second;
+	const std::vector<int>& members = this->chnl_mem_it_->second;
 	for (size_t k = 0; k < members.size(); ++k) {
 		User& m = users_.at(members[k]);
 		std::ostringstream reply;
@@ -723,25 +730,27 @@ void MiniIRCd::handle_who(const IRCMessage& msg, const int& fd)
 }
 
 
-void MiniIRCd::handle_pass(const IRCMessage& msg, const int& fd, int i)
+bool MiniIRCd::handle_pass(const IRCMessage& msg, const int& fd, int i)
 {
 	if (msg.params.empty()) {
 		sendLine(fd, "461 PASS :Not enough parameters");
-		return;
+		return false ;
 	}
 	std::string pw = msg.params[0];
 	if (!pw.empty() && pw[0] == ':') pw = pw.substr(1);
 
 	if (server_password_.empty()) {
 		users_[fd].pass_ok = true;
-		return;
+		return true;
 	}
 
 	if (pw == server_password_) {
 		users_[fd].pass_ok = true;
+		return true;
 	} else {
 		sendLine(fd, "464 * :Password incorrect");
 		handle_quit(fd, i);
+		return false;
 	}
 }
 
@@ -781,11 +790,11 @@ void MiniIRCd::handle_mode(User& actual_user, IRCMessage msg)
 {
 	if (!this->channels_.empty())
 	{
-		std::map<std::string, Channel>::iterator selected_chnl = this->channels_.find(*(msg.params.begin()));
+		this->chnls_it_ = this->channels_.find(*(msg.params.begin()));
 
-		if (selected_chnl != channels_.end())
+		if (this->chnls_it_ != channels_.end())
 		{
-			// std::cout << "Channel \"" << selected_chnl->first << "\" found in Server \n";
+			// std::cout << "Channel \"" << this->chnls_it_->first << "\" found in Server \n";
 			
 			// Erasing channel name from msg.params
 			std::rotate(msg.params.begin(), msg.params.begin() + 1, msg.params.end());
@@ -793,16 +802,16 @@ void MiniIRCd::handle_mode(User& actual_user, IRCMessage msg)
 			
 			bool res;
 			std::string chnl_res;
-			res = selected_chnl->second.channel_mode(msg.params, actual_user.nick, chnl_res);
+			res = this->chnls_it_->second.channel_mode(msg.params, actual_user.nick, chnl_res);
 			if (!res)
 				sendLine(actual_user.usr_fd, chnl_res);
 			else
 			{
-				std::map<std::string, std::vector<int> >::iterator chnl_mem_it; 
-				chnl_mem_it = this->chnl_members_.find(selected_chnl->second.get_chnl_name());
-				if (chnl_mem_it != chnl_members_.end())
+				// std::map<std::string, std::vector<int> >::iterator chnl_mem_it; 
+				this->chnl_mem_it_ = this->chnl_members_.find(this->chnls_it_->second.get_chnl_name());
+				if (this->chnl_mem_it_ != chnl_members_.end())
 				{
-					std::vector<int>& v = chnl_mem_it->second;
+					std::vector<int>& v = this->chnl_mem_it_->second;
 					for (size_t k = 0; k < v.size(); ++k)
 						sendLine(v[k], chnl_res);
 				}
@@ -901,10 +910,9 @@ int MiniIRCd::run()
 					
 					// erase the fd of the user who quitted the server
 					// from each channel :
-					std::map<std::string, std::vector<int> >::iterator it;
-					for (it = chnl_members_.begin(); it != chnl_members_.end(); ++it)
+					for (this->chnl_mem_it_ = chnl_members_.begin(); this->chnl_mem_it_ != chnl_members_.end(); ++this->chnl_mem_it_)
 					{
-						std::vector<int> channel_fds = it->second;
+						std::vector<int> channel_fds = this->chnl_mem_it_->second;
 						for (size_t k = 0; k < channel_fds.size(); ++k)
 						{
 							if (channel_fds[k] == client_fd)
@@ -912,15 +920,7 @@ int MiniIRCd::run()
 							// tell other users of this channel, that smbdy has quit :
 							std::ostringstream os;
 							os << ":" << usr.get_host_mask() << " QUIT :" << quitmsg;
-							// try
-							// {
-								sendLine(channel_fds[k], os.str());
-							// }
-							// catch (std::exception& e)
-							// {
-							// 	std::cout << "cannot sendLine to fd " << channel_fds[k] << std::endl;
-							// 	// return ;
-							// }
+							sendLine(channel_fds[k], os.str());
 						}
 
 						std::vector<int> channel_new_fds;
@@ -935,9 +935,8 @@ int MiniIRCd::run()
 					if (!usr.nick.empty())
 						nick_map_.erase(usr.nick);
 					close(client_fd);
-					std::map<int, User>::iterator op_it;
-					op_it = opers_.find(client_fd);
-					if (op_it != opers_.end())
+					this->usr_it_ = opers_.find(client_fd);
+					if (this->usr_it_ != opers_.end())
 						opers_.erase(client_fd);
 					users_.erase(client_fd);
 					pfds_.erase(pfds_.begin() + i);
@@ -976,12 +975,34 @@ int MiniIRCd::run()
 							handle_ping(msg, client_fd);
 						} else if (cmd == "CAP") {
 							handle_cap(msg, client_fd);
-						} else if (cmd == "PASS") {
-							handle_pass(msg, client_fd, i);
-						} else if (cmd == "NICK") {
-							handle_nick(msg, client_fd);
+						} else if (cmd == "PASS")
+						{
+							if (!handle_pass(msg, client_fd, i))
+								break ;
+						} else if (cmd == "NICK")
+						{
+							// Test in case of wrong PSWD -> the user has quit
+							// but IRSSI tries to register with /nick and /user
+							// Also, the client retries several /nick commands
+							// even after registration, so :
+							
+							// this->usr_it_ = this->users_.find(client_fd);
+							// if (this->usr_it_ != this->users_.end()
+							// 	&& !this->usr_it_->second.registered)
+								handle_nick(msg, client_fd);
+							// else
+							//  	break ;
 						} else if (cmd == "USER") {
-							handle_user(msg, client_fd);
+							// Test in case of wrong PSWD -> the user has quit
+							// but IRSSI tries to register with /nick and /user anyway,
+							// so those verifications help 
+							
+							// this->usr_it_ = this->users_.find(client_fd);
+							// if (this->usr_it_ == this->users_.end()
+							// 	&& !this->usr_it_->second.registered)
+								handle_user(msg, client_fd);
+							// else
+							//  	break;
 						} else if (cmd == "OPER") {
 							handle_oper(actual_user, msg);
 						} else if (cmd == "JOIN") {
