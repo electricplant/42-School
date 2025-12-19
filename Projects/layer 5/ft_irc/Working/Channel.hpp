@@ -16,9 +16,8 @@
 #define OPER    111
 #define TOPIC   116
 
-class User;
+// class User;
 
-// #include "MiniIRCd.hpp"
 
 class Channel
 {
@@ -38,8 +37,7 @@ class Channel
     std::set<std::string> chanop_list_;
     std::set<std::string> user_list_;
     std::set<std::string> invited_users_;
-    // Need to implement smth to forward messages
-    // to all the users
+
     // std::map<std::string, User> users_;
 
 
@@ -48,7 +46,7 @@ class Channel
     // CONSTRUCTORS
 
     // For the first user :
-    Channel(std::string name, User& usr);
+    Channel(std::string name, std::string usr);
     // Default :
     Channel();
     ~Channel();
@@ -71,23 +69,47 @@ class Channel
             return (false);
         return (true);
     }
+
+    bool is_chnl_usr(std::string usr_nick) const
+    {
+        std::set<std::string>::iterator usr_it = this->user_list_.find(usr_nick);
+        if (usr_it == this->user_list_.end())
+            return (false);
+        return (true);
+    }
+
+    void show_chnl_users() const
+    {
+        std::set<std::string>::iterator it;
+        it = this->user_list_.begin();
+
+        std::cout << get_chnl_name() << "'s users (" << this->user_list_.size()
+                    << ")\n";
+        while (it != this->user_list_.end())
+        {
+            std::cout << *it << std::endl;
+            ++it;
+        }
+    }
     
     // Join
-    bool channel_join(User& usr, std::string key, std::string& returned_error);
-    void add_user(User& usr);
+    bool channel_join(std::string usr, std::string key, std::string& returned_error);
+    void add_user(std::string usr);
     // Mode
     bool channel_mode(std::vector<std::string> mode_params, std::string user_name, std::string& returned_info);
     bool add_mode(std::string modes, std::vector<std::string> mode_params, std::string user_name, std::string& returned_info);
-    bool cancel_mode(std::string modes, std::string user_name, std::string& returned_info);
-    void print_channel_modes(bool for_chanops, uint8_t all_modifs, std::string user_name, std::string& returned_info, std::string sign);
+    bool cancel_mode(std::string modes, std::vector<std::string> mode_params, std::string user_name, std::string& returned_info);
+    void print_channel_modes(bool for_chanops, uint8_t all_modifs, std::string user_name,
+        std::string& returned_info, std::string sign, std::string new_chanop);
     // Part
     void channel_part(const std::string user_nick);
+    // Invite
+    void channel_invite(const std::string user_nick);
 
     // Problems when trying to connect to the same channel
     // with different IRSSI users :
     // The WHO and WHOIS commands seem necessary.
-    // Also, reviewing PRIVMSG may be necessary.
 };
 
-#include "User.hpp"
+// #include "User.hpp"
 #endif

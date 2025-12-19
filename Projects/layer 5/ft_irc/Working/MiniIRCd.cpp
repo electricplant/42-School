@@ -218,20 +218,20 @@ void MiniIRCd::sendLine(int fd, const std::string& line)
 
 
 
-static void debug_print_raw(const std::string &label, const std::string &s) {
-	// print printable chars and hex for others (helps to see CR/LF/extra bytes)
-	std::cerr << label << ": ";
-	for (size_t i = 0; i < s.size(); ++i) {
-		unsigned char c = static_cast<unsigned char>(s[i]);
-		if (c >= 0x20 && c <= 0x7e) std::cerr << s[i];
-		else {
-			char buf[8];
-			snprintf(buf, sizeof(buf), "\\x%02x", c);
-			std::cerr << buf;
-		}
-	}
-	std::cerr << std::endl;
-}
+// static void debug_print_raw(const std::string &label, const std::string &s) {
+// 	// print printable chars and hex for others (helps to see CR/LF/extra bytes)
+// 	std::cerr << label << ": ";
+// 	for (size_t i = 0; i < s.size(); ++i) {
+// 		unsigned char c = static_cast<unsigned char>(s[i]);
+// 		if (c >= 0x20 && c <= 0x7e) std::cerr << s[i];
+// 		else {
+// 			char buf[8];
+// 			snprintf(buf, sizeof(buf), "\\x%02x", c);
+// 			std::cerr << buf;
+// 		}
+// 	}
+// 	std::cerr << std::endl;
+// }
 
 static std::string nick_or_fd(const User& u) {
 	if (!u.nick.empty()) return u.nick;
@@ -370,21 +370,23 @@ void MiniIRCd::handle_join(const IRCMessage& msg, const int& fd)
 		{
 			std::cout << usr.nick << " joined " << chan << "\n";
 			// Update 2 of the server's lists
-			channels_[chan] = Channel(chan, usr);
+			channels_[chan] = Channel(chan, usr.nick);
 			chnl_members_[chan].push_back(fd);
 			new_chanop = true;
 			// No errors expected
 		}
 		else
 		{
-			Channel existing_channel = this->chnls_it_->second;
-			join_success = existing_channel.channel_join(usr, "", detected_error);
+			Channel& existing_channel = this->chnls_it_->second;
+			join_success = existing_channel.channel_join(usr.nick, "", detected_error);
 			if (!join_success)
 			{
 				sendLine(fd, detected_error);
 				return;
 			}
 			chnl_members_[chan].push_back(fd);
+			std::cout << usr.nick << " joined " << chan << "\n";
+
 		}
 
 		// Warn all channel members :
@@ -399,7 +401,7 @@ void MiniIRCd::handle_join(const IRCMessage& msg, const int& fd)
 			sendLine(fd, ":miniircd MODE " + chan + " +o " + usr.nick);
 
 		// Send topic to the new channel member - RPL_TOPIC (332)
-		Channel chnl = channels_.at(chan);
+		Channel& chnl = channels_.at(chan);
 		if (!chnl.get_chnl_topic().empty())
 			sendLine(fd, ":miniircd 332 " + usr.nick + " " + chan + " :" + chnl.get_chnl_topic());
 
@@ -420,13 +422,16 @@ void MiniIRCd::handle_join(const IRCMessage& msg, const int& fd)
 		std::ostringstream endnames;
 		endnames << ":miniircd 366 " << (usr.nick.empty() ? "*" : usr.nick) << " " << chan << " :End of /NAMES list.";
 		sendLine(fd, endnames.str());
+
+
+
 	}
 }
 
 // If the user types "/part " without a word starting whith "#"
 // IRSSI considers that the user wants to quit the actual channel
 // So "/part channel reason" -> "channel reason" will be considered
-// as trailing, not /part argument
+// as trailing, not /part's argument
 void MiniIRCd::handle_part(const IRCMessage& msg, const int& fd)
 {
 	if (msg.params.empty()) {
@@ -838,8 +843,84 @@ void MiniIRCd::handle_mode(User& actual_user, IRCMessage msg)
 	}
 }
 
+void MiniIRCd::handle_invite(const IRCMessage& msg, const int fd)
+{
+	if (msg.params.size() == 1)
+	{
+		// ERR_NEEDMOREPARAMS (461)
+		// std::cout << "INVITE ERROR 461\n";
+		sendLine(fd, ":miniircd 461 INVITE :Not enough parameters");
+		return ;
+	}
+
+	nicks_it_ = nick_map_.find(msg.params[0]);
+	if (msg.params.size() > 2 || nicks_it_ == nick_map_.end())
+	{
+		// std::cout << "INVITE ERROR no such user/ too many params\n";
+		return ;
+	}
+
+	chnls_it_ = channels_.find(msg.params[1]);
+	if (chnls_it_ == channels_.end())
+	{
+		// ERR_NOSUCHCHANNEL (403)
+		// std::cout << "INVITE ERROR 403\n";
+
+		sendLine(fd, ":miniircd 403 " + msg.params[1] + " :No such channel");
+		return ;
+	}
+	Channel& c = chnls_it_->second;
+
+    if (!c.is_chnl_usr(users_.at(fd).nick))
+	{
+		// std::cout << "INVITE ERROR 442\n";
+
+		// ERR_NOTONCHANNEL (442)
+		//  "<client> <channel> :You're not on that channel"
+		sendLine(fd, ":miniircd 442 " + msg.params[0] + " " + c.get_chnl_name() + " :You're not on that channel");
+		return ;
+	}
+
+	if (!c.is_chnl_op(users_.at(fd).nick))
+	{
+		// std::cout << "INVITE ERROR 482\n";
+
+		// ERR_CHANOPRIVSNEEDED (482)
+		// "<client> <channel> :You're not channel operator"
+		sendLine(fd, ":miniircd 482 " + msg.params[1] + " :You're not channel operator");
+		return ;
+	}
+
+	if (c.is_chnl_usr(msg.params[0]))
+	{
+		// std::cout << "INVITE ERROR 443\n";
+
+		// ERR_USERONCHANNEL (443)
+		// "<client> <nick> <channel> :is already on channel"
+		sendLine(fd, ":miniircd 443 " + msg.params[0] + " " + msg.params[1] + " :is already on channel");
+		return ;
+	}
+
+	c.channel_invite(msg.params[0]);
+	// RPL_INVITING (341)
+	// "<client> <nick> <channel>"
+
+	std::ostringstream os;
+	// os << ":miniircd ";
+	os << "341 ";
+	os << msg.params[1] << " ";
+	os << msg.params[0];
+	sendLine(fd, os.str());
+
+	return ;
+}
+
+
+
 int MiniIRCd::run()
 {
+	nick_map_.clear();
+
 	//SIGNAL PROTECTION
 	struct sigaction sa;
 	memset(&sa, 0, sizeof(sa));
@@ -848,6 +929,7 @@ int MiniIRCd::run()
 	sa.sa_flags = 0;
 	sigaction(SIGINT, &sa, NULL);
 	sigaction(SIGTERM, &sa, NULL);
+
 
 
 	listenfd_ = make_listen();
@@ -964,7 +1046,7 @@ int MiniIRCd::run()
 						actual_user.inbuf.erase(0, pos + erase_len);
 
 						if (line.size() > MAXLINE) line = line.substr(0, MAXLINE);
-						debug_print_raw("RECV raw", line);
+						// debug_print_raw("RECV raw", line);
 
 						IRCMessage msg = parseLine(line);
 						std::string cmd = msg.command;
@@ -1028,10 +1110,11 @@ int MiniIRCd::run()
 						// and in each Channel, users are stored by their names : the Channel
 						// will need to print their names and send to other users, know who is invited...						
 							handle_mode(actual_user, msg);
+						} else if (cmd == "INVITE") {
+							handle_invite(msg, client_fd);
 						} else if (cmd == "QUIT") {
 							handle_quit(client_fd, i);
 							std::cout << "quit break\n";
-							
 							break;
 						} else if (cmd == "KILL") {
 							handle_kill(client_fd, msg);
@@ -1051,7 +1134,6 @@ int MiniIRCd::run()
 			}
 		} // end clients loop
 	} // main loop
-
 	close(listenfd_);
 	return 0;
 }
