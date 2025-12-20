@@ -218,24 +218,24 @@ void MiniIRCd::sendLine(int fd, const std::string& line)
 
 
 
-// static void debug_print_raw(const std::string &label, const std::string &s) {
-// 	// print printable chars and hex for others (helps to see CR/LF/extra bytes)
-// 	std::cerr << label << ": ";
-// 	for (size_t i = 0; i < s.size(); ++i) {
-// 		unsigned char c = static_cast<unsigned char>(s[i]);
-// 		if (c >= 0x20 && c <= 0x7e) std::cerr << s[i];
-// 		else {
-// 			char buf[8];
-// 			snprintf(buf, sizeof(buf), "\\x%02x", c);
-// 			std::cerr << buf;
-// 		}
-// 	}
-// 	std::cerr << std::endl;
-// }
+static void debug_print_raw(const std::string &label, const std::string &s) {
+	// print printable chars and hex for others (helps to see CR/LF/extra bytes)
+	std::cerr << label << ": ";
+	for (size_t i = 0; i < s.size(); ++i) {
+		unsigned char c = static_cast<unsigned char>(s[i]);
+		if (c >= 0x20 && c <= 0x7e) std::cerr << s[i];
+		else {
+			char buf[8];
+			snprintf(buf, sizeof(buf), "\\x%02x", c);
+			std::cerr << buf;
+		}
+	}
+	std::cerr << std::endl;
+}
 
 static std::string nick_or_fd(const User& u) {
 	if (!u.nick.empty()) return u.nick;
-	std::ostringstream os; os << "fd" << u.usr_fd; return os.str();
+	std::ostringstream os; os << "fd " << u.usr_fd; return os.str();
 }
 
 void MiniIRCd::send_numeric(int fd, const std::string& target, int code, const std::string& msg) {
@@ -292,13 +292,14 @@ void MiniIRCd::handle_nick(const IRCMessage& msg, const int& fd)
 
 			u.nick = newnick;
 			nick_map_[newnick] = fd;
-			if (!u.user.empty() && !u.registered)
-			{
+			// if (!u.user.empty() && !u.registered)
+			// {
 				u.registered = true;
-				send_numeric(fd, u.nick, 001, ":Welcome to miniircd, made by Jeanne and Dean");
-			}
-			else
-			{
+			// 	send_numeric(fd, u.nick, 001, ":Welcome to miniircd, made by Jeanne and Dean");
+			// }
+			// else
+			// {
+				// Tell the other users that smbdy changed his nick
 				this->usr_it_ = users_.begin();
 				while (this->usr_it_ != users_.end())
 				{
@@ -307,13 +308,14 @@ void MiniIRCd::handle_nick(const IRCMessage& msg, const int& fd)
 					sendLine(this->usr_it_->first, nick_change.str());
 					this->usr_it_++;
 				}
-				// if (u.nick.empty())
-				// 	sendLine(fd, nick_or_fd(u) + " NICK :" + newnick);
-				// else
-				// 	sendLine(fd, orignick + " NICK :" + newnick);
+				// Confirm to the user himself
+				if (u.nick.empty())
+					sendLine(fd, nick_or_fd(u) + " NICK :" + newnick);
+				else
+					sendLine(fd, orignick + " NICK :" + newnick);
 
-				// send_numeric(fd, u.nick, 001, ":Welcome to miniircd, made by Jeanne and Dean");
-			}
+				send_numeric(fd, u.nick, 001, ":Welcome to miniircd, made by Jeanne and Dean");
+			// }
 		}
 	}
 }
@@ -843,13 +845,143 @@ void MiniIRCd::handle_mode(User& actual_user, IRCMessage msg)
 	}
 }
 
-void MiniIRCd::handle_invite(const IRCMessage& msg, const int fd)
+// KICK #channel user_C(,user_B,...) :reason to be kicked!
+// IRSSI, will send KICK cmd to all users separately
+void MiniIRCd::handle_kick(const IRCMessage& msg, const int kicker_fd)
+{
+	std::cout << "=> handle_kick:\n";
+
+	std::ostringstream os;
+	User kicker = users_.at(kicker_fd);
+	if (msg.params.size() < 2)
+	{
+		std::cout << "ERR_NEEDMOREPARAMS (461)\n";
+		//ERR_NEEDMOREPARAMS (461)
+		// "<client> <command> :Not enough parameters"
+
+		os << ":miniircd 461 ";
+		os << kicker.nick;
+		os << " KICK :Not enough parameters";
+		sendLine(kicker_fd, os.str());
+		return ;
+	}
+	
+	std::cout << "msg.params[0] " << msg.params[0] << std::endl;
+	std::cout << "msg.params[1] " << msg.params[1] << std::endl;
+	if (!msg.trailing.empty())
+		std::cout << "msg.trailing " << msg.trailing << std::endl;
+	
+	std::string target_chnl = msg.params[0];
+	std::string target_usr = msg.params[1];
+
+	// Valid channel?
+	chnls_it_ = channels_.find(target_chnl);
+	if (chnls_it_ == channels_.end())
+	{
+		std::cout << "ERR_NOSUCHCHANNEL (403)\n";
+		// ERR_NOSUCHCHANNEL (403)
+		// "<client> <channel> :No such channel"
+		os << ":miniircd 403 ";
+		os << kicker.nick << " ";
+		os << target_chnl << " :No such channel";
+		sendLine(kicker_fd, os.str()); 
+		return ;
+	}
+
+	Channel& c = channels_.at(target_chnl);
+	// Is the kicker on that channel?
+	if (!c.is_chnl_usr(kicker.nick))
+	{
+		std::cout << "ERR_NOTONCHANNEL (442)\n";
+
+		// ERR_NOTONCHANNEL (442)
+		// "<client> <channel> :You're not on that channel"
+		os << ":miniircd 442 ";
+		os << kicker.nick << " ";
+		os << target_chnl << " :You're not on that channel";
+		sendLine(kicker_fd, os.str()); 
+		return ;
+	}
+
+	// Is the kicker chanop?
+	if (!c.is_chnl_op(kicker.nick))
+	{
+		std::cout << "ERR_CHANOPRIVSNEEDED (482)\n";
+		
+		// ERR_CHANOPRIVSNEEDED (482)
+		// "<client> <channel> :You're not channel operator"
+		os << ":miniircd 482 ";
+		os << kicker.nick << " ";
+		os << target_chnl << " :You're not channel operator";
+		sendLine(kicker_fd, os.str()); 
+		return ;
+	}
+
+	// Does the target nick exist?
+	nicks_it_ = nick_map_.find(target_usr);
+	if (nicks_it_ == nick_map_.end())
+	{
+		std::cout << "ERR_NOSUCHNICK (401)\n";
+
+		// ERR_NOSUCHNICK (401)
+		// "<client> <nickname> :No such nick/channel"
+		os << ":miniircd 401 ";
+		os << kicker.nick << " ";
+		os << target_usr;
+		os << " :No such nick/channel";
+		sendLine(kicker_fd, os.str());
+		return ;
+	}
+
+	// Is the target in the channel?
+	if (!c.is_chnl_usr(target_usr))
+	{
+		std::cout << "ERR_USERNOTINCHANNEL (441)\n";
+
+		// ERR_USERNOTINCHANNEL (441)
+		// "<client> <nick> <channel> :They aren't on that channel"
+		os << ":miniircd 441 ";
+		os << kicker.nick << " ";
+		os << target_usr << " ";
+		os << target_chnl << " :They aren't on that channel";
+		sendLine(kicker_fd, os.str());
+		return ;
+	}
+
+	// :dan!d@localhost KICK #Melbourne alice :dan
+	// message sent to all channel members:
+	os << ":" << kicker.get_host_mask();
+	os << " KICK " << target_chnl << " ";
+	os << target_usr << " :";
+	if (msg.trailing.empty())
+		os << target_usr;
+	else
+	 	os << msg.trailing;
+
+	std::vector<int> all_chnl_members = chnl_members_.at(target_chnl);
+	std::vector<int>::iterator m_fd = all_chnl_members.begin();
+
+	int counter = 0;
+	while (m_fd != all_chnl_members.end())
+	{
+		counter++;
+		sendLine(*m_fd, os.str());
+		m_fd++;
+	}
+	std::cout << "KICKING MSG:\n" << os.str()
+		<< "sent to " << counter << " users of " << c.get_chnl_name()
+		<< "\n";
+
+	c.channel_part(target_usr);
+}
+
+void MiniIRCd::handle_invite(const IRCMessage& msg, const int inviter_fd)
 {
 	if (msg.params.size() == 1)
 	{
 		// ERR_NEEDMOREPARAMS (461)
 		// std::cout << "INVITE ERROR 461\n";
-		sendLine(fd, ":miniircd 461 INVITE :Not enough parameters");
+		sendLine(inviter_fd, ":miniircd 461 INVITE :Not enough parameters");
 		return ;
 	}
 
@@ -866,28 +998,28 @@ void MiniIRCd::handle_invite(const IRCMessage& msg, const int fd)
 		// ERR_NOSUCHCHANNEL (403)
 		// std::cout << "INVITE ERROR 403\n";
 
-		sendLine(fd, ":miniircd 403 " + msg.params[1] + " :No such channel");
+		sendLine(inviter_fd, ":miniircd 403 " + msg.params[1] + " :No such channel");
 		return ;
 	}
-	Channel& c = chnls_it_->second;
 
-    if (!c.is_chnl_usr(users_.at(fd).nick))
+	Channel& c = chnls_it_->second;
+    if (!c.is_chnl_usr(users_.at(inviter_fd).nick))
 	{
 		// std::cout << "INVITE ERROR 442\n";
 
 		// ERR_NOTONCHANNEL (442)
 		//  "<client> <channel> :You're not on that channel"
-		sendLine(fd, ":miniircd 442 " + msg.params[0] + " " + c.get_chnl_name() + " :You're not on that channel");
+		sendLine(inviter_fd, ":miniircd 442 " + msg.params[0] + " " + c.get_chnl_name() + " :You're not on that channel");
 		return ;
 	}
 
-	if (!c.is_chnl_op(users_.at(fd).nick))
+	if (!c.is_chnl_op(users_.at(inviter_fd).nick))
 	{
 		// std::cout << "INVITE ERROR 482\n";
 
 		// ERR_CHANOPRIVSNEEDED (482)
 		// "<client> <channel> :You're not channel operator"
-		sendLine(fd, ":miniircd 482 " + msg.params[1] + " :You're not channel operator");
+		sendLine(inviter_fd, ":miniircd 482 " + msg.params[1] + " :You're not channel operator");
 		return ;
 	}
 
@@ -897,21 +1029,35 @@ void MiniIRCd::handle_invite(const IRCMessage& msg, const int fd)
 
 		// ERR_USERONCHANNEL (443)
 		// "<client> <nick> <channel> :is already on channel"
-		sendLine(fd, ":miniircd 443 " + msg.params[0] + " " + msg.params[1] + " :is already on channel");
+		sendLine(inviter_fd, ":miniircd 443 " + msg.params[0] + " " + msg.params[1] + " :is already on channel");
 		return ;
 	}
 
 	c.channel_invite(msg.params[0]);
+
 	// RPL_INVITING (341)
 	// "<client> <nick> <channel>"
 
-	std::ostringstream os;
-	// os << ":miniircd ";
-	os << "341 ";
-	os << msg.params[1] << " ";
-	os << msg.params[0];
-	sendLine(fd, os.str());
+	User inviter = users_.at(inviter_fd);
+	int invited_fd = nick_map_.at(msg.params[0]);
+	User invited = users_.at(invited_fd);
 
+	std::ostringstream os;
+	os << ":" << inviter.get_host_mask();
+	os << " INVITE ";
+	os << invited.nick << " ";
+	os << msg.params[1] << " ";
+	sendLine(invited_fd, os.str());
+	
+	os.str("");
+	os.clear();
+
+	os << ":miniircd ";
+	os << "341 ";
+	os << inviter.nick << " ";
+	os << msg.params[0] << " ";
+	os << msg.params[1];
+	sendLine(inviter_fd, os.str());
 	return ;
 }
 
@@ -1046,7 +1192,7 @@ int MiniIRCd::run()
 						actual_user.inbuf.erase(0, pos + erase_len);
 
 						if (line.size() > MAXLINE) line = line.substr(0, MAXLINE);
-						// debug_print_raw("RECV raw", line);
+						debug_print_raw("RECV raw", line);
 
 						IRCMessage msg = parseLine(line);
 						std::string cmd = msg.command;
@@ -1097,6 +1243,44 @@ int MiniIRCd::run()
 							handle_part(msg, client_fd);
 						} else if (cmd == "WHO") {
 							handle_who(msg, client_fd);
+						} else if (cmd == "WHOIS") {
+							std::ostringstream os;
+							usr_it_ = users_.find(client_fd);
+							if (usr_it_ == users_.end())
+							{
+								// ERR_NOSUCHNICK (401) 
+								std::cout << "Réponse négative à WHOIS:\n";
+								os << ":miniircd 401 ";
+								os << msg.params[0];
+								os << " :No such nick/channel";
+								sendLine(client_fd, os.str());
+								std::cout << os.str() << std::endl;
+
+								os.str("");
+								os.clear();
+							}
+							else
+							{
+								std::cout << "Réponse à WHOIS:\n";
+								// RPL_WHOISREGNICK (307)
+								os << ":miniircd 3O7 " << msg.params[0] << " :has identified for this nick";
+								sendLine(client_fd, os.str());
+								std::cout << os.str() << std::endl;
+
+								os.str("");
+								os.clear();
+
+								// RPL_ENDOFWHOIS (318)
+								os << ":miniircd 318 ";
+								os << msg.params[0];
+								os << " :End of /WHOIS list";
+								sendLine(client_fd, os.str());
+								std::cout << os.str() << std::endl;
+
+								os.str("");
+								os.clear();
+							} 
+
 						} else if (cmd == "PRIVMSG") {
 							handle_privmsg(msg, client_fd);
 						} else if (cmd == "MODE") {
@@ -1112,6 +1296,8 @@ int MiniIRCd::run()
 							handle_mode(actual_user, msg);
 						} else if (cmd == "INVITE") {
 							handle_invite(msg, client_fd);
+						} else if (cmd == "KICK") {
+							handle_kick(msg, client_fd);
 						} else if (cmd == "QUIT") {
 							handle_quit(client_fd, i);
 							std::cout << "quit break\n";

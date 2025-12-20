@@ -46,37 +46,18 @@ class Channel
     // CONSTRUCTORS
 
     // For the first user :
-    Channel(std::string name, std::string usr);
+    Channel(const std::string name, const std::string usr);
     // Default :
     Channel();
     ~Channel();
 
-    // For all the users
-    std::string get_chnl_name() const
-    {
-        return this->channel_name_;
-    }
-
-    std::string get_chnl_topic() const
-    {
-        return this->topic_;
-    }
-
-    bool is_chnl_op(std::string usr_nick) const
-    {
-        std::set<std::string>::iterator chanop_it = this->chanop_list_.find(usr_nick);
-        if (chanop_it == this->chanop_list_.end())
-            return (false);
-        return (true);
-    }
-
-    bool is_chnl_usr(std::string usr_nick) const
-    {
-        std::set<std::string>::iterator usr_it = this->user_list_.find(usr_nick);
-        if (usr_it == this->user_list_.end())
-            return (false);
-        return (true);
-    }
+    // Getters
+    std::string get_chnl_name() const;
+    std::string get_chnl_topic() const;
+    
+    // Verifications 
+    bool is_chnl_op(const std::string usr_nick) const;
+    bool is_chnl_usr(const std::string usr_nick) const;
 
     void show_chnl_users() const
     {

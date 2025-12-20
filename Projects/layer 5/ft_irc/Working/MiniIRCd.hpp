@@ -84,7 +84,8 @@ private:
 	void handle_mode(User& actual_user, IRCMessage msg);
 	void handle_oper(User& actual_user, const IRCMessage& msg);
 	void handle_kill(const int killer_fd, const IRCMessage& msg);
-	void handle_invite(const IRCMessage& msg, const int fd);
+	void handle_invite(const IRCMessage& msg, const int inviter_fd);
+	void handle_kick(const IRCMessage& msg, const int kicker_fd);
 
 
 

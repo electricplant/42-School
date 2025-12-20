@@ -3,7 +3,7 @@
 // CONSTRUCTORS
 
 // For the first user :
-Channel::Channel(std::string name, std::string usr):
+Channel::Channel(const std::string name, const std::string usr):
     i_mode_(false), k_mode_(false), l_mode_(false), o_mode_(false), t_mode_(false),
     length_(0), max_length_(0), topic_(""), key_(""), channel_name_(name)
 {  add_user(usr);  }
@@ -11,6 +11,31 @@ Channel::Channel(std::string name, std::string usr):
 // Default :
 Channel::Channel(){}
 Channel::~Channel(){}
+
+// GETTERS
+std::string Channel::get_chnl_name() const
+{ return this->channel_name_; }
+
+std::string Channel::get_chnl_topic() const
+{ return this->topic_; }
+
+// VERIFICATIONS 
+
+bool Channel::is_chnl_op(const std::string usr_nick) const
+{
+    std::set<std::string>::iterator chanop_it = this->chanop_list_.find(usr_nick);
+    if (chanop_it == this->chanop_list_.end())
+        return (false);
+    return (true);
+}
+
+bool Channel::is_chnl_usr(const std::string usr_nick) const
+{
+    std::set<std::string>::iterator usr_it = this->user_list_.find(usr_nick);
+    if (usr_it == this->user_list_.end())
+        return (false);
+    return (true);
+}
 
 
 // JOIN
@@ -23,7 +48,7 @@ void Channel::add_user(std::string usr)
     length_++;
     // users_[usr] = User(usr);
 }
- 
+
 bool Channel::channel_join(std::string usr, std::string key, std::string& returned_error)
 {
     std::cout << "=> join func\n";
@@ -348,6 +373,8 @@ void Channel::print_channel_modes(bool chanops_only, uint8_t all_modifs, std::st
 
 void Channel::channel_part(const std::string user_nick)
 {
+    std::cout << "=> channel_part on " << user_nick << "\n";
+    
     std::set<std::string>::iterator set_it;
 
     set_it = user_list_.find(user_nick);
