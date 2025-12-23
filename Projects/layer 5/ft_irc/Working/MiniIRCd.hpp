@@ -86,8 +86,7 @@ private:
 	void handle_kill(const int killer_fd, const IRCMessage& msg);
 	void handle_invite(const IRCMessage& msg, const int inviter_fd);
 	void handle_kick(const IRCMessage& msg, const int kicker_fd);
-
-
+	void handle_topic(const IRCMessage& msg, const int client_fd);
 
 };
 

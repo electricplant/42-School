@@ -214,16 +214,16 @@ bool Channel::add_mode(std::string modes, std::vector<std::string> mode_params, 
             } 
             break;
             case TOPIC:
-            if (param_counter < total_prms)
-            {
+            // if (param_counter < total_prms)
+            // {
                 t_mode_ = true;
                 all_modifs |= 16;
-                topic_ = mode_params[param_counter];
-                param_counter++;
+                // topic_ = mode_params[param_counter];
+                // param_counter++;
 
                 // std::cout << this->channel_name << " : mode +t "
                 //             << this->topic << std::endl;
-            }
+            // }
             break;
             default:
                 error = true;

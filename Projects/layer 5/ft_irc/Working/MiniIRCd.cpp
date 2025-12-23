@@ -567,10 +567,10 @@ void MiniIRCd::handle_quit(const int fd, int i)
 	std::ostringstream q;
 	// q << ":" << nick_or_fd(u) << " QUIT :Client Quit";
 	q << ":" << u.get_host_mask() << " QUIT :Client Quit";
-	for (this->chnl_mem_it_ =chnl_members_.begin(); this->chnl_mem_it_!=chnl_members_.end(); ++this->chnl_mem_it_)
+	for (chnl_mem_it_ =chnl_members_.begin(); chnl_mem_it_!=chnl_members_.end(); ++chnl_mem_it_)
 	{
-		std::cout << "Eject user from channel " << this->chnl_mem_it_->first << std::endl;
-		std::vector<int>& v = this->chnl_mem_it_->second;
+		std::cout << "Eject user from channel " << chnl_mem_it_->first << std::endl;
+		std::vector<int>& v = chnl_mem_it_->second;
 		for (size_t k = 0; k < v.size(); ++k)
 			if (v[k] != fd)
 				sendLine(v[k], q.str()); // alert all group members
@@ -579,19 +579,19 @@ void MiniIRCd::handle_quit(const int fd, int i)
 	}
 	sendLine(fd, "ERROR :Closing Link");
 	close(fd);
-	this->nicks_it_ = this->nick_map_.find(u.nick);
-	if (this->nicks_it_ != this->nick_map_.end())
+	nicks_it_ = nick_map_.find(u.nick);
+	if (nicks_it_ != nick_map_.end())
 		nick_map_.erase(u.nick);
 
 
 	// std::map<int, User>::iterator u_it;
 	// u_it = users_.find(fd);
 	// if (u_it != users_.end())
-	this->users_.erase(fd);
-	// u_it = this->opers_.find(fd);
-	// if (u_it != this->opers_.end())
-	this->opers_.erase(fd);
-	this->pfds_.erase(this->pfds_.begin() + i);
+	users_.erase(fd);
+	// u_it = opers_.find(fd);
+	// if (u_it != opers_.end())
+	opers_.erase(fd);
+	pfds_.erase(pfds_.begin() + i);
 	std::cout << "fd " << fd << " quit\n";
 
 
@@ -845,6 +845,145 @@ void MiniIRCd::handle_mode(User& actual_user, IRCMessage msg)
 	}
 }
 
+void MiniIRCd::handle_topic(const IRCMessage& msg, const int client_fd)
+{
+	// std::cout << "=> handle_topic, params: ";
+	// std::cout << msg.params.size() << "\n";
+	// if (msg.params.size() == 1)
+	// 	std::cout << msg.params[0] << "\n";
+	// std::cout << "=> handle_topic, trailing: "; 
+	// std::cout << msg.trailing.size() << "\n";
+
+	std::ostringstream os;
+	std::ostringstream os_t;
+	User u = users_.at(client_fd);
+
+	if (msg.params.empty())
+	{
+		// std::cout << "TOPIC: ERR_NEEDMOREPARAMS (461)\n";
+		
+		// ERR_NEEDMOREPARAMS (461)
+		// "<client> <command> :Not enough parameters"
+		os << ":miniircd 461 ";
+		os << u.nick << " ";
+		os << "TOPIC :Not enough parameters";
+		sendLine(client_fd, os.str());
+		return ;
+	}
+	std::string chnl_name = msg.params[0];
+
+	chnls_it_ = channels_.find(chnl_name);
+	if (chnls_it_ == channels_.end())
+	{
+		// std::cout << "TOPIC: ERR_NOSUCHCHANNEL (403)\n";
+
+		// ERR_NOSUCHCHANNEL (403)
+		// "<client> <channel> :No such channel"
+		os << ":miniircd 403 ";
+		os << u.nick << " ";
+		os << chnl_name;
+		os << " :No such channel";
+		sendLine(client_fd, os.str());
+		return ;
+	}
+	
+	Channel& c = chnls_it_->second;
+	if (!c.is_chnl_usr(u.nick))
+	{
+		// std::cout << "TOPIC: ERR_NOTONCHANNEL (442)\n";
+
+		// ERR_NOTONCHANNEL (442)
+		// "<client> <channel> :You're not on that channel"
+		os << ":miniircd 442 ";
+		os << chnl_name;
+		os << " :You're not on that channel";
+		sendLine(client_fd, os.str());
+		return ;
+	}
+
+	// only showing the topic
+	if (msg.params.size() == 1 && msg.trailing.empty())
+	{
+		// std::cout << "TOPIC: Show topic\n";
+
+		if (c.get_chnl_topic().empty())
+		{
+
+			// RPL_NOTOPIC (331)
+			// "<client> <channel> :No topic is set"
+			os << ":miniircd 331 ";
+			os << u.nick << " ";
+			os << chnl_name;
+			os << " :No topic is set";
+			sendLine(client_fd, os.str());
+			return ;
+		}
+		else
+		{
+			// RPL_TOPIC (332)
+			// "<client> <channel> :<topic>"
+			os << ":miniircd 332 ";
+			os << u.nick << " ";
+
+			os << chnl_name << " :";
+			os << c.get_chnl_topic();
+			sendLine(client_fd, os.str());
+
+			// RPL_TOPICWHOTIME (333)
+			// "<client> <channel> <nick> <setat>"
+			os_t << ":miniircd 333 ";
+			os_t << u.nick << " ";
+
+			os_t << c.get_chnl_topic_time();
+			sendLine(client_fd, os_t.str());
+
+			return ;
+		}
+	}
+	else
+	{
+		// std::cout << "TOPIC: Change topic !\n";
+
+		// changing topic and alerting all channel members
+		// std::string new_topic = msg.trailing;
+
+		if (!c.channel_topic(u.nick, msg.trailing, os))
+		{
+			sendLine(client_fd, os.str());
+			return ;
+		}
+
+		// os << ":miniircd 332 ";
+		// // "<client> <channel> :<topic>"
+		// os << u.nick << " ";
+
+		// os << chnl_name << " :";
+		// os << c.get_chnl_topic();
+
+		// :irc.example.com 333 nick #bar topic-setter 1487418032
+		os_t << ":miniircd 333 ";
+		os_t << u.nick << " ";
+		// "<client> <channel> <nick> <setat>"
+		os_t << c.get_chnl_topic_time();
+
+		std::cout << "TOPIC CHANGED\n";
+		std::cout << os.str() << "\n";
+		std::cout << os_t.str() << "\n";
+
+		std::vector<int> all_chnl_membs = chnl_members_.at(c.get_chnl_name());
+		std::vector<int>::iterator membs_it = all_chnl_membs.begin();
+
+		while (membs_it < all_chnl_membs.end())
+		{
+			sendLine(*membs_it, os.str());
+			sendLine(*membs_it, os_t.str());
+			membs_it++;
+		}
+
+	}
+}
+
+
 // KICK #channel user_C(,user_B,...) :reason to be kicked!
 // IRSSI, will send KICK cmd to all users separately
 void MiniIRCd::handle_kick(const IRCMessage& msg, const int kicker_fd)
@@ -853,6 +992,7 @@ void MiniIRCd::handle_kick(const IRCMessage& msg, const int kicker_fd)
 
 	std::ostringstream os;
 	User kicker = users_.at(kicker_fd);
+
 	if (msg.params.size() < 2)
 	{
 		std::cout << "ERR_NEEDMOREPARAMS (461)\n";
@@ -1294,6 +1434,8 @@ int MiniIRCd::run()
 						// and in each Channel, users are stored by their names : the Channel
 						// will need to print their names and send to other users, know who is invited...						
 							handle_mode(actual_user, msg);
+						} else if (cmd == "TOPIC") {
+							handle_topic(msg, client_fd);
 						} else if (cmd == "INVITE") {
 							handle_invite(msg, client_fd);
 						} else if (cmd == "KICK") {

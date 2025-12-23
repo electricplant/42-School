@@ -3,11 +3,15 @@
 
 #include <string>
 #include <set>
-#include <map>
+// #include <map>
 #include <vector>
 #include <iostream>
 #include <sstream>
-#include <algorithm>
+
+// #include <chrono>
+#include <ctime>
+
+#include <algorithm> // std::atoi
 #include <stdint.h>
 
 #define INVITE  105
@@ -32,6 +36,7 @@ class Channel
     int length_;
     int max_length_;
     std::string topic_;
+    std::string topic_whotime_; // <channel> <nick> <setat>
     std::string key_;
     std::string channel_name_;
     std::set<std::string> chanop_list_;
@@ -54,6 +59,10 @@ class Channel
     // Getters
     std::string get_chnl_name() const;
     std::string get_chnl_topic() const;
+    std::string get_chnl_topic_time() const
+    {
+        return topic_whotime_ ;
+    }
     
     // Verifications 
     bool is_chnl_op(const std::string usr_nick) const;
@@ -86,10 +95,53 @@ class Channel
     void channel_part(const std::string user_nick);
     // Invite
     void channel_invite(const std::string user_nick);
+    
+    // Topic
+    bool channel_topic(const std::string user_nick, std::string new_topic, std::ostringstream& os)
+    {
+        std::set<std::string>::iterator s_it;
+        s_it = chanop_list_.find(user_nick);
+        if (t_mode_ == true && s_it == chanop_list_.end())
+        {
+            // ERR_CHANOPRIVSNEEDED (482)
+            //  "<client> <channel> :You're not channel operator"
+            os << ":miniircd 482 ";
+            os << get_chnl_name();
+            os << " :You're not channel operator";
+            return false;
+        }
+        // can set new topic
+        std::ostringstream new_t_whotime;
+    
+        // if (new_topic == ":")
+        //     new_topic = "";
+        this->topic_ = new_topic;
+    
+        std::time_t now = std::time(NULL);
+        std::tm* local = std::localtime(&now);
+        std::time_t actual_time = std::mktime(local);
 
-    // Problems when trying to connect to the same channel
-    // with different IRSSI users :
-    // The WHO and WHOIS commands seem necessary.
+
+        // for RPL_TOPICWHOTIME (333)
+        // <channel> <nick> <setat>
+        new_t_whotime << get_chnl_name() << " ";
+        new_t_whotime << user_nick << " ";
+        new_t_whotime << actual_time;
+        this->topic_whotime_ = new_t_whotime.str();
+
+        // std::cout << "Année   : " << (1900 + local->tm_year) << '\n';
+        // std::cout << "Mois    : " << (1 + local->tm_mon)   << '\n';
+        // std::cout << "Jour    : " << local->tm_mday        << '\n';
+        // std::cout << "Heure   : " << local->tm_hour        << '\n';
+        // std::cout << "Minute  : " << local->tm_min         << '\n';
+        // std::cout << "Seconde : " << local->tm_sec         << '\n';
+
+        os << ":miniircd 332 ";
+        os << user_nick << " ";
+        os << get_chnl_name();
+        os << " :" << get_chnl_topic();
+        return true ;
+    }
 };
 
 // #include "User.hpp"
