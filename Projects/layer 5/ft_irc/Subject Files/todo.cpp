@@ -6,7 +6,7 @@
 /*   By: dgerhard <dgerhard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 14:16:15 by dgerhard          #+#    #+#             */
-/*   Updated: 2025/11/29 08:31:26 by dgerhard         ###   ########.fr       */
+/*   Updated: 2025/12/29 14:25:36 by dgerhard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,36 @@
 
 /*
 
-1. add password /Dean - Mostly done, needs parsing
-2. What access does the operator need? /Jeanne
-2.1 add operators (copy of clients?) /Jeanne
-3. for operators, implement KICK, INVITE, TOPIC, MODE /Jeanne
-3.1. for Mode, add i, t, k, o, l /Jeanne
-4. test PRIVMSG /Jeanne
-5. verify tests using NC /Both
-5.1. Check the same commands in NC with different syntaxes /Both
-6. Find ideal storage medium for maximum parameter list, (how many words in the possible maximum length command?)
+Tasks from Subject File:
+DONE - Executable requires port and password
+DONE - Choose reference client (IRSSI)
+DONE - Reference client connects without error
+DONE - Communication is done with TCP/IP
+DONE - Regular users
+DONE - Can handle partial data input
+DONE - Send/recv private messages
+DONE - Message from client to channel appear in every client
+DONE - Set nick
+DONE - Can handle multiple clients without hanging
+DONE - Set user
+DONE - Join channel (ROOM)
 
-// UPDATE (à valider)
+Operators
+
+Kick
+Invite
+Topic
+Mode - i t k o l-
+
+File transfer
+A bot
+
+
+
+
 
 1. Connect to a real IRC server (RFC 1459 or other) and test commands
 with IRSSI on it /both ?
-
-2. Inside the Server class, command parsing /Dean
 
 3.a. Create Basic_user + Operator classes with functions that
 correspond to all the useful commands:
