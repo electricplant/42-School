@@ -53,76 +53,20 @@ int MiniIRCd::make_listen() {
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
-	
-	res = NULL;
-	// std::cout << "res = " << res << "\n";
-	
-	int getaddrinfo_res = getaddrinfo(NULL, port_.c_str(), &hints, &res);
-	if (getaddrinfo_res != 0)
-	{
-		std::cerr << "getaddrinfo failed\n";
-		if (res == NULL)
-			std::cerr << "res == NULL\n";
-
-		return -1;
-	}
-	else
-	{
-		if (res == NULL)
-			std::cerr << "res == NULL\n";
-		else 
-		{
-			std::cout << "res = " ;
-		    const struct sockaddr_in *addr4 =
-    			reinterpret_cast<const struct sockaddr_in*>(res->ai_addr);
-			char ipStr[INET_ADDRSTRLEN];   // 16 octets, assez grand pour IPv4
-			inet_ntop(AF_INET, &(addr4->sin_addr), ipStr, sizeof(ipStr));
-			std::cout << "Adresse IP retournée par getaddrinfo : " << ipStr << '\n';
-		}
-			
-		std::cerr << "getaddrinfo SUCCESS, ans res = " << res << " \n";
-	}
-
-
-	int hah = 1;
+	if (getaddrinfo(NULL, port_.c_str(), &hints, &res) != 0) return -1;
 	for (rp = res; rp; rp = rp->ai_next) {
-
-		std::cout << "Try n°" << hah << ", res_addr = " << res->ai_addr->sa_data[0] << "\n";
-
 		listenfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
-		// error:
 		if (listenfd < 0) continue;
 		setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
-		
-		int bind_res = bind(listenfd, rp->ai_addr, rp->ai_addrlen) ;
-		if (bind_res == 0)
-		{
-			std::cout << "Found address n°" << hah << ", " ;
-			const struct sockaddr_in *addr4 =
-    			reinterpret_cast<const struct sockaddr_in*>(res->ai_addr);
-			char ipStr[INET_ADDRSTRLEN];   // 16 octets, assez grand pour IPv4
-			inet_ntop(AF_INET, &(addr4->sin_addr), ipStr, sizeof(ipStr));
-			std::cout  << ipStr << '\n';
-			// << rp->ai_addr->sa_data << std::endl;
-			break;
-		}
-		else 
-		{
-			close(listenfd);
-			listenfd = -1;
-			std::cout << "Didn't find address n°" << hah << ", " << rp->ai_addr->sa_data << std::endl;
-		}
-		hah++;
+		if (bind(listenfd, rp->ai_addr, rp->ai_addrlen) == 0) break;
+		close(listenfd);
+		listenfd = -1;
 	}
 	freeaddrinfo(res);
 	if (listenfd < 0) return -1;
 	if (listen(listenfd, LISTEN_BACKLOG) < 0) { close(listenfd); return -1; }
-	
-	// We'll probably have to avoid using "int flags"
 	int flags = fcntl(listenfd, F_GETFL, 0);
 	fcntl(listenfd, F_SETFL, flags | O_NONBLOCK);
-	// fcntl(fd, F_SETFL, O_NONBLOCK); cf SUBJECT
-	
 	return listenfd;
 }
 
@@ -581,7 +525,10 @@ void MiniIRCd::handle_quit(const int fd, int i)
 	close(fd);
 	nicks_it_ = nick_map_.find(u.nick);
 	if (nicks_it_ != nick_map_.end())
+	{
+		std::cout << u.nick << " erased from nick_map\n";
 		nick_map_.erase(u.nick);
+	}
 
 
 	// std::map<int, User>::iterator u_it;
@@ -1301,7 +1248,10 @@ int MiniIRCd::run()
 					}
 					// And erase quitted user from server's list
 					if (!usr.nick.empty())
+					{
+						std::cout << usr.nick << " erased from nick_map\n";
 						nick_map_.erase(usr.nick);
+					}
 					close(client_fd);
 					this->usr_it_ = opers_.find(client_fd);
 					if (this->usr_it_ != opers_.end())
