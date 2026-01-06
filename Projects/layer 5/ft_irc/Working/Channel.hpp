@@ -30,7 +30,7 @@ class Channel
     bool i_mode_;
     bool k_mode_;
     bool l_mode_;
-    bool o_mode_;
+    // bool o_mode_;
     bool t_mode_;
 
     int length_;

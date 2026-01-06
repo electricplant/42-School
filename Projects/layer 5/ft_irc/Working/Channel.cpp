@@ -4,7 +4,7 @@
 
 // For the first user :
 Channel::Channel(const std::string name, const std::string usr):
-    i_mode_(false), k_mode_(false), l_mode_(false), o_mode_(false), t_mode_(false),
+    i_mode_(false), k_mode_(false), l_mode_(false)/*, o_mode_(false)*/, t_mode_(false),
     length_(0), max_length_(0), topic_(""), key_(""), channel_name_(name)
 {  add_user(usr);  }
 
